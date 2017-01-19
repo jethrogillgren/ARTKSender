@@ -19,13 +19,15 @@ EditorBuildSettings:
     path: Assets/TangoSDK/Examples/Scenes/PointToPoint.unity
   - enabled: 1
     path: Assets/TangoSDK/Examples/Scenes/SimpleAugmentedReality.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/TangoSDK/Examples/Scenes/AugmentedReality.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/TangoSDK/Examples/Scenes/ExperimentalMeshBuilderWithColor.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/TangoSDK/Examples/Scenes/ExperimentalMeshBuilderWithPhysics.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/TangoSDK/Examples/Scenes/ExperimentalMeshOcclusion.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/TangoSDK/Examples/Scenes/ExperimentalFloorFinding.unity
+  - enabled: 1
+    path: Assets/JethroTest.unity
