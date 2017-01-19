@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using System.Xml.Serialization;
-using System.Collections;
 using System.IO;
 using System.Threading;
 using System.Xml;
-using System.Xml.Serialization;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -128,6 +126,16 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 		if(m_areaMeshPrefab != null){
 			m_areaMesh = Instantiate (m_areaMeshPrefab);
 			m_areaMesh.transform.Rotate (new Vector3 (0, 180, 0));
+
+			MeshFilter mf = m_meshFromFile.AddComponent<MeshFilter>();
+			mf.mesh = m_areaMeshPrefab.GetComponent<Mesh>();
+	
+			MeshRenderer mr = m_areaMesh.AddComponent<MeshRenderer> ();
+			mr.material = m_depthMaskMat;
+
+			m_areaMesh.AddComponent<MeshCollider>();
+			m_areaMesh.layer = LayerMask.NameToLayer("Occlusion");
+
 		}
 	}
 
@@ -135,10 +143,13 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	private void createAdfMeshGameobject(ADFMeshUtil.AreaDescriptionMesh mesh) {
 		// Create GameObject container with mesh components for the loaded mesh.
 		m_meshFromFile = new GameObject();
+
 		MeshFilter mf = m_meshFromFile.AddComponent<MeshFilter>();
 		mf.mesh = adfMeshUtil._AreaDescriptionMeshToUnityMesh(mesh);
+
 		MeshRenderer mr = m_meshFromFile.AddComponent<MeshRenderer>();
 		mr.material = m_depthMaskMat;
+
 		m_meshFromFile.AddComponent<MeshCollider>();
 		m_meshFromFile.layer = LayerMask.NameToLayer("Occlusion");
 		JLog ("Created ADF Mesh GameObject at " + m_meshFromFile.transform.position );
