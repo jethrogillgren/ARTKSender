@@ -46,6 +46,7 @@ public class SceneSwitcher : MonoBehaviour
 		"ExperimentalMeshBuilderWithColor",
 		"ExperimentalMeshBuilderWithPhysics",
 		"ExperimentalMeshOcclusion",
+		"ExperimentalMeshOcclusion_mod",
 		"ExperimentalFloorFinding",
 		"JethroTest"
     };

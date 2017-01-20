@@ -33,6 +33,9 @@ using UnityEngine.UI;
 /// </summary>
 public class MeshOcclusionUIController : MonoBehaviour, ITangoLifecycle, ITangoPose
 {
+	public GameObject m_areaMeshPrefab;
+
+
     /// <summary>
     /// The object that is used to test occlusion.
     /// </summary>
@@ -419,9 +422,10 @@ public class MeshOcclusionUIController : MonoBehaviour, ITangoLifecycle, ITangoP
         }
         
         // Create GameObject container with mesh components for the loaded mesh.
-        m_meshFromFile = new GameObject();
+		m_meshFromFile = new GameObject ();
         MeshFilter mf = m_meshFromFile.AddComponent<MeshFilter>();
         mf.mesh = _AreaDescriptionMeshToUnityMesh(mesh);
+//		m_meshFromFile.transform.Rotate (new Vector3 (0, 180, 0));
         MeshRenderer mr = m_meshFromFile.AddComponent<MeshRenderer>();
         mr.material = m_depthMaskMat;
         m_meshFromFile.AddComponent<MeshCollider>();

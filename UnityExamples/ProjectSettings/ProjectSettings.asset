@@ -124,8 +124,7 @@ PlayerSettings:
   metroInputSource: 0
   m_HolographicPauseOnTrackingLoss: 1
   xboxOneDisableKinectGpuReservation: 0
-  virtualRealitySupported: 0
-  productGUID: c6391136f507d40acbbba7382166aeb8
+  protectGraphicsMemory: 0
   AndroidBundleVersionCode: 49
   AndroidMinSdkVersion: 17
   AndroidPreferredInstallLocation: 1

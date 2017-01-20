@@ -31,3 +31,5 @@ EditorBuildSettings:
     path: Assets/TangoSDK/Examples/Scenes/ExperimentalFloorFinding.unity
   - enabled: 1
     path: Assets/JethroTest.unity
+  - enabled: 1
+    path: Assets/ExperimentalMeshOcclusion_mod.unity

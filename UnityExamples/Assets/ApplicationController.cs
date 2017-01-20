@@ -53,6 +53,8 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 
 		adfMeshUtil = new ADFMeshUtil ();
 
+//		instantiateAreaMeshPrefab ();
+
 		if (m_tangoApplication != null)
 		{
 			m_tangoApplication.Register(this);
@@ -123,20 +125,51 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 
 	private void onFirstLocalisation() {
 		JLog ("Running Initial Localisation Actions");
+		instantiateAreaMeshPrefab ();
+
+	}
+
+	private void instantiateAreaMeshPrefab() {
 		if(m_areaMeshPrefab != null){
 			m_areaMesh = Instantiate (m_areaMeshPrefab);
+
+			foreach( Component o in m_areaMesh.GetComponents<Component>() ){
+				JLog("Component  " + o.ToString() );
+			}
+				
+			foreach( Component co in m_areaMesh.GetComponentsInChildren<Component>() ){
+				JLog("Child Component  " + co.ToString() );
+			}
+
+			foreach( MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>() ){
+				JLog("Child MeshRenderer!!  " + m.ToString() );
+				m.material = m_depthMaskMat;
+//				m.gameObject.layer = LayerMask.NameToLayer("Occlusion");
+			}
+			foreach( MeshFilter m in m_areaMesh.GetComponentsInChildren<MeshFilter>() ){
+				JLog("Child MeshFilter!!  " + m.ToString() );
+				JLog (m.mesh.name);
+				m.gameObject.layer = LayerMask.NameToLayer("Occlusion");
+			}
+
+
+			//m_areaMesh.GetComponent<Mesh>().RecalculateNormals();
 			m_areaMesh.transform.Rotate (new Vector3 (0, 180, 0));
 
 			MeshFilter mf = m_areaMesh.AddComponent<MeshFilter>();
-			mf.mesh = m_areaMeshPrefab.GetComponent<Mesh>();
-	
+
+			JLog ("Mesh Component on Instance:");
+			if( m_areaMesh.GetComponent<Mesh> () != null )
+				JLog (m_areaMesh.GetComponent<Mesh> ().ToString());
+			//mf.mesh = m_areaMeshPrefab.GetComponent<Mesh>();
+
 			MeshRenderer mr = m_areaMesh.AddComponent<MeshRenderer> ();
-			mr.material = m_visibleMat;
+			mr.material = m_depthMaskMat;
 
 			m_areaMesh.AddComponent<MeshCollider>();
 			m_areaMesh.layer = LayerMask.NameToLayer("Occlusion");
 
-			m_areaMesh.GetComponent<MeshRenderer>().material = m_visibleMat;
+			m_areaMesh.GetComponent<MeshRenderer>().material = m_depthMaskMat;
 
 		}
 	}
@@ -446,6 +479,27 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 		m_dynamicMesh.enabled = newVal;
 		m_tangoApplication.Set3DReconstructionEnabled(newVal);
 		m_exportButton.GetComponent<Button>().interactable = newVal;
+	}
+
+	//Called by Canvas Checkbox
+	public void OnMeshViewToggle(bool newVal)
+	{
+		if (m_areaMesh != null) {
+			JLog (" Setting Mesh Visibility to " + newVal);
+
+			if (newVal) {
+				foreach (MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>()) {
+					m.material = m_visibleMat;
+				}
+			} else {
+				foreach (MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>()) {
+					m.material = m_depthMaskMat;
+				}
+			}
+		} else {
+			JLogErr ("Asked to toggle Mesh View to " + newVal + " but the areaMesh is null");
+		}
+
 	}
 
 
