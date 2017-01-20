@@ -127,14 +127,16 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 			m_areaMesh = Instantiate (m_areaMeshPrefab);
 			m_areaMesh.transform.Rotate (new Vector3 (0, 180, 0));
 
-			MeshFilter mf = m_meshFromFile.AddComponent<MeshFilter>();
+			MeshFilter mf = m_areaMesh.AddComponent<MeshFilter>();
 			mf.mesh = m_areaMeshPrefab.GetComponent<Mesh>();
 	
 			MeshRenderer mr = m_areaMesh.AddComponent<MeshRenderer> ();
-			mr.material = m_depthMaskMat;
+			mr.material = m_visibleMat;
 
 			m_areaMesh.AddComponent<MeshCollider>();
 			m_areaMesh.layer = LayerMask.NameToLayer("Occlusion");
+
+			m_areaMesh.GetComponent<MeshRenderer>().material = m_visibleMat;
 
 		}
 	}
@@ -173,7 +175,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 			Vector2 guiPositionPosYUp = new Vector2(t.position.x, t.position.y);
 
 			Camera cam = Camera.main;
-			RaycastHit hitInfo;
+//			RaycastHit hitInfo;
 
 			if (t.phase != TouchPhase.Began)
 			{
