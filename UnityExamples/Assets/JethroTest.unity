@@ -2455,60 +2455,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5f59b9945461344cebfcccf17cdc53f9, type: 2}
   m_IsPrefabParent: 0
---- !u!1001 &1553915922
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 400344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-      propertyPath: m_RootOrder
-      value: 11
-      objectReference: {fileID: 0}
-    - target: {fileID: 400344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 100344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-  m_IsPrefabParent: 0
---- !u!1 &1553915923 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
-  m_PrefabInternal: {fileID: 1553915922}
 --- !u!1 &1631191622
 GameObject:
   m_ObjectHideFlags: 0
@@ -2780,7 +2726,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_areaDescriptionName: starbucks6th
-  m_areaMeshPrefab: {fileID: 1553915923}
+  m_areaMeshPrefab: {fileID: 100344, guid: db059d3cabce74e0d86bce3d02b5c54a, type: 3}
   m_relocalizationOverlay: {fileID: 57001936}
   m_buttonsPanel: {fileID: 1649024375}
   m_exportButton: {fileID: 659788316}

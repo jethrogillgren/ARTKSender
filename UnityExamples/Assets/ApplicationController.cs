@@ -126,34 +126,35 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	}
 
 	private void instantiateAreaMeshPrefab() {
-		if(m_areaMeshPrefab != null){
+		if (m_areaMeshPrefab != null) {
 			m_areaMesh = Instantiate (m_areaMeshPrefab);
-
-//			foreach( MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>() ){
-//				m.material = m_depthMaskMat;
-//				m.gameObject.layer = LayerMask.NameToLayer("Occlusion");
-//			}
-
-			m_areaMesh.transform.Rotate (new Vector3 (0, 180, 0));
-
+			m_areaMesh.name = m_areaMeshPrefab.name; //defaults to name + "(Clone)"
 			MeshRenderer mr = m_areaMesh.AddComponent<MeshRenderer> ();
-//			mr.material = m_depthMaskMat;
-//
 			m_areaMesh.AddComponent<MeshCollider>();
-//			m_areaMesh.layer = LayerMask.NameToLayer("Occlusion");
-//
-//			m_areaMesh.GetComponent<MeshRenderer>().material = m_depthMaskMat;
 
 
-			OcclusionGameplayObject tmp = m_areaMesh.AddComponent ( typeof(OcclusionGameplayObject) ) as OcclusionGameplayObject ;
-			tmp.m_visibleMat = m_visibleMat;
-			tmp.m_depthMaskMat = m_depthMaskMat;
-			tmp.m_GameplayState = BaseGameplayObject.GameplayState.Started;
-			tmp.m_IsDecorationOnly = true;
-			m_gameplayController.addGameplayObject (tmp);
-			tmp.setOcclusion (false);
+			foreach( MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>() ){
+				m.material = m_depthMaskMat;
+				m.gameObject.layer = LayerMask.NameToLayer("Occlusion");
+			}
+			m_areaMesh.transform.Rotate (new Vector3 (0, 180, 0));
+			mr.material = m_depthMaskMat;
+			m_areaMesh.layer = LayerMask.NameToLayer("Occlusion");
+			m_areaMesh.GetComponent<MeshRenderer>().material = m_depthMaskMat;
+			JLog ("Created the Area Mesh Programatically OK:  " + m_areaMesh.name);
 
-			JLog ("Created the Area Mesh Programatically OK:  " + m_areaMesh.name + "  as an occluder: " + m_areaMesh.GetComponent<OcclusionGameplayObject>().m_GameplayState );
+
+
+
+//			OcclusionGameplayObject tmp = m_areaMesh.AddComponent ( typeof(OcclusionGameplayObject) ) as OcclusionGameplayObject ;
+//			tmp.m_visibleMat = m_visibleMat;
+//			tmp.m_depthMaskMat = m_depthMaskMat;
+//			tmp.m_GameplayState = BaseGameplayObject.GameplayState.Started;
+//			tmp.m_IsDecorationOnly = true;
+//			m_gameplayController.addGameplayObject (tmp);
+//			tmp.setOcclusion (false);	
+//			
+//			JLog ("Created the Area Mesh Programatically OK:  " + m_areaMesh.name + "  as an occluder: " + m_areaMesh.GetComponent<OcclusionGameplayObject>().m_GameplayState );
 		}
 
 	}
@@ -482,21 +483,23 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	//Called by Canvas Checkbox
 	public void OnMeshViewToggle(bool newVal)
 	{
-//		if (m_areaMesh != null) {
-//			JLog (" Setting Mesh Visibility to " + newVal);
-//
-//			if (newVal) {
-//				foreach (MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>()) {
-//					m.material = m_visibleMat;
-//				}
-//			} else {
-//				foreach (MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>()) {
-//					m.material = m_depthMaskMat;
-//				}
-//			}
-//		} else {
-//			JLogErr ("Asked to toggle Mesh View to " + newVal + " but the areaMesh is null");
-//		}
+		if (m_areaMesh != null) {
+			JLog (" Setting Area Mesh: " + m_areaMesh.name + " Visibility to " + newVal);
+
+			if (newVal) {
+				foreach (MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>()) {
+					JLog (m.name);
+					m.material = m_visibleMat;
+				}
+			} else {
+				foreach (MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>()) {
+					JLog (m.name);
+					m.material = m_depthMaskMat;
+				}
+			}
+		} else {
+			JLogErr ("Asked to toggle Mesh View to " + newVal + " but the areaMesh is null");
+		}
 
 		//OcclusionGameplayObject[] occluders = FindObjectsOfType(typeof(OcclusionGameplayObject)) as OcclusionGameplayObject[];
 //		JLog ("Scoped still:  Area Mesh:  " + m_areaMesh.name + "  as an occluder: " + m_areaMesh.GetComponent<OcclusionGameplayObject>().m_GameplayState );

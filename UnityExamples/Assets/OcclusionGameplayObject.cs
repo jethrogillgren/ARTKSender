@@ -34,10 +34,12 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 			gameObject.layer = LayerMask.NameToLayer ("Occlusion");
 			
 			foreach (MeshRenderer m in gameObject.GetComponents<MeshRenderer>()) {
+				JLog ("Occluding: " + m.name);
 				m.material = m_depthMaskMat;
 				m.gameObject.layer = LayerMask.NameToLayer("Occlusion");
 			}
 			foreach (MeshRenderer m in gameObject.GetComponentsInChildren<MeshRenderer>()) {
+				JLog ("Occluding: " + m.name);
 				m.material = m_depthMaskMat;
 				m.gameObject.layer = LayerMask.NameToLayer("Occlusion");
 			}
@@ -48,10 +50,12 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 
 			gameObject.layer = LayerMask.NameToLayer ("Default");
 			foreach (MeshRenderer m in gameObject.GetComponents<MeshRenderer>()) {
+				JLog ("Un-Occluding: " + m.name);
 				m.material = m_visibleMat;
 				m.gameObject.layer = LayerMask.NameToLayer ("Default");
 			}
 			foreach (MeshRenderer m in gameObject.GetComponentsInChildren<MeshRenderer>()) {
+				JLog ("Un-Occluding: " + m.name);
 				m.material = m_visibleMat;
 				m.gameObject.layer = LayerMask.NameToLayer ("Default");
 			}
