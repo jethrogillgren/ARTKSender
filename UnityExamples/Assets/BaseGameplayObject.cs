@@ -10,8 +10,8 @@ public abstract class BaseGameplayObject : MonoBehaviour {
 		Finished //All interaction is finished.
 	}
 
-	public bool m_IsDecorationOnly = true; //True means there is no interactions - it is just for show
-	public GameplayState m_GameplayState = GameplayState.Inactive ;
+	public bool m_IsDecorationOnly = true; //True means there is no interactions - it is just for show or graphics.  False means the user will interact with it as part of a clue.
+	public GameplayState m_GameplayState = GameplayState.Started ;
 
 
 //	public abstract void test(); //Must be implemented

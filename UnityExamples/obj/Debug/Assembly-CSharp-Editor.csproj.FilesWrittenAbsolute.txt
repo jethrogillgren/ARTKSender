@@ -39,3 +39,8 @@
 /Users/jethro/git/tango-examples-unity/UnityExamples/Temp/bin/Debug/UnityEngine.Purchasing.dll
 /Users/jethro/git/tango-examples-unity/UnityExamples/Temp/bin/Debug/UnityEngine.Advertisements.dll
 /Users/jethro/git/tango-examples-unity/UnityExamples/Temp/bin/Debug/Ionic.Zip.Unity.dll
+/Users/jethro/git/tango-examples-unity/UnityExamples/Temp/bin/Debug/Newtonsoft.Json.dll
+/Users/jethro/git/tango-examples-unity/UnityExamples/Temp/bin/Debug/websocket-sharp.dll
+/Users/jethro/git/tango-examples-unity/UnityExamples/Temp/bin/Debug/Photon3Unity3D.dll
+/Users/jethro/git/tango-examples-unity/UnityExamples/Temp/bin/Debug/Assembly-CSharp-firstpass.dll
+/Users/jethro/git/tango-examples-unity/UnityExamples/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb

@@ -1,8 +1,10 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.IO;
 using System.Threading;
 using System.Xml;
+using System.Text;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -30,6 +32,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	public Material m_visibleMat;// The reference to the visible material applied to the mesh.
 
 	private ApplicationStateMachine state;
+	private GameplayController m_gameplayController;
 	private ADFMeshUtil adfMeshUtil;
 	private GameObject m_areaMesh;
 	private GameObject m_meshFromFile;	// The loaded mesh reconstructed from the serialized AreaDescriptionMesh file.
@@ -39,6 +42,8 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	private bool m_modeMarkPoint = false;
 	private AreaDescription m_areaDescription = null;
 	private bool m_findPlaneWaitingForDepth;// If set, then the depth camera is on and we are waiting for the next depth update.
+
+//	private OcclusionGameplayObject tmp;
 
 	public void Start()
 	{
@@ -50,8 +55,10 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 		m_poseController = FindObjectOfType<TangoARPoseController>();
 		m_tangoApplication = FindObjectOfType<TangoApplication>();
 		m_dynamicMesh = FindObjectOfType<TangoDynamicMesh>();
+		m_gameplayController = FindObjectOfType<GameplayController>();
 
 		adfMeshUtil = new ADFMeshUtil ();
+
 
 //		instantiateAreaMeshPrefab ();
 
@@ -83,19 +90,8 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 				foreach (AreaDescription areaDescription in list) {
 					AreaDescription.Metadata metadata = areaDescription.GetMetadata ();
 
-					JLog(" Looking at Area Description " + metadata.m_name + " " + metadata.m_dateTime);
-
 					if (metadata.m_name == m_areaDescriptionName) {
 						m_areaDescription = areaDescription;
-
-//						JLog(" Found Correct Area Description, checking for saved Mesh");
-//						ADFMeshUtil.AreaDescriptionMesh adfMesh = adfMeshUtil._DeserializeAreaDescriptionMesh (m_areaDescription.m_uuid);
-//						if (adfMesh == null) {
-//							JLogErr ("Starting Application with ADF but without an ADF Mesh");
-//						} else {
-//							JLog ("Found Mesh for the ADF");
-//							createAdfMeshGameobject (adfMesh);
-//						}
 
 						m_tangoApplication.Startup (m_areaDescription);
 						return;
@@ -133,45 +129,33 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 		if(m_areaMeshPrefab != null){
 			m_areaMesh = Instantiate (m_areaMeshPrefab);
 
-			foreach( Component o in m_areaMesh.GetComponents<Component>() ){
-				JLog("Component  " + o.ToString() );
-			}
-				
-			foreach( Component co in m_areaMesh.GetComponentsInChildren<Component>() ){
-				JLog("Child Component  " + co.ToString() );
-			}
-
-			foreach( MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>() ){
-				JLog("Child MeshRenderer!!  " + m.ToString() );
-				m.material = m_depthMaskMat;
+//			foreach( MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>() ){
+//				m.material = m_depthMaskMat;
 //				m.gameObject.layer = LayerMask.NameToLayer("Occlusion");
-			}
-			foreach( MeshFilter m in m_areaMesh.GetComponentsInChildren<MeshFilter>() ){
-				JLog("Child MeshFilter!!  " + m.ToString() );
-				JLog (m.mesh.name);
-				m.gameObject.layer = LayerMask.NameToLayer("Occlusion");
-			}
+//			}
 
-
-			//m_areaMesh.GetComponent<Mesh>().RecalculateNormals();
 			m_areaMesh.transform.Rotate (new Vector3 (0, 180, 0));
 
-			MeshFilter mf = m_areaMesh.AddComponent<MeshFilter>();
-
-			JLog ("Mesh Component on Instance:");
-			if( m_areaMesh.GetComponent<Mesh> () != null )
-				JLog (m_areaMesh.GetComponent<Mesh> ().ToString());
-			//mf.mesh = m_areaMeshPrefab.GetComponent<Mesh>();
-
 			MeshRenderer mr = m_areaMesh.AddComponent<MeshRenderer> ();
-			mr.material = m_depthMaskMat;
-
+//			mr.material = m_depthMaskMat;
+//
 			m_areaMesh.AddComponent<MeshCollider>();
-			m_areaMesh.layer = LayerMask.NameToLayer("Occlusion");
+//			m_areaMesh.layer = LayerMask.NameToLayer("Occlusion");
+//
+//			m_areaMesh.GetComponent<MeshRenderer>().material = m_depthMaskMat;
 
-			m_areaMesh.GetComponent<MeshRenderer>().material = m_depthMaskMat;
 
+			OcclusionGameplayObject tmp = m_areaMesh.AddComponent ( typeof(OcclusionGameplayObject) ) as OcclusionGameplayObject ;
+			tmp.m_visibleMat = m_visibleMat;
+			tmp.m_depthMaskMat = m_depthMaskMat;
+			tmp.m_GameplayState = BaseGameplayObject.GameplayState.Started;
+			tmp.m_IsDecorationOnly = true;
+			m_gameplayController.addGameplayObject (tmp);
+			tmp.setOcclusion (false);
+
+			JLog ("Created the Area Mesh Programatically OK:  " + m_areaMesh.name + "  as an occluder: " + m_areaMesh.GetComponent<OcclusionGameplayObject>().m_GameplayState );
 		}
+
 	}
 
 
@@ -441,9 +425,23 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	//Debug something to the screen
 	public void OnButtonShoutClick()
 	{
-		JLog(" Current Pose Position.  World: " + Camera. main.transform.position + "   local:" + Camera.main.transform.localPosition );
-		AndroidHelper.ShowAndroidToastMessage("World: " + Camera.main.transform.position + "   local:" + Camera.main.transform.localPosition );
+//		string ret = " Current Pose Position.  World: " + Camera.main.transform.position + "   local:" + Camera.main.transform.localPosition;
+		StringBuilder builder = new StringBuilder ();
 
+		if (m_gameplayController != null) {
+			builder.AppendLine (m_gameplayController.m_gameplayObjects.Count + " Gameplay Objects:");
+			foreach (BaseGameplayObject g in m_gameplayController.getGameplayObjectsByState (BaseGameplayObject.GameplayState.Started)) { // Loop through all strings
+				builder.AppendLine (g.name);
+			}
+		} else {
+			JLogErr ("BADTING");
+		}
+
+//		string ret = string.Join(",", m_gameplayController.getGameplayObjectsByState (BaseGameplayObject.GameplayState.Started) );
+		string ret = builder.ToString ();
+
+		JLog( ret );
+		AndroidHelper.ShowAndroidToastMessage ( ret );
 	}
 
 	//Save current Mesh to file
@@ -461,7 +459,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	//Save current Mesh to file
 	public void OnButtonExportMarkedPointsClick()
 	{
-		string filepath = Application.persistentDataPath + "/meshes/Marks_" + m_areaDescriptionName + ".obj";
+//		string filepath = Application.persistentDataPath + "/meshes/Marks_" + m_areaDescriptionName + ".obj";
 
 	}
 
@@ -484,20 +482,28 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	//Called by Canvas Checkbox
 	public void OnMeshViewToggle(bool newVal)
 	{
-		if (m_areaMesh != null) {
-			JLog (" Setting Mesh Visibility to " + newVal);
+//		if (m_areaMesh != null) {
+//			JLog (" Setting Mesh Visibility to " + newVal);
+//
+//			if (newVal) {
+//				foreach (MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>()) {
+//					m.material = m_visibleMat;
+//				}
+//			} else {
+//				foreach (MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>()) {
+//					m.material = m_depthMaskMat;
+//				}
+//			}
+//		} else {
+//			JLogErr ("Asked to toggle Mesh View to " + newVal + " but the areaMesh is null");
+//		}
 
-			if (newVal) {
-				foreach (MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>()) {
-					m.material = m_visibleMat;
-				}
-			} else {
-				foreach (MeshRenderer m in m_areaMesh.GetComponentsInChildren<MeshRenderer>()) {
-					m.material = m_depthMaskMat;
-				}
-			}
-		} else {
-			JLogErr ("Asked to toggle Mesh View to " + newVal + " but the areaMesh is null");
+		//OcclusionGameplayObject[] occluders = FindObjectsOfType(typeof(OcclusionGameplayObject)) as OcclusionGameplayObject[];
+//		JLog ("Scoped still:  Area Mesh:  " + m_areaMesh.name + "  as an occluder: " + m_areaMesh.GetComponent<OcclusionGameplayObject>().m_GameplayState );
+//		JLog("There are " + occluders.Length + " Occluder Gameplay Objects");
+		foreach (OcclusionGameplayObject occluder in m_gameplayController.getOcclusionGameplayObjects() ){
+			occluder.setOcclusion (!newVal);
+			JLog ("Set GameplayObject " + occluder.gameObject.name + " to occlusion=" + !newVal);
 		}
 
 	}
