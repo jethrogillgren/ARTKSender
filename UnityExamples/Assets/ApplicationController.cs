@@ -120,8 +120,8 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	}
 
 	private void onFirstLocalisation() {
-		JLog ("Running Initial Localisation Actions");
-		instantiateAreaMeshPrefab ();
+		JLog ("There are no Initial Localisation Actions");
+		//instantiateAreaMeshPrefab ();
 
 	}
 
