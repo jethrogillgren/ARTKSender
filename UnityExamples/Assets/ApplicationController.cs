@@ -69,6 +69,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 		}
 
 		On3DRToggle (false);
+		OnMeshViewToggle (false);
 	}
 
 	public void Awake() {
