@@ -11,10 +11,6 @@ public class GameplayController : MonoBehaviour {
 		m_gameplayObjects = new HashSet<BaseGameplayObject>();
 		collectGameplayObjects ();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	}
 
 
 
