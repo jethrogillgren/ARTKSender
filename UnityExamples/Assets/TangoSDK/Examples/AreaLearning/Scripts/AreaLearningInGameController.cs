@@ -117,7 +117,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
     /// <summary>
     /// If set, this is the selected marker.
     /// </summary>
-    private ARMarker m_selectedMarker;
+    private TangoARMarker m_selectedMarker;
 
     /// <summary>
     /// If set, this is the rectangle bounding the selected marker.
@@ -211,7 +211,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
                 GameObject tapped = hitInfo.collider.gameObject;
                 if (!tapped.GetComponent<Animation>().isPlaying)
                 {
-                    m_selectedMarker = tapped.GetComponent<ARMarker>();
+                    m_selectedMarker = tapped.GetComponent<TangoARMarker>();
                 }
             }
             else
@@ -504,7 +504,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
         // Adjust mark's position each time we have a loop closure detected.
         foreach (GameObject obj in m_markerList)
         {
-            ARMarker tempMarker = obj.GetComponent<ARMarker>();
+            TangoARMarker tempMarker = obj.GetComponent<TangoARMarker>();
             if (tempMarker.m_timestamp != -1.0f)
             {
                 TangoCoordinateFramePair pair;
@@ -539,7 +539,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
             // useful when the next time Tango Service is connected. The timestamp is only used for loop closure pose
             // correction in current Tango connection.
             MarkerData temp = new MarkerData();
-            temp.m_type = obj.GetComponent<ARMarker>().m_type;
+            temp.m_type = obj.GetComponent<TangoARMarker>().m_type;
             temp.m_position = obj.transform.position;
             temp.m_orientation = obj.transform.rotation;
             xmlDataList.Add(temp);
@@ -654,7 +654,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
                                     planeCenter,
                                     Quaternion.LookRotation(forward, up)) as GameObject;
 
-        ARMarker markerScript = newMarkObject.GetComponent<ARMarker>();
+        TangoARMarker markerScript = newMarkObject.GetComponent<TangoARMarker>();
 
         markerScript.m_type = m_currentMarkType;
         markerScript.m_timestamp = (float)m_poseController.m_poseTimestamp;

@@ -15,21 +15,70 @@ using System.Collections;
 [RequireComponent (typeof(Rigidbody))]
 
 public class PortalManager : MonoBehaviour {
-	//General vars
-	public GameObject SecondGate;
-	public Material SecondGateCustomSkybox;
-	public bool EnablePortalTrigger = true;
-	public bool EnableMeshClipPlane = true;
-	public Vector2 ProjectionResolution = new Vector2(1280, 1024);
-	public enum ProjectionDepthQualityEnum {Min, Max};
-	public ProjectionDepthQualityEnum ProjectionDepthQuality = ProjectionDepthQualityEnum.Max;
-	private ProjectionDepthQualityEnum[] CurrentProjectionDepthQuality = new ProjectionDepthQualityEnum[0];
-	[Range(1, 20)] public int RecursionSteps = 1;
-	public Material CustomFinalRecursion;
-	public GameObject[] ExcludedObjsFromTrigger = new GameObject[0];
-	[Range(2, 31)] public int ExcludedObjsLayer = 2;
-	public bool NextSceneAsyncLoad;
-	public int NextSceneIndex = 0;
+	//Public vars and correlated
+	public GameObject ConnectedPortal;
+	public Material ConnectedPortalSkybox;
+	[HideInInspector] public Material NullConnectedPortalSkybox;
+
+	[Serializable] public class ViewSettingsClass {
+		[Serializable] public class ProjectionClass {
+			public Vector2 Resolution = new Vector2(1280, 1024);
+
+			public enum DepthQualityEnum {Fast, High};
+			public DepthQualityEnum DepthQuality = DepthQualityEnum.High;
+			[HideInInspector] public DepthQualityEnum[] CurrentDepthQuality = new DepthQualityEnum[0];
+		}
+		public ProjectionClass Projection;
+
+		[Serializable] public class RecursionClass {
+			[Range(1, 20)] public int Steps = 1;
+			public Material CustomFinalStep;
+		}
+		public RecursionClass Recursion;
+
+		[Serializable] public class DistorsionClass {
+			public bool EnableDistorsion;
+
+			public Texture2D Pattern;
+			public Color Color = new Color(1, 1, 1, 1);
+			[Range(1, 100)] public int Tiling = 1;
+			[Range(-10, 10)] public float SpeedX = .01f;
+			[Range(-10, 10)] public float SpeedY = 0;
+		}
+		public DistorsionClass Distorsion;
+	}
+	public ViewSettingsClass ViewSettings;
+
+	[Serializable] public class PortalSettingsClass {
+		public bool EnablePortalTrigger = true;
+		public bool EnableMeshClipPlane = true;
+	}
+	public PortalSettingsClass PortalSettings;
+
+	[Serializable] public class PortalFunctionalityClass {
+		[Serializable] public class ExcludedObjsFromTriggerClass {
+			public GameObject Obj;
+
+			public bool OnlyForPortal;
+		}
+
+		public ExcludedObjsFromTriggerClass[] ExcludedObjsFromTrigger = new ExcludedObjsFromTriggerClass[0];
+
+		[Serializable] public class ExcludedObjsFromRenderClass {
+			public GameObject Obj;
+
+			[Range(2, 31)] public int Layer = 2;
+		}
+		public ExcludedObjsFromRenderClass[] ExcludedObjsFromRender = new ExcludedObjsFromRenderClass[0];
+
+		[Serializable] public class SceneAsyncLoadClass {
+			public bool Enable;
+
+			public int SceneIndex = 0;
+		}
+		public SceneAsyncLoadClass SceneAsyncLoad;
+	}
+	public PortalFunctionalityClass PortalFunctionality;
 	//----------
 
 	private Material[] GateMaterial;
@@ -50,9 +99,10 @@ public class PortalManager : MonoBehaviour {
 		#endif
 		GateMaterial = new Material [RenTex.Length];
 		CurrentProjectionResolution = new Vector2[RenTex.Length];
-		CurrentProjectionDepthQuality = new ProjectionDepthQualityEnum[RenTex.Length];
+		ViewSettings.Projection.CurrentDepthQuality = new ViewSettingsClass.ProjectionClass.DepthQualityEnum[RenTex.Length];
 
 		GateCamObjs = new GameObject[20];
+		Array.Resize (ref GateCamObjs, GateCamObjs.Length + 1);
 		InitGateCamObjsCullingMask = new int[GateCamObjs.Length];
 
 		for (int i = 0; i < GateMaterial.Length; i++) //Generate "Portal" and "Clipping plane" materials
@@ -60,6 +110,9 @@ public class PortalManager : MonoBehaviour {
 				GateMaterial [i] = new Material (Shader.Find ("Gater/UV Remap"));
 
 		Shader ClipPlaneShader = Shader.Find ("Custom/StandardClippable");
+
+		if (!NullConnectedPortalSkybox)
+			NullConnectedPortalSkybox = new Material (Shader.Find ("Standard"));
 
 		if (!ClipPlaneMaterial) {
 			ClipPlaneMaterial = new Material (Shader.Find ("Standard"));
@@ -91,31 +144,31 @@ public class PortalManager : MonoBehaviour {
 		}
 
 		//Disable collision of walls behind portals, and check if the excluded objects from trigger have a collider component
-		if (ExcludedObjsFromTrigger.Length > 0)
-			for (int k = 0; k < ExcludedObjsFromTrigger.Length; k++)
-				if (ExcludedObjsFromTrigger [k]) {
-					Physics.IgnoreCollision (transform.GetComponent<Collider> (), ExcludedObjsFromTrigger [k].GetComponent<Collider> (), true);
+		if (PortalFunctionality.ExcludedObjsFromTrigger.Length > 0)
+			for (int k = 0; k < PortalFunctionality.ExcludedObjsFromTrigger.Length; k++)
+				if (PortalFunctionality.ExcludedObjsFromTrigger [k].Obj) {
+					Physics.IgnoreCollision (transform.GetComponent<Collider> (), PortalFunctionality.ExcludedObjsFromTrigger [k].Obj.GetComponent<Collider> (), true);
 
-					if (!ExcludedObjsFromTrigger [k].GetComponent<Collider> ())
+					if (!PortalFunctionality.ExcludedObjsFromTrigger [k].Obj.GetComponent<Collider> ())
 						Debug.LogError ("One excluded wall doesn't have a collider component");
 				}
 
 		#if UNITY_EDITOR
 			EditorApplication.update = Update;
-
+			
 			//Search already existing required objects for teleport, and fill the relative variables with
 			int GateCamObjsSteps = 0;
-			
+
 			for (int l = 0; l < transform.GetComponentsInChildren<Transform> ().Length; l++) {
 				if (transform.GetComponentsInChildren<Transform> () [l].name == this.gameObject.name + " Camera " + GateCamObjsSteps) {
 					GateCamObjs [GateCamObjsSteps] = transform.GetComponentsInChildren<Transform> () [l].gameObject;
-						
+
 					GateCamObjsSteps += 1;
 				}
-				
+
 				if (transform.GetComponentsInChildren<Transform> () [l].name == transform.name + " SceneviewRender")
 					SceneviewRender = transform.GetComponentsInChildren<Transform> () [l].gameObject;
-				
+
 				if (transform.GetComponentsInChildren<Transform> () [l].name == transform.name + " ClipPlanePosObj")
 					ClipPlanePosObj = transform.GetComponentsInChildren<Transform> () [l].gameObject;
 			}
@@ -124,9 +177,9 @@ public class PortalManager : MonoBehaviour {
 
 	void Update () {
 		#if UNITY_EDITOR
-				SetGate ();
+			SetGate ();
 
-				GateCamRepos ();
+			GateCamRepos ();
 		#endif
 	}
 	void FixedUpdate () {
@@ -141,7 +194,11 @@ public class PortalManager : MonoBehaviour {
 	private Mesh GateMesh;
 
 	void SetGate () {
-		if (SecondGate) {
+		if (!ConnectedPortal || ConnectedPortal.GetComponent<PortalManager> ().ConnectedPortal != gameObject) {
+			for (int i = 0; i < FindObjectsOfType<Transform> ().Length; i++)
+				if (FindObjectsOfType<Transform> () [i] != transform && FindObjectsOfType<Transform> () [i].GetComponent<PortalManager> () && FindObjectsOfType<Transform> () [i].GetComponent<PortalManager> ().ConnectedPortal == gameObject)
+					ConnectedPortal = FindObjectsOfType<Transform> () [i].gameObject;
+		} else {
 			if (!InGameCamera) {
 				ResetVars (false); //Reset arrays elements of the required objects for teleport, if game camera variable is null and any object is still colliding with the portal
 
@@ -154,7 +211,7 @@ public class PortalManager : MonoBehaviour {
 
 				//Generate render texture for the portal camera
 				for (int i = 0; i < RenTex.Length; i++) {
-					if (CurrentProjectionResolution [i].x != ProjectionResolution.x || CurrentProjectionResolution [i].y != ProjectionResolution.y || CurrentProjectionDepthQuality [i] != ProjectionDepthQuality) {
+					if (CurrentProjectionResolution [i].x != ViewSettings.Projection.Resolution.x || CurrentProjectionResolution [i].y != ViewSettings.Projection.Resolution.y || ViewSettings.Projection.CurrentDepthQuality [i] != ViewSettings.Projection.DepthQuality) {
 						if (RenTex [i]) {
 							#if UNITY_EDITOR
 								if (!EditorApplication.isPlaying) {
@@ -165,25 +222,25 @@ public class PortalManager : MonoBehaviour {
 								}
 								if (EditorApplication.isPlaying) {
 									Destroy (RenTex [i]);
-									
+
 									if (i == 0)
 										Destroy (TempRenTex);
 								}
 							#else
 								Destroy (RenTex [i]);
-								
+
 								if (i == 0)
 									Destroy (TempRenTex);
 							#endif
 						}
 						if (!RenTex [i]) {
-							RenTex [i] = new RenderTexture (Convert.ToInt32 (ProjectionResolution.x), Convert.ToInt32 (ProjectionResolution.y), ProjectionDepthQuality == ProjectionDepthQualityEnum.Min ? 16 : 24);
+							RenTex [i] = new RenderTexture (Convert.ToInt32 (ViewSettings.Projection.Resolution.x), Convert.ToInt32 (ViewSettings.Projection.Resolution.y), ViewSettings.Projection.DepthQuality == ViewSettingsClass.ProjectionClass.DepthQualityEnum.Fast ? 16 : 24);
 							RenTex [i].name = this.gameObject.name + " RenderTexture " + i;
 							if (i == 0)
-								TempRenTex = RenderTexture.GetTemporary (Convert.ToInt32 (ProjectionResolution.x), Convert.ToInt32 (ProjectionResolution.y), ProjectionDepthQuality == ProjectionDepthQualityEnum.Min ? 16 : 24);
+								TempRenTex = RenderTexture.GetTemporary (Convert.ToInt32 (ViewSettings.Projection.Resolution.x), Convert.ToInt32 (ViewSettings.Projection.Resolution.y), ViewSettings.Projection.DepthQuality == ViewSettingsClass.ProjectionClass.DepthQualityEnum.Fast ? 16 : 24);
 
-							CurrentProjectionResolution [i] = new Vector2 (ProjectionResolution.x, ProjectionResolution.y);
-							CurrentProjectionDepthQuality [i] = ProjectionDepthQuality;
+							CurrentProjectionResolution [i] = new Vector2 (ViewSettings.Projection.Resolution.x, ViewSettings.Projection.Resolution.y);
+							ViewSettings.Projection.CurrentDepthQuality [i] = ViewSettings.Projection.DepthQuality;
 						}
 					}
 				}
@@ -219,17 +276,26 @@ public class PortalManager : MonoBehaviour {
 
 						//Apply render texture to the scene portal material
 						if (GateMaterial.Length > 1)
-							SceneviewRender.GetComponent<MeshRenderer> ().sharedMaterial.SetTexture ("_MainTex", InGameCamera && SecondGate.GetComponent<PortalManager> ().RenTex [1] ? SecondGate.GetComponent<PortalManager> ().RenTex [1] : null);
+							SceneviewRender.GetComponent<MeshRenderer> ().sharedMaterial.SetTexture ("_MainTex", InGameCamera && ConnectedPortal.GetComponent<PortalManager> ().RenTex [1] ? ConnectedPortal.GetComponent<PortalManager> ().RenTex [1] : null);
 					}
 				#endif
 
 				//Apply render texture to the game portal material
 				if (GateMaterial.Length > 0)
-					GetComponent<MeshRenderer> ().sharedMaterial.SetTexture ("_MainTex", InGameCamera && SecondGate.GetComponent<PortalManager> ().RenTex [0] ? SecondGate.GetComponent<PortalManager> ().RenTex [0] : null);
-				
+					GetComponent<MeshRenderer> ().sharedMaterial.SetTexture ("_MainTex", InGameCamera && ConnectedPortal.GetComponent<PortalManager> ().RenTex [0] ? ConnectedPortal.GetComponent<PortalManager> ().RenTex [0] : null);
+
+				//Manage distorstion pattern settings
+				GetComponent<MeshRenderer> ().sharedMaterial.SetInt ("_EnableDistorsionPattern", ViewSettings.Distorsion.EnableDistorsion ? 1 : 0);
+				GetComponent<MeshRenderer> ().sharedMaterial.SetTexture ("_DistorsionPattern", ViewSettings.Distorsion.Pattern);
+				GetComponent<MeshRenderer> ().sharedMaterial.SetColor ("_DistorsionPatternColor", ViewSettings.Distorsion.Color);
+				GetComponent<MeshRenderer> ().sharedMaterial.SetInt ("_DistorsionPatternTiling", ViewSettings.Distorsion.Tiling);
+				GetComponent<MeshRenderer> ().sharedMaterial.SetFloat ("_DistorsionPatternSpeedX", -ViewSettings.Distorsion.SpeedX);
+				GetComponent<MeshRenderer> ().sharedMaterial.SetFloat ("_DistorsionPatternSpeedY", -ViewSettings.Distorsion.SpeedY);
+
+
 				//Generate camera for the portal rendering
 				for (int j = 0; j < GateCamObjs.Length; j++) {
-					if (j < RecursionSteps) {
+					if (j < ViewSettings.Recursion.Steps + 1) {
 						if (!GateCamObjs [j]) {
 							GateCamObjs [j] = new GameObject (transform.name + " Camera " + j);
 
@@ -257,8 +323,8 @@ public class PortalManager : MonoBehaviour {
 							}
 						}
 
-						if (SecondGate.GetComponent<PortalManager> ().GateCamObjs [j])
-							SecondGate.GetComponent<PortalManager> ().GateCamObjs [j].GetComponent<Skybox> ().material = CustomFinalRecursion && (j > 0 && j == RecursionSteps - 1) ? CustomFinalRecursion : SecondGateCustomSkybox;
+						if (ConnectedPortal.GetComponent<PortalManager> ().GateCamObjs [j])
+							ConnectedPortal.GetComponent<PortalManager> ().GateCamObjs [j].GetComponent<Skybox> ().material = ViewSettings.Recursion.CustomFinalStep && (j > 0 && j == ViewSettings.Recursion.Steps) ? ViewSettings.Recursion.CustomFinalStep : (!ConnectedPortalSkybox && (j > 0 && j == ViewSettings.Recursion.Steps) ? NullConnectedPortalSkybox : ConnectedPortalSkybox);
 					} else {
 						#if UNITY_EDITOR
 							if (!EditorApplication.isPlaying)
@@ -293,7 +359,7 @@ public class PortalManager : MonoBehaviour {
 				//Disable trigger of portal collider
 				if (GetComponent<Collider> ()) {
 					if (GetComponent<Collider> ().isTrigger != (InGameCamera ? true : false))
-						GetComponent<Collider> ().isTrigger = InGameCamera ? (EnablePortalTrigger ? true : false) : false;
+						GetComponent<Collider> ().isTrigger = InGameCamera ? (PortalSettings.EnablePortalTrigger ? true : false) : false;
 				} else
 					Debug.LogError ("No collider component found");
 			}
@@ -301,59 +367,65 @@ public class PortalManager : MonoBehaviour {
 	}
 
 	void GateCamRepos () {
-		if (InGameCamera && SecondGate) {
+		if (InGameCamera && ConnectedPortal) {
 			Vector3[] GateCamPos = new Vector3[GateCamObjs.Length];
 			Quaternion[] GateCamRot = new Quaternion[GateCamObjs.Length];
 
 			for (int i = 0; i < RenTex.Length; i++) {
 				if (RenTex [i]) {
-					for (int j = RecursionSteps - 1; j >= 0; j--) {
-						//Move portal camera to position/rotation of Scene/Game camera
-						Camera SceneCamera = null;
+					for (int j = ViewSettings.Recursion.Steps; j >= 0; j--) {
+						if (GateCamObjs [j]) {
+							//Move portal camera to position/rotation of Scene/Game camera
+							Camera SceneCamera = null;
 
-						#if UNITY_EDITOR
-							SceneCamera = SceneView.GetAllSceneCameras ().Length > 0 ? SceneView.GetAllSceneCameras () [0] : null;
-						#endif
+							#if UNITY_EDITOR
+								SceneCamera = SceneView.GetAllSceneCameras ().Length > 0 ? SceneView.GetAllSceneCameras () [0] : null;
+							#endif
 
-						GateCamObjs [j].GetComponent<Camera> ().aspect = (i == 1 && SceneCamera ? SceneCamera.aspect : InGameCamera.aspect);
-						GateCamObjs [j].GetComponent<Camera> ().fieldOfView = (i == 1 && SceneCamera ? SceneCamera.fieldOfView : InGameCamera.fieldOfView);
-						GateCamObjs [j].GetComponent<Camera> ().farClipPlane = (i == 1 && SceneCamera ? SceneCamera.farClipPlane : InGameCamera.farClipPlane);
+							GateCamObjs [j].GetComponent<Camera> ().aspect = (i == 1 && SceneCamera ? SceneCamera.aspect : InGameCamera.aspect);
+							GateCamObjs [j].GetComponent<Camera> ().fieldOfView = (i == 1 && SceneCamera ? SceneCamera.fieldOfView : InGameCamera.fieldOfView);
+							GateCamObjs [j].GetComponent<Camera> ().farClipPlane = (i == 1 && SceneCamera ? SceneCamera.farClipPlane : InGameCamera.farClipPlane);
 
-						GateCamPos [j] = SecondGate.transform.InverseTransformPoint (i == 1 && SceneCamera ? SceneCamera.transform.position : InGameCamera.transform.position);
+							GateCamPos [j] = ConnectedPortal.transform.InverseTransformPoint (i == 1 && SceneCamera ? SceneCamera.transform.position : InGameCamera.transform.position);
 
-						GateCamPos [j].x = -GateCamPos [j].x;
-						GateCamPos [j].z = -GateCamPos [j].z + j * (Vector3.Distance (transform.position, SecondGate.transform.position) / 5);
+							GateCamPos [j].x = -GateCamPos [j].x;
+							GateCamPos [j].z = -GateCamPos [j].z + j * (Vector3.Distance (transform.position, ConnectedPortal.transform.position) / 5);
 
-						GateCamRot [j] = Quaternion.Inverse (SecondGate.transform.rotation) * (i == 1 && SceneCamera ? SceneCamera.transform.rotation : InGameCamera.transform.rotation);
+							GateCamRot [j] = Quaternion.Inverse (ConnectedPortal.transform.rotation) * (i == 1 && SceneCamera ? SceneCamera.transform.rotation : InGameCamera.transform.rotation);
 
-						GateCamRot [j] = Quaternion.AngleAxis (180.0f, new Vector3 (0, 1, 0)) * GateCamRot [j];
+							GateCamRot [j] = Quaternion.AngleAxis (180.0f, new Vector3 (0, 1, 0)) * GateCamRot [j];
 
-						GateCamObjs [j].transform.localPosition = GateCamPos [j];
-						GateCamObjs [j].transform.localRotation = GateCamRot [j];
+							GateCamObjs [j].transform.localPosition = GateCamPos [j];
+							GateCamObjs [j].transform.localRotation = GateCamRot [j];
 
-						//Render portal camera and recursion to render texture
-						if (CustomFinalRecursion && (j > 0 && j == RecursionSteps - 1))
-							GateCamObjs [j].GetComponent<Camera> ().cullingMask = 0;
-						else {
-							GateCamObjs [j].GetComponent<Camera> ().cullingMask = InGameCamera.cullingMask;
-							GateCamObjs [j].GetComponent<Camera> ().cullingMask &= ~(1 << ExcludedObjsLayer);
-							if (i == 0)
-								GateCamObjs [j].GetComponent<Camera> ().cullingMask &= ~(1 << 4);
-							else
-								GateCamObjs [j].GetComponent<Camera> ().cullingMask &= ~(1 << 1);
+							//Render portal camera and recursion to render texture
+							if (j > 0 && j == ViewSettings.Recursion.Steps)
+								GateCamObjs [j].GetComponent<Camera> ().cullingMask = 0;
+							else {
+								GateCamObjs [j].GetComponent<Camera> ().cullingMask = InGameCamera.cullingMask;
+
+								for (int k = 0; k < PortalFunctionality.ExcludedObjsFromRender.Length; k++)
+									if (PortalFunctionality.ExcludedObjsFromRender [k].Obj)
+										GateCamObjs [j].GetComponent<Camera> ().cullingMask &= ~(1 << PortalFunctionality.ExcludedObjsFromRender [k].Layer);
+								
+								if (i == 0)
+									GateCamObjs [j].GetComponent<Camera> ().cullingMask &= ~(1 << 4);
+								else
+									GateCamObjs [j].GetComponent<Camera> ().cullingMask &= ~(1 << 1);
+							}
+
+							GateCamObjs [j].GetComponent<Camera> ().targetTexture = TempRenTex;
+
+							RenderTexture.active = GateCamObjs [j].GetComponent<Camera> ().targetTexture;
+
+							GateCamObjs [j].GetComponent<Camera> ().Render ();
+
+							Graphics.Blit (TempRenTex, RenTex [i]);
+
+							RenderTexture.active = null;
+
+							GateCamObjs [j].GetComponent<Camera> ().targetTexture = null;
 						}
-
-						GateCamObjs [j].GetComponent<Camera> ().targetTexture = TempRenTex;
-
-						RenderTexture.active = GateCamObjs [j].GetComponent<Camera> ().targetTexture;
-
-						GateCamObjs [j].GetComponent<Camera> ().Render ();
-
-						Graphics.Blit (TempRenTex, RenTex [i]);
-
-						RenderTexture.active = null;
-
-						GateCamObjs [j].GetComponent<Camera> ().targetTexture = null;
 					}
 				}
 			}
@@ -365,7 +437,7 @@ public class PortalManager : MonoBehaviour {
 	private string[] CollidedObjsInitName = new string[0];
 	[HideInInspector] public Vector3 CollidedObjsParentPreviousFirstPos;
 	[HideInInspector] public Vector3 CollidedObjsParentPreviousSecondPos;
-	public bool AcquireNextPos;
+	private bool AcquireNextPos;
 	private InitMaterialsList[] CollidedObjsInitMaterials = new InitMaterialsList[0];
 	private bool[] StandardObjShader = new bool[0];
 	private bool[] CollidedObjsAlwaysTeleport = new bool[0];
@@ -379,18 +451,14 @@ public class PortalManager : MonoBehaviour {
 	[HideInInspector] public int EnterTriggerTimes;
 
 	void OnTriggerEnter (Collider collision) {
-		Util.JLog ("Gater - TriggerEnter: " + collision.ToString() );
-
 		//Disable collision with objects excluded from trigger during teleport
-		if (ExcludedObjsFromTrigger.Length > 0)
-			for (int i = 0; i < ExcludedObjsFromTrigger.Length; i++)
-				if (collision.GetComponent<TangoARPoseController> ())
-					Physics.IgnoreCollision (collision, ExcludedObjsFromTrigger [i].GetComponent<Collider> (), true);
+		if (PortalFunctionality.ExcludedObjsFromTrigger.Length > 0)
+			for (int i = 0; i < PortalFunctionality.ExcludedObjsFromTrigger.Length; i++)
+				if (collision.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> () && !PortalFunctionality.ExcludedObjsFromTrigger [i].OnlyForPortal)
+					Physics.IgnoreCollision (collision, PortalFunctionality.ExcludedObjsFromTrigger [i].Obj.GetComponent<Collider> (), true);
 
 		//Increment and partially fill the arrays elements of required object for teleport
 		if (collision.gameObject != this.gameObject && !collision.GetComponent<PortalManager> () && !collision.name.Contains (collision.gameObject.GetHashCode ().ToString ()) && !collision.name.Contains ("Clone")) {
-			Util.JLog ("Gater - TriggerEnter Is appenin" );
-
 			Array.Resize (ref CollidedObjs, CollidedObjs.Length + 1);
 			Array.Resize (ref CollidedObjsInitName, CollidedObjsInitName.Length + 1);
 			Array.Resize (ref CollidedObjsInitMaterials, CollidedObjsInitMaterials.Length + 1);
@@ -405,23 +473,23 @@ public class PortalManager : MonoBehaviour {
 
 			CollidedObjs [CollidedObjs.Length - 1] = collision.gameObject;
 			CollidedObjsInitName [CollidedObjsInitName.Length - 1] = collision.gameObject.name;
-			if (!collision.GetComponent<TangoARPoseController> ()) {
+			if (!collision.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ()) {
 				if (collision.transform.childCount > 0) {
 					EnterTriggerTimes = 0;
-					SecondGate.GetComponent<PortalManager> ().EnterTriggerTimes = 0;
+					ConnectedPortal.GetComponent<PortalManager> ().EnterTriggerTimes = 0;
 
 					for (int j = 0; j < collision.GetComponentsInChildren<Transform> ().Length; j++)
 						if (collision.GetComponentsInChildren<Transform> () [j] != collision.gameObject && collision.GetComponentsInChildren<Transform> () [j].GetComponent<Camera> ()) {
 							CollidedObjsParentPreviousFirstPos = collision.GetComponentsInChildren<Transform> () [j].transform.localPosition;
-							SecondGate.GetComponent<PortalManager> ().CollidedObjsParentPreviousFirstPos = collision.GetComponentsInChildren<Transform> () [j].transform.localPosition;
+							ConnectedPortal.GetComponent<PortalManager> ().CollidedObjsParentPreviousFirstPos = collision.GetComponentsInChildren<Transform> () [j].transform.localPosition;
 
 							AcquireNextPos = true;
-							SecondGate.GetComponent<PortalManager> ().AcquireNextPos = true;
+							ConnectedPortal.GetComponent<PortalManager> ().AcquireNextPos = true;
 						}
 				}
 				if (!AcquireNextPos && collision.GetComponent<Camera> ()) {
 					EnterTriggerTimes += 1;
-					SecondGate.GetComponent<PortalManager> ().EnterTriggerTimes += 1;
+					ConnectedPortal.GetComponent<PortalManager> ().EnterTriggerTimes += 1;
 
 					if (EnterTriggerTimes == 2)
 						CollidedObjsExternalParent = false;
@@ -429,14 +497,14 @@ public class PortalManager : MonoBehaviour {
 				if (AcquireNextPos) {
 					if (collision.transform.childCount == 0 && collision.gameObject && collision.GetComponent<Camera> ()) {
 						CollidedObjsParentPreviousSecondPos = collision.transform.localPosition;
-						SecondGate.GetComponent<PortalManager> ().CollidedObjsParentPreviousSecondPos = collision.transform.localPosition;
+						ConnectedPortal.GetComponent<PortalManager> ().CollidedObjsParentPreviousSecondPos = collision.transform.localPosition;
 
 						AcquireNextPos = false;
-						SecondGate.GetComponent<PortalManager> ().AcquireNextPos = false;
+						ConnectedPortal.GetComponent<PortalManager> ().AcquireNextPos = false;
 					}
 				}
 			}
-			
+
 			if (CollidedObjs [CollidedObjs.Length - 1].GetComponent<MeshRenderer> ()) {
 				if (!StandardObjShader[CollidedObjs.Length - 1]) {
 					if (CollidedObjs [CollidedObjs.Length - 1].GetComponent<MeshRenderer> ().sharedMaterial.shader.name != "Standard")
@@ -445,7 +513,7 @@ public class PortalManager : MonoBehaviour {
 						StandardObjShader[CollidedObjs.Length - 1] = true;
 				}
 				if (StandardObjShader[CollidedObjs.Length - 1]) {
-					if (CollidedObjs [CollidedObjs.Length - 1].GetComponent<MeshRenderer> () && EnableMeshClipPlane) {
+					if (CollidedObjs [CollidedObjs.Length - 1].GetComponent<MeshRenderer> () && PortalSettings.EnableMeshClipPlane) {
 						CollidedObjsInitMaterials [CollidedObjsInitMaterials.Length - 1] = new InitMaterialsList ();
 
 						CollidedObjsInitMaterials [CollidedObjsInitMaterials.Length - 1].Materials = CollidedObjs [CollidedObjs.Length - 1].GetComponent<MeshRenderer> ().sharedMaterials;
@@ -464,8 +532,6 @@ public class PortalManager : MonoBehaviour {
 	private GameObject[] ObjCloneCollidedCamObj = new GameObject[2];
 
 	void OnTriggerStay (Collider collision) {
-//		Util.JLog ("Gater - TriggerStay: " + collision.ToString() );
-
 		//Change position/rotation of required objects for teleport, and complete the fill of remaining arrays elements
 		for (int i = 0; i < CollidedObjs.Length; i++) {
 			if (ContinueTriggerEvents [i] && CollidedObjs [i]) {
@@ -480,13 +546,13 @@ public class PortalManager : MonoBehaviour {
 					if (GateMesh && ProxDetCollidedObjs [i]) {
 						if (CollidedObjs [i].transform.childCount > 0) {
 							for (int j = 0; j < CollidedObjs [i].transform.GetComponentsInChildren<Transform> ().Length; j++)
-								if (CollidedObjs [i].GetComponent<TangoARPoseController> () && CollidedObjs [i].transform.GetComponentsInChildren<Transform> () [j].GetComponent<Camera> ())
+								if (CollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> () && CollidedObjs [i].transform.GetComponentsInChildren<Transform> () [j].GetComponent<Camera> ())
 									ObjCollidedCamObj [0] = CollidedObjs [i].transform.GetComponentsInChildren<Transform> () [j].gameObject;
 						}
 						if (CollidedObjs [i].transform.childCount == 0)
-							if (CollidedObjs [i].GetComponent<Camera> ())
-								ObjCollidedCamObj [1] = CollidedObjs [i];
-						
+						if (CollidedObjs [i].GetComponent<Camera> ())
+							ObjCollidedCamObj [1] = CollidedObjs [i];
+
 						Vector3 ProxDetCollidedObjPos = transform.InverseTransformPoint ((ObjCollidedCamObj [ObjCollidedCamObj [1] ? 1 : 0] ? ObjCollidedCamObj [ObjCollidedCamObj [1] ? 1 : 0].transform.position : CollidedObjs [i].transform.position));
 						Vector3 ProxDetCollLimit = new Vector3 (GateMesh.bounds.size.x / 2, GateMesh.bounds.size.y / 2, GateMesh.bounds.size.z / 2);
 
@@ -500,17 +566,17 @@ public class PortalManager : MonoBehaviour {
 							}
 							if (CollidedObjsFirstTrig [i] && CollidedObjsFirstTrigDist [i] < 0) {
 								CollidedObjsAlwaysTeleport [i] = true;
-								
+
 								CollidedObjs [i].name = CollidedObjs [i].name + " " + CollidedObjs [i].GetHashCode ().ToString ();
 							}
 						}
 						if (CollidedObjsAlwaysTeleport [i]) {
 							if (!CloneCollidedObjs [i]) {
-								CloneCollidedObjs [i] = (GameObject)Instantiate (CollidedObjs [i], SecondGate.transform.position, SecondGate.transform.rotation);
+								CloneCollidedObjs [i] = (GameObject)Instantiate (CollidedObjs [i], ConnectedPortal.transform.position, ConnectedPortal.transform.rotation);
 
 								if (CloneCollidedObjs [i].GetComponent<AudioListener> ())
 									Destroy (CloneCollidedObjs [i].GetComponent<AudioListener> ());
-								
+
 								if (CloneCollidedObjs [i].transform.childCount > 0) {
 									for (int k = 0; k < CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> ().Length; k++) {
 										if (CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k] != CloneCollidedObjs [i].transform && CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<MeshRenderer> ())
@@ -518,38 +584,38 @@ public class PortalManager : MonoBehaviour {
 
 										if (CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<AudioListener> ())
 											Destroy (CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<AudioListener> ());
-									
-										if (CloneCollidedObjs [i].transform.GetComponent<TangoARPoseController> () && CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<Camera> ())
+
+										if (CloneCollidedObjs [i].transform.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> () && CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<Camera> ())
 											ObjCloneCollidedCamObj [0] = CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].gameObject;
-										if (!CloneCollidedObjs [i].transform.GetComponent<TangoARPoseController> () && CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<Camera> ())
+										if (!CloneCollidedObjs [i].transform.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> () && CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<Camera> ())
 											CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].gameObject.GetComponent<Camera> ().enabled = false;
 									}
 								}
 								if (CloneCollidedObjs [i].transform.childCount == 0)
-									if (CloneCollidedObjs [i].GetComponent<Camera> ())
-										ObjCloneCollidedCamObj [1] = CloneCollidedObjs [i];
-								
+								if (CloneCollidedObjs [i].GetComponent<Camera> ())
+									ObjCloneCollidedCamObj [1] = CloneCollidedObjs [i];
+
 								if (CloneCollidedObjs [i].GetComponent<MeshRenderer> () && StandardObjShader [i]) {
-									if (EnableMeshClipPlane) {
+									if (PortalSettings.EnableMeshClipPlane) {
 										CloneCollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterial = CloneClipPlaneMaterial;
 										CloneCollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterial.CopyPropertiesFromMaterial (CollidedObjsInitMaterials [i].Materials [0]);
 									}
-									if (!EnableMeshClipPlane) {
+									if (!PortalSettings.EnableMeshClipPlane) {
 										CollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterials = CollidedObjsInitMaterials [i].Materials;
 										CloneCollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterials = CollidedObjsInitMaterials [i].Materials;
 									}
 								}
 
 								if (ObjCloneCollidedCamObj [0]) {
-									CloneCollidedObjs [i].GetComponent<TangoARPoseController> ().enabled = false;
+									CloneCollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().enabled = false;
 
-//									CloneCollidedObjs [i].GetComponent<TangoARPoseController> ().m_OriginalCameraPosition = CollidedObjs [i].GetComponent<TangoARPoseController> ().m_OriginalCameraPosition;
+									CloneCollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().m_OriginalCameraPosition = CollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().m_OriginalCameraPosition;
 								}
 
 								CloneCollidedObjs [i].name = CollidedObjsInitName [i] + " Clone";
 
-								CloneCollidedObjs [i].transform.position = SecondGate.transform.position;
-								CloneCollidedObjs [i].transform.parent = SecondGate.transform;
+								CloneCollidedObjs [i].transform.position = ConnectedPortal.transform.position;
+								CloneCollidedObjs [i].transform.parent = ConnectedPortal.transform;
 							}
 							if (CloneCollidedObjs [i]) {
 								float DistAmount = .015f;
@@ -572,9 +638,9 @@ public class PortalManager : MonoBehaviour {
 									if (!ObjCloneCollidedCamObj [ObjCloneCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> ())
 										ObjCloneCollidedCamObj [ObjCloneCollidedCamObj [1] ? 1 : 0].AddComponent<Skybox> ();
 									if (ObjCloneCollidedCamObj [ObjCloneCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> ()) {
-										ObjCloneCollidedCamObj [ObjCloneCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> ().material = SecondGateCustomSkybox;
+										ObjCloneCollidedCamObj [ObjCloneCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> ().material = ConnectedPortalSkybox;
 
-										if (!SecondGateCustomSkybox) {
+										if (!ConnectedPortalSkybox) {
 											#if UNITY_EDITOR
 												if (!EditorApplication.isPlaying)
 													DestroyImmediate (ObjCloneCollidedCamObj [ObjCloneCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> (), false);
@@ -603,8 +669,8 @@ public class PortalManager : MonoBehaviour {
 									CollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterial.SetVector ("_planePos", ClipPlanePosObj.transform.position);
 									CollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterial.SetVector ("_planeNorm", Quaternion.Euler (transform.eulerAngles) * -DirectionVector);
 
-									CloneCollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterial.SetVector ("_planePos", SecondGate.GetComponent<PortalManager> ().ClipPlanePosObj.transform.position);
-									CloneCollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterial.SetVector ("_planeNorm", Quaternion.Euler (SecondGate.transform.eulerAngles) * -DirectionVector);
+									CloneCollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterial.SetVector ("_planePos", ConnectedPortal.GetComponent<PortalManager> ().ClipPlanePosObj.transform.position);
+									CloneCollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterial.SetVector ("_planeNorm", Quaternion.Euler (ConnectedPortal.transform.eulerAngles) * -DirectionVector);
 								}
 							}
 						}
@@ -617,18 +683,15 @@ public class PortalManager : MonoBehaviour {
 	private Vector3 PreviousCollidedObjsInternalParentPos;
 
 	void OnTriggerExit (Collider collision) {
-		Util.JLog ("Gater - TriggerExit: " + collision.ToString() );
 		//Destroy required objects for teleport, reset relative arrays, and move original collided object to the its final position/rotation
 		for (int i = 0; i < CloneCollidedObjs.Length; i++) {
 			if (ContinueTriggerEvents [i] && CollidedObjs [i] && CollidedObjs [i].GetHashCode ().ToString () == collision.gameObject.GetHashCode ().ToString () && CloneCollidedObjs [i]) {
-				Util.JLog ("Gater - TriggerExit  :" + i + " Is appenin" );
-
 				if (CollidedObjVelocity [i] == Vector3.zero)
-					CollidedObjVelocity [i] = CollidedObjs [i].GetComponent<Rigidbody> () ? CollidedObjs [i].GetComponent<Rigidbody> ().velocity.magnitude * -SecondGate.transform.forward : new Vector3 (0, 0, 0);
+					CollidedObjVelocity [i] = CollidedObjs [i].GetComponent<Rigidbody> () ? CollidedObjs [i].GetComponent<Rigidbody> ().velocity.magnitude * -ConnectedPortal.transform.forward : new Vector3 (0, 0, 0);
 
 				float CollObjProxDetDistExit = Vector3.Dot (CollidedObjs [i].transform.position - ProxDetCollidedObjs [i].transform.position, ProxDetCollidedObjs [i].transform.forward);
 
-				GameObject[] CollidedObjsInternalParent = new GameObject[CollidedObjs [i].transform.childCount > 0 && !CollidedObjs [i].GetComponent<TangoARPoseController> () ? CollidedObjs [i].transform.childCount : 0];
+				GameObject[] CollidedObjsInternalParent = new GameObject[CollidedObjs [i].transform.childCount > 0 && !CollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> () ? CollidedObjs [i].transform.childCount : 0];
 
 				if (CollidedObjsInternalParent.Length > 0) {
 					for (int j = 0; j < CollidedObjs [i].transform.GetComponentsInChildren<Transform> ().Length; j++) {
@@ -641,23 +704,23 @@ public class PortalManager : MonoBehaviour {
 
 				if (CollidedObjs [i].transform.childCount > 0) {
 					for (int k = 0; k < CollidedObjs [i].transform.GetComponentsInChildren<Transform> ().Length; k++)
-						if (CollidedObjs [i].GetComponent<TangoARPoseController> () && CollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<Camera> ())
+						if (CollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> () && CollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<Camera> ())
 							ObjCollidedCamObj [0] = CollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].gameObject;
 				}
 				if (CollidedObjs [i].transform.childCount == 0)
-					if (CollidedObjs [i].GetComponent<Camera> ())
-						ObjCollidedCamObj [1] = CollidedObjs [i];
+				if (CollidedObjs [i].GetComponent<Camera> ())
+					ObjCollidedCamObj [1] = CollidedObjs [i];
 				if (CloneCollidedObjs [i].transform.childCount > 0) {
 					for (int k = 0; k < CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> ().Length; k++)
-						if (CloneCollidedObjs [i].GetComponent<TangoARPoseController> () && CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<Camera> ())
+						if (CloneCollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> () && CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].GetComponent<Camera> ())
 							ObjCloneCollidedCamObj [0] = CloneCollidedObjs [i].transform.GetComponentsInChildren<Transform> () [k].gameObject;
 				}
 				if (CloneCollidedObjs [i].transform.childCount == 0)
-					if (CloneCollidedObjs [i].GetComponent<Camera> ())
-						ObjCloneCollidedCamObj [1] = CloneCollidedObjs [i];
+				if (CloneCollidedObjs [i].GetComponent<Camera> ())
+					ObjCloneCollidedCamObj [1] = CloneCollidedObjs [i];
 
 				if (CollObjProxDetDistExit > 0) {
-					if (!CollidedObjs [i].GetComponent<TangoARPoseController> ()) {
+					if (!CollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ()) {
 						if (CollidedObjsInternalParent.Length == 0) {
 							if (CollidedObjs [i].transform.parent != null) {
 								if (!CollidedObjsExternalParent)
@@ -674,24 +737,24 @@ public class PortalManager : MonoBehaviour {
 							CollidedObjsInternalParent [0].transform.position = PreviousCollidedObjsInternalParentPos;
 						}
 					}
-					if (CollidedObjs [i].GetComponent<TangoARPoseController> ())
+					if (CollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ())
 						CollidedObjs [i].transform.position = CloneCollidedObjs [i].transform.position;
 
 					CollidedObjs [i].transform.rotation = CloneCollidedObjs [i].transform.rotation;
 
 					if (ObjCollidedCamObj [ObjCollidedCamObj [1] ? 1 : 0] && ObjCloneCollidedCamObj [ObjCloneCollidedCamObj [1] ? 1 : 0]) {
-						if (SecondGateCustomSkybox && ObjCloneCollidedCamObj [ObjCloneCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> () && !ObjCollidedCamObj [ObjCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> ())
+						if (ConnectedPortalSkybox && ObjCloneCollidedCamObj [ObjCloneCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> () && !ObjCollidedCamObj [ObjCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> ())
 							ObjCollidedCamObj [ObjCollidedCamObj [1] ? 1 : 0].AddComponent<Skybox> ();
 						if (ObjCollidedCamObj [ObjCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> ())
-							ObjCollidedCamObj [ObjCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> ().material = SecondGateCustomSkybox;
-						
+							ObjCollidedCamObj [ObjCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> ().material = ConnectedPortalSkybox;
+
 						ObjCollidedCamObj [ObjCollidedCamObj [1] ? 1 : 0].GetComponent<Camera> ().enabled = true;
 
-						if (NextSceneAsyncLoad)
+						if (PortalFunctionality.SceneAsyncLoad.Enable)
 							LoadNextScene ();
 					}
-//					if (CollidedObjs [i].GetComponent<TangoARPoseController> ())
-//						CollidedObjs [i].GetComponent<TangoARPoseController> ().m_MouseLook.Init (CollidedObjs [i].transform, CollidedObjs [i].GetComponent<TangoARPoseController> ().m_Camera.transform);
+					if (CollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ())
+						CollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().m_MouseLook.Init (CollidedObjs [i].transform, CollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ().m_Camera.transform);
 
 					if (CollidedObjVelocity [i] != new Vector3 (0, 0, 0))
 						CollidedObjs [i].GetComponent<Rigidbody> ().velocity = CollidedObjVelocity [i];
@@ -699,7 +762,7 @@ public class PortalManager : MonoBehaviour {
 
 				CollidedObjs [i].name = CollidedObjsInitName [i];
 
-				if (CollidedObjs [i].GetComponent<MeshRenderer> () && EnableMeshClipPlane && StandardObjShader [i]) {
+				if (CollidedObjs [i].GetComponent<MeshRenderer> () && PortalSettings.EnableMeshClipPlane && StandardObjShader [i]) {
 					CollidedObjs [i].GetComponent<MeshRenderer> ().sharedMaterials = CollidedObjsInitMaterials [i].Materials;
 
 					CollidedObjsInitMaterials [i].Materials = null;
@@ -719,36 +782,35 @@ public class PortalManager : MonoBehaviour {
 
 		if (collision.transform.childCount == 0 && collision.GetComponent<Camera> ()) {
 			CollidedObjsExternalParent = true;
-			SecondGate.GetComponent<PortalManager> ().CollidedObjsExternalParent = true;
+			ConnectedPortal.GetComponent<PortalManager> ().CollidedObjsExternalParent = true;
 		}
 		if (collision.transform.childCount > 0 && !collision.GetComponent<Camera> ()) {
 			CollidedObjsExternalParent = false;
-			SecondGate.GetComponent<PortalManager> ().CollidedObjsExternalParent = false;
+			ConnectedPortal.GetComponent<PortalManager> ().CollidedObjsExternalParent = false;
 		}
 
 		//Enable collision with objects excluded from trigger during teleport
-		if (ExcludedObjsFromTrigger.Length > 0)
-			for (int m = 0; m < ExcludedObjsFromTrigger.Length; m++)
-				if (collision.GetComponent<TangoARPoseController> ())
-					Physics.IgnoreCollision (collision, ExcludedObjsFromTrigger [m].GetComponent<Collider> (), false);
+		if (PortalFunctionality.ExcludedObjsFromTrigger.Length > 0)
+			for (int m = 0; m < PortalFunctionality.ExcludedObjsFromTrigger.Length; m++)
+				if (collision.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> () && !PortalFunctionality.ExcludedObjsFromTrigger [m].OnlyForPortal)
+					Physics.IgnoreCollision (collision, PortalFunctionality.ExcludedObjsFromTrigger [m].Obj.GetComponent<Collider> (), false);
 
 		ResetVars (true);
 	}
 
 	void ResetVars (bool TriggerExit) {
 		bool SetVars = false;
-		Util.JLog ("Gater - ResetVars.  triggerExit: " + TriggerExit );
 
 		if (CollidedObjs.Length > 0) {
 			if (!TriggerExit) {
 				for (int i = 0; i < CollidedObjs.Length; i++) {
 					if (CloneCollidedObjs [i])
 						Destroy (CloneCollidedObjs [i]);
-					
+
 					if (ProxDetCollidedObjs [i])
 						Destroy (ProxDetCollidedObjs [i]);
-					
-					if (CollidedObjs [i] && CollidedObjs [i].transform.childCount > 0 && CollidedObjs [i].GetComponent<TangoARPoseController> ()) {
+
+					if (CollidedObjs [i] && CollidedObjs [i].transform.childCount > 0 && CollidedObjs [i].GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController> ()) {
 						Camera CollObjCam = null;
 
 						for (int j = 0; j < CollidedObjs [i].transform.GetComponentsInChildren<Transform> ().Length; j++)
@@ -791,7 +853,7 @@ public class PortalManager : MonoBehaviour {
 	}
 
 	IEnumerator LoadNextScene() {
-		AsyncOperation AsyncLoad = SceneManager.LoadSceneAsync (NextSceneIndex);
+		AsyncOperation AsyncLoad = SceneManager.LoadSceneAsync (PortalFunctionality.SceneAsyncLoad.SceneIndex);
 
 		yield return AsyncLoad;
 	}

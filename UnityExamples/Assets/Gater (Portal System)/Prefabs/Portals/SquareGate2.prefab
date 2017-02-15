@@ -647,20 +647,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 1043933513973582}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 690a7c95d1b60b04e96e68b87b6806c4, type: 3}
+  m_Script: {fileID: 11500000, guid: ed48c3ac2d1fea14c972c2b216f7adb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SecondGate: {fileID: 0}
-  SecondGateCustomSkybox: {fileID: 0}
-  EnablePortalTrigger: 1
-  EnableMeshClipPlane: 1
-  ProjectionResolution: {x: 1280, y: 1024}
-  RecursionSteps: 1
-  CustomFinalRecursion: {fileID: 0}
-  ExcludedObjsFromTrigger: []
-  ExcludedObjsLayer: 2
-  NextSceneAsyncLoad: 0
-  NextSceneIndex: 0
+  ConnectedPortal: {fileID: 0}
+  ViewSettings:
+    ProjectionResolution: {x: 1280, y: 1024}
+    ProjectionDepthQuality: 1
+    CurrentProjectionDepthQuality: 
+    RecursionSteps: 1
+    CustomFinalRecursion: {fileID: 0}
+    ConnectedPortalCustomSkybox: {fileID: 0}
+    NullConnectedPortalCustomSkybox: {fileID: 0}
+    Distorsion:
+      EnableDistorsionPattern: 0
+      DistorsionPattern: {fileID: 0}
+      DistorsionPatternTiling: 1
+      DistorsionPatternSpeedX: 0.01
+      DistorsionPatternSpeedY: 0
+  PortalSettings:
+    EnablePortalTrigger: 1
+    EnableMeshClipPlane: 1
+  PortalFunctionality:
+    ExcludedObjsFromTrigger: []
+    ExcludedObjsLayer: 2
+    NextSceneAsyncLoad: 0
+    NextSceneIndex: 0
   ClipPlanePosObj: {fileID: 1186260641324146}
   GateCamObjs:
   - {fileID: 1945544739381760}
@@ -683,3 +695,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  CollidedObjsParentPreviousFirstPos: {x: 0, y: 0, z: 0}
+  CollidedObjsParentPreviousSecondPos: {x: 0, y: 0, z: 0}
+  CollidedObjsExternalParent: 0
+  EnterTriggerTimes: 0

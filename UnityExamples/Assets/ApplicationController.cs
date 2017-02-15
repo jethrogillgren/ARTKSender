@@ -10,7 +10,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-using Evryway.ColladaExporter;
 //using ADFMeshUtil;
 
 using Tango;
@@ -33,7 +32,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 
 	private ApplicationStateMachine state;
 	private GameplayController m_gameplayController;
-	private ADFMeshUtil adfMeshUtil;
+//	private ADFMeshUtil adfMeshUtil;
 	private GameObject m_areaMesh;
 	private GameObject m_meshFromFile;	// The loaded mesh reconstructed from the serialized AreaDescriptionMesh file.
 	private TangoApplication m_tangoApplication;
@@ -57,7 +56,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 		m_dynamicMesh = FindObjectOfType<TangoDynamicMesh>();
 		m_gameplayController = FindObjectOfType<GameplayController>();
 
-		adfMeshUtil = new ADFMeshUtil ();
+//		adfMeshUtil = new ADFMeshUtil ();
 
 
 //		instantiateAreaMeshPrefab ();
@@ -157,20 +156,20 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	}
 
 
-	private void createAdfMeshGameobject(ADFMeshUtil.AreaDescriptionMesh mesh) {
-		// Create GameObject container with mesh components for the loaded mesh.
-		m_meshFromFile = new GameObject();
-
-		MeshFilter mf = m_meshFromFile.AddComponent<MeshFilter>();
-		mf.mesh = adfMeshUtil._AreaDescriptionMeshToUnityMesh(mesh);
-
-		MeshRenderer mr = m_meshFromFile.AddComponent<MeshRenderer>();
-		mr.material = m_depthMaskMat;
-
-		m_meshFromFile.AddComponent<MeshCollider>();
-		m_meshFromFile.layer = LayerMask.NameToLayer("Occlusion");
-		JLog ("Created ADF Mesh GameObject at " + m_meshFromFile.transform.position );
-	}
+//	private void createAdfMeshGameobject(ADFMeshUtil.AreaDescriptionMesh mesh) {
+//		// Create GameObject container with mesh components for the loaded mesh.
+//		m_meshFromFile = new GameObject();
+//
+//		MeshFilter mf = m_meshFromFile.AddComponent<MeshFilter>();
+//		mf.mesh = adfMeshUtil._AreaDescriptionMeshToUnityMesh(mesh);
+//
+//		MeshRenderer mr = m_meshFromFile.AddComponent<MeshRenderer>();
+//		mr.material = m_depthMaskMat;
+//
+//		m_meshFromFile.AddComponent<MeshCollider>();
+//		m_meshFromFile.layer = LayerMask.NameToLayer("Occlusion");
+//		JLog ("Created ADF Mesh GameObject at " + m_meshFromFile.transform.position );
+//	}
 
 	/// <summary>
 	/// Unity Update function.
@@ -332,7 +331,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 		
 		GameObject newMarkObject = Instantiate(m_prefabMarker, planeCenter, Quaternion.LookRotation(forward, up));
 
-		ARMarker markerScript = newMarkObject.GetComponent<ARMarker>();
+		TangoARMarker markerScript = newMarkObject.GetComponent<TangoARMarker>();
 
 //		markerScript.m_type = 0;
 		markerScript.m_timestamp = (float)m_poseController.m_poseTimestamp;

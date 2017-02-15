@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class BaseGameplayObject : MonoBehaviour {
 
+	protected string LogTag = "J#";
+
 	public enum GameplayState {
 		Inactive, //Not interactible or visible to the user.
 		Started, //Either interactible with the world, or visible to the user, or both.
@@ -19,9 +21,9 @@ public abstract class BaseGameplayObject : MonoBehaviour {
 
 
 	protected virtual void JLog(string val) {
-		Debug.Log ("J# " + val);
+		Debug.Log (LogTag + " " + val);
 	}
 	protected virtual void JLogErr(string val) {
-		Debug.LogError ("J# " + val);
+		Debug.LogError (LogTag + " " + val);
 	}
 }
