@@ -34,7 +34,6 @@ public class GameplayController : MonoBehaviour {
 	public HashSet<OcclusionGameplayObject> getOcclusionGameplayObjects() {
 		HashSet<OcclusionGameplayObject> ret = new HashSet<OcclusionGameplayObject>();
 		foreach (BaseGameplayObject g in m_gameplayObjects) {
-			JLog ("Search for Occls:  " + g.name + " " + g.GetType() + " " + g.ToString() + "   ---   Testing against " + typeof(OcclusionGameplayObject));
 			if ( g.GetType() == typeof(OcclusionGameplayObject) )
 				ret.Add (g as OcclusionGameplayObject);
 		}

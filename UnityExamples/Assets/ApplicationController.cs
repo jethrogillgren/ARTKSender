@@ -101,6 +101,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 				if (m_areaDescription == null) {
 					JLogErr("J# No AreaDescription Found matching " + m_areaDescriptionName + "   Starting without one");
 					m_tangoApplication.Startup (null);
+					state.MoveNext (Command.Localise);
 				}
 
 			}
@@ -109,7 +110,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 				// No Area Descriptions available.
 				JLogErr("J# No area descriptions available.  Starting without one");
 				m_tangoApplication.Startup(null);
-				state.MoveNext (Command.Connect);
+				state.MoveNext (Command.Localise);
 			}
 		}
 		else
@@ -425,13 +426,24 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 //		string ret = " Current Pose Position.  World: " + Camera.main.transform.position + "   local:" + Camera.main.transform.localPosition;
 		StringBuilder builder = new StringBuilder ();
 
-		if (m_gameplayController != null) {
-			builder.AppendLine (m_gameplayController.m_gameplayObjects.Count + " Gameplay Objects:");
-			foreach (BaseGameplayObject g in m_gameplayController.getGameplayObjectsByState (BaseGameplayObject.GameplayState.Started)) { // Loop through all strings
-				builder.AppendLine (g.name);
-			}
-		} else {
-			JLogErr ("BADTING");
+//		if (m_gameplayController != null) {
+//			builder.AppendLine (m_gameplayController.m_gameplayObjects.Count + " Gameplay Objects:");
+//			foreach (BaseGameplayObject g in m_gameplayController.getGameplayObjectsByState (BaseGameplayObject.GameplayState.Started)) { // Loop through all strings
+//				builder.AppendLine (g.name);
+//			}
+//		} else {
+//			JLogErr ("BADTING");
+//		}
+
+		Camera[] arCameras = FindObjectsOfType(typeof(Camera)) as Camera[];
+		foreach (Camera arc in arCameras) {
+//			if (arc.name == "ARToolkitController") {
+//				arc.enabled = false;
+//				builder.AppendLine ( arc.name + " - I Just Disabled" );
+//
+//			} else {
+				builder.AppendLine ( arc.name + " - " + arc.isActiveAndEnabled );
+//			}
 		}
 
 //		string ret = string.Join(",", m_gameplayController.getGameplayObjectsByState (BaseGameplayObject.GameplayState.Started) );

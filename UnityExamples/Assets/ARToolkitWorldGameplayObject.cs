@@ -40,9 +40,9 @@ using UnityEngine;
 
 [RequireComponent(typeof(Transform))]
 [ExecuteInEditMode]
-public class ARTrackedObject : MonoBehaviour
+public class ARToolkitWorldGameplayObject : BaseGameplayObject
 {
-	private const string LogTag = "J# ARTrackedObject: ";
+	private const string LogTag = "J# AR_MyTrackedGameplayObj: ";
 
 	private AROrigin _origin = null;
 	private ARMarker _marker = null;
@@ -54,18 +54,20 @@ public class ARTrackedObject : MonoBehaviour
 
 	public GameObject eventReceiver;
 
+	public ARCamera trackingCamera;
+
 	// Private fields with accessors.
 	[SerializeField]
 	private string _markerTag = "";					// Unique tag for the marker to get tracking from
-	
-	
+
+
 	public string MarkerTag
 	{
 		get
 		{
 			return _markerTag;
 		}
-		
+
 		set
 		{
 			_markerTag = value;
@@ -103,7 +105,7 @@ public class ARTrackedObject : MonoBehaviour
 
 	void Start()
 	{
-		ARController.Log(LogTag + "Start()");
+		JLog("Start()");
 		secondsToRemainVisible = 0.0f;
 
 		if (Application.isPlaying) {
@@ -120,10 +122,10 @@ public class ARTrackedObject : MonoBehaviour
 	{
 		// Local scale is always 1 for now
 		transform.localScale = Vector3.one;
-		
+
 		// Update tracking if we are running in the Player.
 		if (Application.isPlaying) {
-			
+
 
 			// Sanity check, make sure we have an AROrigin in parent hierachy.
 			AROrigin origin = GetOrigin();
@@ -142,7 +144,7 @@ public class ARTrackedObject : MonoBehaviour
 
 					// Note the current time
 					float timeNow = Time.realtimeSinceStartup;
-					
+
 					ARMarker baseMarker = origin.GetBaseMarker();
 					if (baseMarker != null && marker.Visible) {
 
@@ -154,20 +156,47 @@ public class ARTrackedObject : MonoBehaviour
 
 							for (int i = 0; i < this.transform.childCount; i++) this.transform.GetChild(i).gameObject.SetActive(true);
 						} else {
-//							ARController.Log (LogTag + "Marker stayed visible");
+							//							ARController.Log (LogTag + "Marker stayed visible");
 						}
 
-                        Matrix4x4 pose;
-                        if (marker == baseMarker) {
-                            // If this marker is the base, no need to take base inverse etc.
-                            pose = origin.transform.localToWorldMatrix;
-                        } else {
-						    pose = (origin.transform.localToWorldMatrix * baseMarker.TransformationMatrix.inverse * marker.TransformationMatrix);
-						}
-						transform.position = ARUtilityFunctions.PositionFromMatrix(pose);
-						transform.rotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
 
-						ARController.Log (LogTag + "RED World pos:" + (transform.position + Camera.main.transform.position) );
+
+						Matrix4x4 pose;
+						if (trackingCamera.Optical && trackingCamera.opticalSetupOK) {
+//							pose = (opticalViewMatrix * marker.TransformationMatrix).inverse;
+							pose = (trackingCamera.opticalViewMatrix * marker.TransformationMatrix);
+
+						} else {
+//							pose = marker.TransformationMatrix.inverse;
+							pose = marker.TransformationMatrix;
+
+						}
+
+						transform.localPosition = ARUtilityFunctions.PositionFromMatrix(pose);
+						// Camera orientation: In ARToolKit, zero rotation of the camera corresponds to looking vertically down on a marker
+						// lying flat on the ground. In Unity however, if we still treat markers as being flat on the ground, we clash with Unity's
+						// camera "rotation", because an unrotated Unity camera is looking horizontally.
+						// So we choose to treat an unrotated marker as standing vertically, and apply a transform to the scene to
+						// to get it to lie flat on the ground.
+						transform.localRotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
+
+
+
+//						Matrix4x4 pose;
+//						if (marker == baseMarker) {
+//							// If this marker is the base, no need to take base inverse etc.
+//							pose = origin.transform.localToWorldMatrix;
+//						} else {
+//							pose = (origin.transform.localToWorldMatrix * baseMarker.TransformationMatrix.inverse * marker.TransformationMatrix);
+//						}
+//						transform.position = ARUtilityFunctions.PositionFromMatrix(pose);
+//						transform.rotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
+
+						ARController.Log (LogTag + "BLUE World pos:" + (transform.position + Camera.main.transform.position) );
+
+
+
+
 
 						if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerTracked", marker, SendMessageOptions.DontRequireReceiver);
 
@@ -178,7 +207,7 @@ public class ARTrackedObject : MonoBehaviour
 							visible = false;
 							timeTrackingLost = timeNow;
 						} else {
-//							ARControllertroller.Log (LogTag + "Marker stayed hidden.");
+							//							ARControllertroller.Log (LogTag + "Marker stayed hidden.");
 						}
 
 						if (visibleOrRemain && (timeNow - timeTrackingLost >= secondsToRemainVisible)) {
@@ -196,6 +225,16 @@ public class ARTrackedObject : MonoBehaviour
 		}
 
 	}
+
+//	//Taken from ARCamera, but apply tracking onto the Object rather than the Camera.
+//	protected virtual void ApplyTracking()
+//	{
+//		if (visible) {
+//			transform.localPosition = arPosition; // TODO: Change to transform.position = PositionFromMatrix(origin.transform.localToWorldMatrix * pose) etc;
+//			Debug.Log ("ARCamera position: " + arPosition);
+//			transform.localRotation = arRotation;
+//		}
+//	}
 
 }
 

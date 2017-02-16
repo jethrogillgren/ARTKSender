@@ -103,12 +103,12 @@ public class ARCamera : MonoBehaviour
 	
 	// Optical settings.
 	public bool Optical = false;
-	private bool opticalSetupOK = false;
+	public bool opticalSetupOK = false;
 	public int OpticalParamsFilenameIndex = 0;
 	public string OpticalParamsFilename = "";
 	public byte[] OpticalParamsFileContents = new byte[0]; // Set by the Editor.
 	public float OpticalEyeLateralOffsetRight = 0.0f;
-	private Matrix4x4 opticalViewMatrix; // This transform expresses the position and orientation of the physical camera in eye coordinates.
+	public Matrix4x4 opticalViewMatrix; // This transform expresses the position and orientation of the physical camera in eye coordinates.
 	
 
 	public bool SetupCamera(float nearClipPlane, float farClipPlane, Matrix4x4 projectionMatrix, ref bool opticalOut)
@@ -200,7 +200,12 @@ public class ARCamera : MonoBehaviour
 		} else {
 			
 			if (marker.Visible) {
-				
+
+
+
+
+
+
 				Matrix4x4 pose;
 				if (Optical && opticalSetupOK) {
 					pose = (opticalViewMatrix * marker.TransformationMatrix).inverse;
@@ -215,6 +220,10 @@ public class ARCamera : MonoBehaviour
 				// So we choose to treat an unrotated marker as standing vertically, and apply a transform to the scene to
 				// to get it to lie flat on the ground.
 				arRotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
+
+
+
+
 
 
 				if (!arVisible) {
@@ -233,11 +242,11 @@ public class ARCamera : MonoBehaviour
 	
 	protected virtual void ApplyTracking()
 	{
-		if (arVisible) {
-			transform.localPosition = arPosition; // TODO: Change to transform.position = PositionFromMatrix(origin.transform.localToWorldMatrix * pose) etc;
-			Debug.Log ("ARCamera position: " + arPosition);
-			transform.localRotation = arRotation;
-		}
+//		if (arVisible) {
+//			transform.localPosition = arPosition; // TODO: Change to transform.position = PositionFromMatrix(origin.transform.localToWorldMatrix * pose) etc;
+//			Debug.Log ("ARCamera position: " + arPosition);
+//			transform.localRotation = arRotation;
+//		}
 	}
 	
 	// Use LateUpdate to be sure the ARMarker has updated before we try and use the transformation.
