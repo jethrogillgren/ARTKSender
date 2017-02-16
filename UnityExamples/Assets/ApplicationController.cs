@@ -30,6 +30,10 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	public Material m_depthMaskMat;// The reference to the depth mask material to be applied to occlusion meshes.
 	public Material m_visibleMat;// The reference to the visible material applied to the mesh.
 
+	[Header("ARToolkit")]
+	public ARController m_ARController;
+	public TrackOtherObject m_temp;
+
 	private ApplicationStateMachine state;
 	private GameplayController m_gameplayController;
 //	private ADFMeshUtil adfMeshUtil;
@@ -41,6 +45,8 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	private bool m_modeMarkPoint = false;
 	private AreaDescription m_areaDescription = null;
 	private bool m_findPlaneWaitingForDepth;// If set, then the depth camera is on and we are waiting for the next depth update.
+
+
 
 //	private OcclusionGameplayObject tmp;
 
@@ -451,6 +457,12 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 
 		JLog( ret );
 		AndroidHelper.ShowAndroidToastMessage ( ret );
+	}
+
+	private bool tog = false;
+	public void OnButtonToggleClick()
+	{
+		
 	}
 
 	//Save current Mesh to file

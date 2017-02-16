@@ -91,7 +91,7 @@ public class ARController : MonoBehaviour
 	//
 
 	private string _version = "";
-	private bool _running = false;
+	public bool _running = false;
 	private bool _runOnUnpause = false;
 	private bool _sceneConfiguredForVideo = false;
 	private bool _sceneConfiguredForVideoWaitingMessageLogged = false;
