@@ -165,6 +165,7 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 						if (trackingCamera.Optical && trackingCamera.opticalSetupOK) {
 //							pose = (opticalViewMatrix * marker.TransformationMatrix).inverse;
 							pose = (trackingCamera.opticalViewMatrix * marker.TransformationMatrix);
+							JLog ("Using Camera's (" + trackingCamera.name + ") Optical View Matrix");
 
 						} else {
 //							pose = marker.TransformationMatrix.inverse;
