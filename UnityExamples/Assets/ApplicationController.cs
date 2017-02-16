@@ -437,13 +437,13 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 
 		Camera[] arCameras = FindObjectsOfType(typeof(Camera)) as Camera[];
 		foreach (Camera arc in arCameras) {
-//			if (arc.name == "ARToolkitController") {
-//				arc.enabled = false;
-//				builder.AppendLine ( arc.name + " - I Just Disabled" );
-//
-//			} else {
+			if (arc.name == "SceneCamera") {
+				builder.AppendLine ( arc.name + " - is " + arc.isActiveAndEnabled + " - About to Toggle" );
+				arc.enabled = !arc.enabled;
+
+			} else {
 				builder.AppendLine ( arc.name + " - " + arc.isActiveAndEnabled );
-//			}
+			}
 		}
 
 //		string ret = string.Join(",", m_gameplayController.getGameplayObjectsByState (BaseGameplayObject.GameplayState.Started) );

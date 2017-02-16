@@ -78,7 +78,7 @@ public class ARController : MonoBehaviour
 	public static Action<String> logCallback { get; set; }
 	private static List<String> logMessages = new List<String>();
 	private const int MaximumLogMessages = 1000;
-	private const string LogTag = "ARController: ";
+	private const string LogTag = "J# ARController: ";
 
 	// Application preferences.
 	public bool UseNativeGLTexturingIfAvailable = true;
@@ -1525,6 +1525,11 @@ public class ARController : MonoBehaviour
 			if (!arc.Stereo) {
 				// A mono display.
 				ok = arc.SetupCamera(NearPlane, FarPlane, _videoProjectionMatrix0, ref optical);
+
+//				//TODO TODO jgillgr jethro test
+//				Util.JLogErr ("Fucking with ARPose Controller");
+//				GetComponent<TangoARPoseController>().SetupCamera(NearPlane, FarPlane, _videoProjectionMatrix0, ref optical);
+
 			} else {
 				// One eye of a stereo display.
 				if (arc.StereoEye == ARCamera.ViewEye.Left) {

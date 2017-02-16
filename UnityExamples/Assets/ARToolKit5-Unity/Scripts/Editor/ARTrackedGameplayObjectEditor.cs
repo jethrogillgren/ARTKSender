@@ -47,7 +47,7 @@ public class ARTrackedGameplayObjectEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-		ARTrackedGameplayObject artgo = (ARTrackedGameplayObject)target;
+	ARTrackedGameplayObject artgo = (ARTrackedGameplayObject)target;
 		if (artgo == null) return;
 
 

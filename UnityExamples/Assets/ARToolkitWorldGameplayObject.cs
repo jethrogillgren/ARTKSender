@@ -55,6 +55,8 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 	public GameObject eventReceiver;
 
 	public ARCamera trackingCamera;
+	public TangoARPoseController tangoPoseController;
+
 
 	// Private fields with accessors.
 	[SerializeField]
@@ -162,7 +164,7 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 
 
 						Matrix4x4 pose;
-						if (trackingCamera.Optical && trackingCamera.opticalSetupOK) {
+						if (trackingCamera && trackingCamera.Optical && trackingCamera.opticalSetupOK) {
 //							pose = (opticalViewMatrix * marker.TransformationMatrix).inverse;
 							pose = (trackingCamera.opticalViewMatrix * marker.TransformationMatrix);
 							JLog ("Using Camera's (" + trackingCamera.name + ") Optical View Matrix");
@@ -173,13 +175,23 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 
 						}
 
-						transform.localPosition = ARUtilityFunctions.PositionFromMatrix(pose);
+						if(tangoPoseController)
+							transform.localPosition = ARUtilityFunctions.PositionFromMatrix(pose) + tangoPoseController.transform.position;
+						else
+							transform.localPosition = ARUtilityFunctions.PositionFromMatrix(pose);
+						
 						// Camera orientation: In ARToolKit, zero rotation of the camera corresponds to looking vertically down on a marker
 						// lying flat on the ground. In Unity however, if we still treat markers as being flat on the ground, we clash with Unity's
 						// camera "rotation", because an unrotated Unity camera is looking horizontally.
 						// So we choose to treat an unrotated marker as standing vertically, and apply a transform to the scene to
 						// to get it to lie flat on the ground.
-						transform.localRotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
+
+//						Quaternion localisedRotation = Quaternion.Eu (ARUtilityFunctions.QuaternionFromMatrix (pose), Camera.main.transform.rotation);
+
+						if(tangoPoseController)
+							transform.localRotation = ARUtilityFunctions.QuaternionFromMatrix(pose);//TODO
+						else
+							transform.localRotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
 
 
 

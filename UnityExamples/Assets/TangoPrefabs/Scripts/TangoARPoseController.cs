@@ -31,6 +31,47 @@ using UnityEngine;
 [RequireComponent(typeof(TangoARScreen))]
 public class TangoARPoseController : MonoBehaviour, ITangoLifecycle
 {
+
+//	//TODO jgillgr test
+//
+//	public bool SetupCamera(float nearClipPlane, float farClipPlane, Matrix4x4 projectionMatrix, ref bool opticalOut)
+//	{
+//		Camera c = this.gameObject.GetComponentInParent<Camera>();
+//
+//		// A perspective projection matrix from the tracker
+//		c.orthographic = false;
+//
+//		// Shouldn't really need to set these, because they are part of the custom 
+//		// projection matrix, but it seems that in the editor, the preview camera view 
+//		// isn't using the custom projection matrix.
+//		c.nearClipPlane = nearClipPlane;
+//		c.farClipPlane = farClipPlane;
+//
+//
+//		c.projectionMatrix = projectionMatrix;
+//
+//		// Don't clear anything or else we interfere with other foreground cameras
+//		c.clearFlags = CameraClearFlags.Nothing;
+//
+//		// Renders after the clear and background cameras
+//		c.depth = 2;
+//
+//		c.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+//		c.transform.rotation = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+//		c.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+//
+//		return true;
+//	}
+
+
+
+
+
+
+
+
+
+
     /// <summary>
     /// If set, use the Area Description base frame for the pose.
     /// </summary>
