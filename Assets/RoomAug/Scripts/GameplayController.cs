@@ -29,8 +29,11 @@ public class GameplayController : MonoBehaviour {
 
 		} else {
 			//Travelling fowards
-			Util.JLog ("Replacing " + oldRoom.roomName + " with " + m_extraGameplayRoom.roomName );
 			GameplayRoom oldGameplayRoom = oldRoom.gameplayRoom;
+
+			Util.JLog ("Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
+			AndroidHelper.ShowAndroidToastMessage ("TELEPORT:  Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
+
 			replace (oldGameplayRoom, m_extraGameplayRoom, oldRoom);
 //			unActivate (oldRoom.gameplayRoom);
 //			activate (new GameplayRoom(), oldRoom);
