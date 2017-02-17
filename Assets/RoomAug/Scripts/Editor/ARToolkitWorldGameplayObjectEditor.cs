@@ -52,7 +52,7 @@ public class ARToolkitWorldGameplayObjectEditor : Editor
 
 
 		artwgo.m_IsDecorationOnly = EditorGUILayout.Toggle("Decoration Only", artwgo.m_IsDecorationOnly);
-		artwgo.m_GameplayState = (ARToolkitWorldGameplayObject.GameplayState) EditorGUILayout.EnumPopup ("Gameplay State", artwgo.m_GameplayState);
+		artwgo.gameplayState = (ARToolkitWorldGameplayObject.GameplayState) EditorGUILayout.EnumPopup ("Gameplay State", artwgo.gameplayState);
 
 		EditorGUILayout.Separator();
 

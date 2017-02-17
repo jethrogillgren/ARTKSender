@@ -9,6 +9,6 @@ public class ClickSwitchGameplayObject : BaseGameplayObject {
 	void OnMouseDown() {
 		m_count++;
 		GetComponent<Animation>().Play("SpinAnimation");
-		JLog (name + " (" + this.GetType() + ") counted to " + m_count );
+		Util.JLog (name + " (" + this.GetType() + ") counted to " + m_count );
 	}
 }

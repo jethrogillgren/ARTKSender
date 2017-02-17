@@ -13,7 +13,7 @@ public class WatcherGameplayObject : BaseGameplayObject {
 
 	// Update is called once per frame
 	void Update () {
-		if (m_GameplayState == GameplayState.Started) {
+		if (gameplayState == GameplayState.Started) {
 
 			if ( m_LookTarget != null  &&  m_LookTarget.activeInHierarchy ) {
 				this.gameObject.transform.LookAt (m_LookTarget.transform.position);

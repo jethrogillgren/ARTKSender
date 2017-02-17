@@ -152,12 +152,12 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 			OcclusionGameplayObject tmp = m_areaMesh.AddComponent ( typeof(OcclusionGameplayObject) ) as OcclusionGameplayObject ;
 			tmp.m_visibleMat = m_visibleMat;
 			tmp.m_depthMaskMat = m_depthMaskMat;
-			tmp.m_GameplayState = OcclusionGameplayObject.GameplayState.Started;
+			tmp.gameplayState = OcclusionGameplayObject.GameplayState.Started;
 			tmp.m_IsDecorationOnly = true;
 			m_gameplayController.addGameplayObject (tmp);
 			tmp.setOcclusion (true);	
 			
-			JLog ("Created the Area Mesh Programatically OK:  " + m_areaMesh.name + "  as an occluder: " + m_areaMesh.GetComponent<OcclusionGameplayObject>().m_GameplayState );
+			JLog ("Created the Area Mesh Programatically OK:  " + m_areaMesh.name + "  as an occluder: " + m_areaMesh.GetComponent<OcclusionGameplayObject>().gameplayState );
 		}
 
 	}
@@ -432,31 +432,25 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 //		string ret = " Current Pose Position.  World: " + Camera.main.transform.position + "   local:" + Camera.main.transform.localPosition;
 		StringBuilder builder = new StringBuilder ();
 
+		BaseGameplayObject[] objs = FindObjectsOfType(typeof(BaseGameplayObject)) as BaseGameplayObject[];
+		foreach (BaseGameplayObject g in objs) {
+			builder.AppendLine (g.name + " - " + g.gameplayState );
+
+		}
+
 //		if (m_gameplayController != null) {
 //			builder.AppendLine (m_gameplayController.m_gameplayObjects.Count + " Gameplay Objects:");
-//			foreach (BaseGameplayObject g in m_gameplayController.getGameplayObjectsByState (BaseGameplayObject.GameplayState.Started)) { // Loop through all strings
-//				builder.AppendLine (g.name);
+//			foreach (BaseGameplayObject g in m_gameplayController.getGameplayObjects() ) { // Loop through all strings
 //			}
 //		} else {
 //			JLogErr ("BADTING");
 //		}
 
-		Camera[] arCameras = FindObjectsOfType(typeof(Camera)) as Camera[];
-		foreach (Camera arc in arCameras) {
-			if (arc.name == "SceneCamera") {
-				builder.AppendLine ( arc.name + " - is " + arc.isActiveAndEnabled + " - About to Toggle" );
-				arc.enabled = !arc.enabled;
-
-			} else {
-				builder.AppendLine ( arc.name + " - " + arc.isActiveAndEnabled );
-			}
-		}
 
 //		string ret = string.Join(",", m_gameplayController.getGameplayObjectsByState (BaseGameplayObject.GameplayState.Started) );
-		string ret = builder.ToString ();
 
-		JLog( ret );
-		AndroidHelper.ShowAndroidToastMessage ( ret );
+		JLog( builder.ToString() );
+		AndroidHelper.ShowAndroidToastMessage ( builder.ToString() );
 	}
 
 	private bool tog = false;

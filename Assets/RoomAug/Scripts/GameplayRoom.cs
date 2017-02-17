@@ -17,30 +17,40 @@ public class GameplayRoom : MonoBehaviour {
 		set
 		{
 			this.m_physicalRoom = value;
-//			value.gameplayRoom = this;
+//			value.gameplayRoom = this;  Not done as a loop would form.  Parent controls the ownership.
 		}
 	}
 
-	public bool roomActive{	 
+	public bool roomActive{
 		get  {
-//			return (physicalRoom == null  ||  GetComponentInParent( physicalRoom.GetType() ) == null ) ? false : true;
 			return (m_physicalRoom != null);
 		}
 	}
 
 	// Use this for initialization
 	void Start () {
-		
+		registerAnyParentPhysicalRoom ();
 	}
 
-	public void getAnyChildGameplayRoom() {
+	public void registerAnyParentPhysicalRoom() {
 		physicalRoom  = GetComponentInParent<PhysicalRoom> (); //TODO check depth
 	}
 
-//	public void registerAnyParentPhysicalRoom() {
-//		PhysicalRoom pr = GetComponentInParent<PhysicalRoom> ();
-//		if (pr)
-//			physicalRoom = pr;
-//	}
+	public void activateAllGameplayObjects() {
+		setAllGameplayObjects (BaseGameplayObject.GameplayState.Started, true);
+	}
+
+	public void deactivateAllGameplayObjects() {
+		setAllGameplayObjects (BaseGameplayObject.GameplayState.Inactive, true);
+	}
+
+	public void setAllGameplayObjects(BaseGameplayObject.GameplayState state, bool includeInactive) {
+		BaseGameplayObject[] objs = GetComponentsInChildren<BaseGameplayObject> (includeInactive);
+		Util.JLog ("Setting all " + objs.Length + " Gamepbjects in room: " + roomName + " to " + state );
+
+		foreach (BaseGameplayObject o in objs) {
+			o.gameplayState = state;
+		}
+	}
 
 }

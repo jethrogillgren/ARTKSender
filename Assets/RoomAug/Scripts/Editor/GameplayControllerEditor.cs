@@ -26,5 +26,14 @@ public class GameplayControllerEditor : Editor {
 		if( gc.m_gameplayObjects.Count == 0  ||  gc.m_physicalRooms.Count == 0  || gc.m_teleportTriggers.Count == 0  ) {		
 			EditorGUILayout.HelpBox("SCENE IS MISSING REQUIRED ELEMENTS", MessageType.Error);
 		}
+
+
+		EditorGUILayout.Separator();
+
+
+		gc.m_currentPhysicalRoom = (PhysicalRoom)EditorGUILayout.ObjectField("Start Physical Room:", gc.m_currentPhysicalRoom, typeof(PhysicalRoom), true);
+		gc.m_extraGameplayRoom = (GameplayRoom)EditorGUILayout.ObjectField("Extra Gameplay Room:", gc.m_extraGameplayRoom, typeof(GameplayRoom), true);
+
+
 	}
 }

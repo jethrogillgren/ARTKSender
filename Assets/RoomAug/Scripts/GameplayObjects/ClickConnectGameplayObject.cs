@@ -27,7 +27,7 @@ public class ClickConnectGameplayObject : BaseGameplayObject {
 	
 	// Update is called once per frame
 	void Update () {
-		if ( m_GameplayState == GameplayState.Started ) {
+		if ( gameplayState == GameplayState.Started ) {
 				
 			if (Input.touchCount == 1) { //One finger is touching screen
 				Touch t = Input.GetTouch (0);

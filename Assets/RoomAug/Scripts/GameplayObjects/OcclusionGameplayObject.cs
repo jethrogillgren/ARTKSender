@@ -29,7 +29,7 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 
 		//Turn occluson on, making the pject invisible but blocking further back objects
 		if (turnOn  &&  m_depthMaskMat != null) {
-			JLog ("Turning " + name + "'s Occlusion On");
+			Util.JLog ("Turning " + name + "'s Occlusion On");
 
 			gameObject.layer = LayerMask.NameToLayer ("Occlusion");
 			
@@ -44,7 +44,7 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 
 		//Turn occlusion off, making the object a regular visible object
 		} else if ( !turnOn  &&  m_visibleMat != null) {
-			JLog ("Turning " + name + "'s Occlusion Off");
+			Util.JLog ("Turning " + name + "'s Occlusion Off");
 
 			gameObject.layer = LayerMask.NameToLayer ("Default");
 			foreach (MeshRenderer m in gameObject.GetComponents<MeshRenderer>()) {
@@ -56,7 +56,7 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 				m.gameObject.layer = LayerMask.NameToLayer ("Default");
 			}
 		} else {
-			JLogErr ("Unable to act on a SetOcclusion Request: " + turnOn + m_depthMaskMat + m_visibleMat);
+			Util.JLogErr ("Unable to act on a SetOcclusion Request: " + turnOn + m_depthMaskMat + m_visibleMat);
 		}
 	}
 

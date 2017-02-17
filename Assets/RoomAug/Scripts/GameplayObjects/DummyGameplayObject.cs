@@ -11,7 +11,7 @@ public class DummyGameplayObject : BaseGameplayObject {
 	
 	// Update is called once per frame
 	void Update () {
-		if( m_GameplayState == GameplayState.Started) {
+		if( gameplayState == GameplayState.Started) {
 			//
 		}
 	}

@@ -8,23 +8,84 @@ public class GameplayController : MonoBehaviour {
 	public HashSet<PhysicalRoom> m_physicalRooms;
 	public HashSet<TeleportTriggerGameplayObject> m_teleportTriggers;
 
-	private 
+	public GameplayRoom m_extraGameplayRoom;//TODO - hardcoding in a 2/3 Room Toggle Teleport... add in Mesh n room!
+	public PhysicalRoom m_currentPhysicalRoom; //TODO initialization?
 
 	// Use this for initialization
 	void Start () {
 		collectGameplayObjects ();
 		collectPhysicalRooms ();
+
+//		m_offscreenPhysicalRoom = new PhysicalRoom ();
+//		m_offscreenPhysicalRoom.transform.position.x
 	}
 
 
 
 
+	public void teleportTriggered (TeleportTriggerGameplayObject t, PhysicalRoom oldRoom, PhysicalRoom newRoom, bool backwards = false) {
+		if(backwards) {
+			//Do nothing otherwise the jump would be watched by the player...
 
+		} else {
+			//Travelling fowards
+			Util.JLog ("Replacing " + oldRoom.roomName + " with " + m_extraGameplayRoom.roomName );
+			GameplayRoom oldGameplayRoom = oldRoom.gameplayRoom;
+			replace (oldGameplayRoom, m_extraGameplayRoom, oldRoom);
+//			unActivate (oldRoom.gameplayRoom);
+//			activate (new GameplayRoom(), oldRoom);
+			m_extraGameplayRoom = oldGameplayRoom;
+			m_currentPhysicalRoom = newRoom;
+		}
+	}
+
+	private bool replace(GameplayRoom oldGr, GameplayRoom newGr, PhysicalRoom pr) {
+		if (oldGr.physicalRoom == pr) {
+			return (unActivate (oldGr) && activate (newGr, pr));
+
+		} else {
+			Util.JLogErr ("Cannot replace " + oldGr.roomName + " with " + newGr.roomName + "  in " + pr.roomName );
+			return false;
+		}
+	}
+
+	private bool unActivate(GameplayRoom gr) {
+		
+		if( gr && gr.roomActive ) { //If room is currently Active
+			if (gr.physicalRoom)
+				gr.physicalRoom.gameplayRoom = null;
+			gr.transform.SetParent(this.transform, false );
+			gr.physicalRoom = null;
+			gr.deactivateAllGameplayObjects();
+			return true;
+
+		} else {
+			Util.JLogErr ( "Unable to Unactivate a GameplayRoom: " + gr );
+			return false;
+		}
+	}
+	private bool activate(GameplayRoom gr, PhysicalRoom pr) {
+		
+		if( gr && !gr.roomActive && pr && pr.roomEmpty ) {
+			gr.transform.SetParent(pr.transform);
+			pr.gameplayRoom = gr;
+			gr.activateAllGameplayObjects ();
+			gr.transform.localPosition = new Vector3 (0, 0, 0);
+
+			Util.JLog ("GR lPos: " + gr.transform.localPosition + "     pr lpos: " + pr.transform.localPosition);
+			return true;
+
+		} else {
+			Util.JLogErr ( "Unable to Activate a GameplayRoom " + gr + " into PhysicalRoom: " + pr );
+			return false;
+		}
+	}
 
 
 	//
 	// DAO
 	//
+
 
 	public HashSet<BaseGameplayObject> getGameplayObjectsByState(BaseGameplayObject.GameplayState state) {
 		HashSet<BaseGameplayObject> ret = new HashSet<BaseGameplayObject>();
@@ -35,7 +96,7 @@ public class GameplayController : MonoBehaviour {
 		}
 
 		foreach(BaseGameplayObject g in m_gameplayObjects) {
-			if (g.m_GameplayState == state) {
+			if (g.gameplayState == state) {
 				ret.Add (g);
 			}
 		}
@@ -59,6 +120,16 @@ public class GameplayController : MonoBehaviour {
 		return ret;
 	}
 
+	//Tries to add the gameplay object, returning true if it was newly added and false if alreadye existed
+	public bool addGameplayObject(BaseGameplayObject o) {
+		if ( m_gameplayObjects.Add (o) ) {
+			Util.JLog("Added new Gameplay Object: " + o.name + " as a  " + o.GetType () );
+			return true;
+		}
+		return false;
+	}
+
+
 	//Add only new Gameplay Objects
 	public void collectGameplayObjects() {
 		if(	m_gameplayObjects == null)
@@ -72,15 +143,6 @@ public class GameplayController : MonoBehaviour {
 				Util.JLog ("Tracking " + o.name + " as a  " + o.GetType ());
 		}
 
-	}
-
-	//Tries to add the gameplay object, returning true if it was newly added and false if alreadye existed
-	public bool addGameplayObject(BaseGameplayObject o) {
-		if ( m_gameplayObjects.Add (o) ) {
-			Util.JLog("Added new Gameplay Object: " + o.name + " as a  " + o.GetType () );
-			return true;
-		}
-		return false;
 	}
 
 	public void collectPhysicalRooms() {

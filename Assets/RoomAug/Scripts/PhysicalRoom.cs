@@ -24,6 +24,12 @@ public class PhysicalRoom : MonoBehaviour {
 		}
 	}
 
+	public bool roomEmpty{
+		get  {
+			return (m_gameplayRoom == null);
+		}
+	}
+
 	// Use this for initialization
 	void Start () {
 		registerAnyChildGameplayRoom ();
@@ -32,9 +38,5 @@ public class PhysicalRoom : MonoBehaviour {
 
 	public void registerAnyChildGameplayRoom() {
 		gameplayRoom  = GetComponentInChildren<GameplayRoom> ();//TODO check depth
-//		if (gr)
-//			gameplayRoom = gr;
-//		else
-//			gameplayRoom = null;
 	}
 }

@@ -42,7 +42,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class ARToolkitWorldGameplayObject : BaseGameplayObject
 {
-	private const string LogTag = "J# AR_MyTrackedGameplayObj: ";
+	private const string LogTag = "J# ARToolkitWorldGameplayObject: ";
 
 	private AROrigin _origin = null;
 	private ARMarker _marker = null;
@@ -107,7 +107,6 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 
 	void Start()
 	{
-		JLog("Start()");
 		secondsToRemainVisible = 0.0f;
 
 		if (Application.isPlaying) {
@@ -152,7 +151,7 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 
 						if (!visible) {
 							// Marker was hidden but now is visible.
-							ARController.Log (LogTag + "Marker was hidden but now is visible.");
+//							ARController.Log (LogTag + "Marker was hidden but now is visible.");
 							visible = visibleOrRemain = true;
 							if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerFound", marker, SendMessageOptions.DontRequireReceiver);
 
@@ -167,7 +166,7 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 						if (trackingCamera && trackingCamera.Optical && trackingCamera.opticalSetupOK) {
 //							pose = (opticalViewMatrix * marker.TransformationMatrix).inverse;
 							pose = (trackingCamera.opticalViewMatrix * marker.TransformationMatrix);
-							JLog ("Using Camera's (" + trackingCamera.name + ") Optical View Matrix");
+							Util.JLog ("Using Camera's (" + trackingCamera.name + ") Optical View Matrix");
 
 						} else {
 //							pose = marker.TransformationMatrix.inverse;
@@ -194,29 +193,12 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 							transform.localRotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
 
 
-
-//						Matrix4x4 pose;
-//						if (marker == baseMarker) {
-//							// If this marker is the base, no need to take base inverse etc.
-//							pose = origin.transform.localToWorldMatrix;
-//						} else {
-//							pose = (origin.transform.localToWorldMatrix * baseMarker.TransformationMatrix.inverse * marker.TransformationMatrix);
-//						}
-//						transform.position = ARUtilityFunctions.PositionFromMatrix(pose);
-//						transform.rotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
-
-						ARController.Log (LogTag + "BLUE World pos:" + (transform.position + Camera.main.transform.position) );
-
-
-
-
-
 						if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerTracked", marker, SendMessageOptions.DontRequireReceiver);
 
 					} else {
 						if (visible) {
 							// Marker was visible but now is hidden.
-							ARController.Log (LogTag + "Marker was visible but now is hidden. (after " + secondsToRemainVisible + "s)");
+//							ARController.Log (LogTag + "Marker was visible but now is hidden. (after " + secondsToRemainVisible + "s)");
 							visible = false;
 							timeTrackingLost = timeNow;
 						} else {
