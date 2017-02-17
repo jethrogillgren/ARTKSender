@@ -16,6 +16,7 @@ public class GameplayRoomEditor : Editor {
 
 		gr.roomName = EditorGUILayout.TextField("Room Name", gr.roomName);
 
+		gr.getAnyChildGameplayRoom ();
 		EditorGUILayout.LabelField("Active", gr.roomActive ? "yes" : "no");
 	}
 }

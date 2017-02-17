@@ -6,7 +6,7 @@ public class GameplayRoom : MonoBehaviour {
 
 	public string roomName;
 
-	private PhysicalRoom m_physicalRoom; //1 to 1 relationship, or empty.
+	private PhysicalRoom m_physicalRoom; //1 to 1 relationship, or empty.  relationship controlled by parent
 	public PhysicalRoom physicalRoom
 	{
 		get
@@ -23,8 +23,9 @@ public class GameplayRoom : MonoBehaviour {
 
 	public bool roomActive{	 
 		get  {
-			return (physicalRoom == null  ||  GetComponentInParent( physicalRoom.GetType() ) == null ) ? false : true;
-		} 
+//			return (physicalRoom == null  ||  GetComponentInParent( physicalRoom.GetType() ) == null ) ? false : true;
+			return (m_physicalRoom != null);
+		}
 	}
 
 	// Use this for initialization
@@ -32,7 +33,9 @@ public class GameplayRoom : MonoBehaviour {
 		
 	}
 
-
+	public void getAnyChildGameplayRoom() {
+		physicalRoom  = GetComponentInParent<PhysicalRoom> (); //TODO check depth
+	}
 
 //	public void registerAnyParentPhysicalRoom() {
 //		PhysicalRoom pr = GetComponentInParent<PhysicalRoom> ();

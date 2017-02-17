@@ -31,7 +31,7 @@ public class PhysicalRoom : MonoBehaviour {
 
 
 	public void registerAnyChildGameplayRoom() {
-		gameplayRoom  = GetComponentInChildren<GameplayRoom> ();
+		gameplayRoom  = GetComponentInChildren<GameplayRoom> ();//TODO check depth
 //		if (gr)
 //			gameplayRoom = gr;
 //		else
