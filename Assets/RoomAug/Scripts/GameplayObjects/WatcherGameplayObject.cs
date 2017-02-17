@@ -15,7 +15,7 @@ public class WatcherGameplayObject : BaseGameplayObject {
 	void Update () {
 		if (m_GameplayState == GameplayState.Started) {
 
-			if (m_LookTarget != null) {
+			if ( m_LookTarget != null  &&  m_LookTarget.activeInHierarchy ) {
 				this.gameObject.transform.LookAt (m_LookTarget.transform.position);
 			} else {
 				this.gameObject.transform.rotation = Quaternion.LookRotation (
