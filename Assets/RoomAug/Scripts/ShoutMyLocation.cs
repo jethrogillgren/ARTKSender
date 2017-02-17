@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class shoutmylocation : MonoBehaviour {
+public class ShoutMyLocation : MonoBehaviour {
 
 	private int c = 0;
 	public int m_step = 100;
