@@ -16,8 +16,9 @@ public class PhysicalRoom : MonoBehaviour {
 
 		set
 		{
+			this.m_gameplayRoom = value;
+
 			if (value) {
-				this.m_gameplayRoom = value;
 				value.physicalRoom = this;
 			}
 		}
@@ -30,8 +31,10 @@ public class PhysicalRoom : MonoBehaviour {
 
 
 	public void registerAnyChildGameplayRoom() {
-		GameplayRoom gr = GetComponentInChildren<GameplayRoom> ();
-		if (gr)
-			gameplayRoom = gr;
+		gameplayRoom  = GetComponentInChildren<GameplayRoom> ();
+//		if (gr)
+//			gameplayRoom = gr;
+//		else
+//			gameplayRoom = null;
 	}
 }

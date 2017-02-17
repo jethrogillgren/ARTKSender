@@ -80,3 +80,5 @@
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Mono.Cecil.Mdb.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEditor.iOS.Extensions.Xcode.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEditor.iOS.Extensions.Xcode.xml
+/Users/jethro/git/TangoTests/Temp/bin/Debug/Assembly-CSharp-Editor.dll.mdb
+/Users/jethro/git/TangoTests/Temp/bin/Debug/Assembly-CSharp-Editor.dll

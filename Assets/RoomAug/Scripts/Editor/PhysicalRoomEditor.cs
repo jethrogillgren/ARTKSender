@@ -16,12 +16,8 @@ public class PhysicalRoomEditor : Editor {
 
 		pr.roomName = EditorGUILayout.TextField("Room Name", pr.roomName);
 
-//		pr.gameplayRoom = (GameplayRoom)EditorGUILayout.ObjectField("AUTO - GameplayRoom:", pr.gameplayRoom, typeof(GameplayRoom), true);
 		pr.registerAnyChildGameplayRoom ();
 		EditorGUILayout.LabelField("Got GameplayRoom", pr.gameplayRoom == null ? "no" : "yes");
 
-
-//		pr.gameplayRoom = pr.GetComponentInChildren<GameplayRoom> ();
-//		Debug.Log (pr.roomName + " is housing " + pr.gameplayRoom.roomName);
 	}
 }

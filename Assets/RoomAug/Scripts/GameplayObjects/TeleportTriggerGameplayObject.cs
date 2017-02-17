@@ -5,7 +5,7 @@ using UnityEngine;
 public class TeleportTriggerGameplayObject : BaseGameplayObject {
 
 	public GameObject m_playerCollider;
-	public bool m_originalSide = true; //True means we are behind the BLue FOrward line of the teleport to start.
+	public bool m_originalSide = true; //True means we are behind the BLue Forward line of the teleport to start, in physical space
 
 	// Use this for initialization
 	void Start () {

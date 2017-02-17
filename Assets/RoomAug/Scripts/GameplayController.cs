@@ -6,7 +6,9 @@ public class GameplayController : MonoBehaviour {
 
 	public HashSet<BaseGameplayObject> m_gameplayObjects;
 	public HashSet<PhysicalRoom> m_physicalRooms;
+	public HashSet<TeleportTriggerGameplayObject> m_teleportTriggers;
 
+	private 
 
 	// Use this for initialization
 	void Start () {
@@ -14,6 +16,15 @@ public class GameplayController : MonoBehaviour {
 		collectPhysicalRooms ();
 	}
 
+
+
+
+
+
+
+	//
+	// DAO
+	//
 
 	public HashSet<BaseGameplayObject> getGameplayObjectsByState(BaseGameplayObject.GameplayState state) {
 		HashSet<BaseGameplayObject> ret = new HashSet<BaseGameplayObject>();
@@ -81,6 +92,18 @@ public class GameplayController : MonoBehaviour {
 		PhysicalRoom[] prs = FindObjectsOfType( typeof(PhysicalRoom) ) as PhysicalRoom[];
 		foreach (PhysicalRoom pr in prs) {
 			m_physicalRooms.Add (pr);
+		}
+	}
+
+	public void collectTeleportTriggers() {
+		if (m_teleportTriggers == null)
+			m_teleportTriggers = new HashSet<TeleportTriggerGameplayObject>();
+		else
+			m_teleportTriggers.Clear ();
+
+		TeleportTriggerGameplayObject[] tt = FindObjectsOfType( typeof(TeleportTriggerGameplayObject) ) as TeleportTriggerGameplayObject[];
+		foreach (TeleportTriggerGameplayObject t in tt) {
+			m_teleportTriggers.Add (t);
 		}
 	}
 }

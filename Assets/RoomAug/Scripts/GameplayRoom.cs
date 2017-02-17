@@ -21,6 +21,12 @@ public class GameplayRoom : MonoBehaviour {
 		}
 	}
 
+	public bool roomActive{	 
+		get  {
+			return (physicalRoom == null  ||  GetComponentInParent( physicalRoom.GetType() ) == null ) ? false : true;
+		} 
+	}
+
 	// Use this for initialization
 	void Start () {
 		

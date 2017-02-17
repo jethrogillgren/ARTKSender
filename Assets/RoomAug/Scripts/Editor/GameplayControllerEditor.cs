@@ -19,5 +19,12 @@ public class GameplayControllerEditor : Editor {
 
 		gc.collectPhysicalRooms ();
 		EditorGUILayout.LabelField("Physical Rooms", gc.m_physicalRooms == null ? "0" : gc.m_physicalRooms.Count.ToString() );
+
+		gc.collectTeleportTriggers();
+		EditorGUILayout.LabelField("Teleport Tiggers", gc.m_teleportTriggers == null ? "0" : gc.m_teleportTriggers.Count.ToString() );
+
+		if( gc.m_gameplayObjects.Count == 0  ||  gc.m_physicalRooms.Count == 0  || gc.m_teleportTriggers.Count == 0  ) {		
+			EditorGUILayout.HelpBox("SCENE IS MISSING REQUIRED ELEMENTS", MessageType.Error);
+		}
 	}
 }
