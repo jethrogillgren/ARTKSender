@@ -74,9 +74,9 @@ public class ARToolkitWorldGameplayObjectEditor : Editor
 		
 		artwgo.eventReceiver = (GameObject)EditorGUILayout.ObjectField("Event Receiver:", artwgo.eventReceiver, typeof(GameObject), true);
 
-		EditorGUILayout.Separator();
-
-		artwgo.trackingCamera = (ARCamera)EditorGUILayout.ObjectField("Tracking Camera:", artwgo.trackingCamera, typeof(ARCamera), true);
-		artwgo.tangoPoseController = (TangoARPoseController)EditorGUILayout.ObjectField("Post Controller:", artwgo.tangoPoseController, typeof(TangoARPoseController), true);
+//		EditorGUILayout.Separator();
+//
+//		artwgo.trackingCamera = (ARCamera)EditorGUILayout.ObjectField("Tracking Camera:", artwgo.trackingCamera, typeof(ARCamera), true);
+//		artwgo.tangoPoseController = (TangoARPoseController)EditorGUILayout.ObjectField("Post Controller:", artwgo.tangoPoseController, typeof(TangoARPoseController), true);
 	}
 }

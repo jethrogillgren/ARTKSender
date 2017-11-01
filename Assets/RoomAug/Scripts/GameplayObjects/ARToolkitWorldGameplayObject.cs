@@ -54,8 +54,8 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 
 	public GameObject eventReceiver;
 
-	public ARCamera trackingCamera;
-	public TangoARPoseController tangoPoseController;
+//	public ARCamera trackingCamera;
+//	public TangoARPoseController tangoPoseController;
 
 
 	// Private fields with accessors.
@@ -163,20 +163,20 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 
 
 						Matrix4x4 pose;
-						if (trackingCamera && trackingCamera.Optical && trackingCamera.opticalSetupOK) {
-//							pose = (opticalViewMatrix * marker.TransformationMatrix).inverse;
-							pose = (trackingCamera.opticalViewMatrix * marker.TransformationMatrix);
-							Util.JLog ("Using Camera's (" + trackingCamera.name + ") Optical View Matrix");
-
-						} else {
+//						if (trackingCamera && trackingCamera.Optical && trackingCamera.opticalSetupOK) {
+////							pose = (opticalViewMatrix * marker.TransformationMatrix).inverse;
+//							pose = (trackingCamera.opticalViewMatrix * marker.TransformationMatrix);
+//							Util.JLog ("Using Camera's (" + trackingCamera.name + ") Optical View Matrix");
+//
+//						} else {
 //							pose = marker.TransformationMatrix.inverse;
 							pose = marker.TransformationMatrix;
 
-						}
-
-						if(tangoPoseController)
-							transform.localPosition = ARUtilityFunctions.PositionFromMatrix(pose) + tangoPoseController.transform.position;
-						else
+//						}
+//
+//						if(tangoPoseController)
+//							transform.localPosition = ARUtilityFunctions.PositionFromMatrix(pose) + tangoPoseController.transform.position;
+//						else
 							transform.localPosition = ARUtilityFunctions.PositionFromMatrix(pose);
 						
 						// Camera orientation: In ARToolKit, zero rotation of the camera corresponds to looking vertically down on a marker
@@ -187,9 +187,9 @@ public class ARToolkitWorldGameplayObject : BaseGameplayObject
 
 //						Quaternion localisedRotation = Quaternion.Eu (ARUtilityFunctions.QuaternionFromMatrix (pose), Camera.main.transform.rotation);
 
-						if(tangoPoseController)
-							transform.localRotation = ARUtilityFunctions.QuaternionFromMatrix(pose);//TODO
-						else
+//						if(tangoPoseController)
+//							transform.localRotation = ARUtilityFunctions.QuaternionFromMatrix(pose);//TODO
+//						else
 							transform.localRotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
 
 
