@@ -97,7 +97,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
     /// In this class, we need TangoARPoseController reference to get the timestamp and pose when we place a marker.
     /// The timestamp and pose is used for later loop closure position correction. 
     /// </summary>
-    private TangoARPoseController m_poseController;
+    private TangoPoseController m_poseController;
 
     /// <summary>
     /// List of markers placed in the scene.
@@ -117,7 +117,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
     /// <summary>
     /// If set, this is the selected marker.
     /// </summary>
-    private TangoARMarker m_selectedMarker;
+    private ARMarker m_selectedMarker;
 
     /// <summary>
     /// If set, this is the rectangle bounding the selected marker.
@@ -146,7 +146,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
     /// </summary>
     public void Start()
     {
-        m_poseController = FindObjectOfType<TangoARPoseController>();
+        m_poseController = FindObjectOfType<TangoPoseController>();
         m_tangoApplication = FindObjectOfType<TangoApplication>();
         
         if (m_tangoApplication != null)
@@ -211,7 +211,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
                 GameObject tapped = hitInfo.collider.gameObject;
                 if (!tapped.GetComponent<Animation>().isPlaying)
                 {
-                    m_selectedMarker = tapped.GetComponent<TangoARMarker>();
+                    m_selectedMarker = tapped.GetComponent<ARMarker>();
                 }
             }
             else
@@ -389,7 +389,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
         // When learning mode is off, and an Area Description is loaded, this callback indicates a
         // relocalization event. Relocalization is when the device finds out where it is with respect to the loaded
         // Area Description. In our case, when the device is relocalized, the markers will be loaded because we
-        // know the relatvie device location to the markers.
+        // know the relative device location to the markers.
         if (poseData.framePair.baseFrame == 
             TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_AREA_DESCRIPTION &&
             poseData.framePair.targetFrame ==
@@ -466,16 +466,20 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
             m_savingText.gameObject.SetActive(true);
             if (m_tangoApplication.m_areaDescriptionLearningMode)
             {
+                // The keyboard is not readable if you are not in the Unity main thread. Cache the value here.
+                string name;
+#if UNITY_EDITOR
+                name = m_guiTextInputContents;
+#else
+                name = kb.text;
+#endif
+
                 m_saveThread = new Thread(delegate()
                 {
                     // Start saving process in another thread.
                     m_curAreaDescription = AreaDescription.SaveCurrent();
                     AreaDescription.Metadata metadata = m_curAreaDescription.GetMetadata();
-#if UNITY_EDITOR
-                    metadata.m_name = m_guiTextInputContents;
-#else
-                    metadata.m_name = kb.text;
-#endif
+                    metadata.m_name = name;
                     m_curAreaDescription.SaveMetadata(metadata);
                 });
                 m_saveThread.Start();
@@ -504,7 +508,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
         // Adjust mark's position each time we have a loop closure detected.
         foreach (GameObject obj in m_markerList)
         {
-            TangoARMarker tempMarker = obj.GetComponent<TangoARMarker>();
+            ARMarker tempMarker = obj.GetComponent<ARMarker>();
             if (tempMarker.m_timestamp != -1.0f)
             {
                 TangoCoordinateFramePair pair;
@@ -514,9 +518,9 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
                 pair.targetFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_DEVICE;
                 PoseProvider.GetPoseAtTime(relocalizedPose, tempMarker.m_timestamp, pair);
 
-                Matrix4x4 uwTDevice = m_poseController.m_uwTss
+                Matrix4x4 uwTDevice = TangoSupport.UNITY_WORLD_T_START_SERVICE
                                       * relocalizedPose.ToMatrix4x4()
-                                      * m_poseController.m_dTuc;
+                                      * TangoSupport.DEVICE_T_UNITY_CAMERA;
 
                 Matrix4x4 uwTMarker = uwTDevice * tempMarker.m_deviceTMarker;
 
@@ -539,7 +543,7 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
             // useful when the next time Tango Service is connected. The timestamp is only used for loop closure pose
             // correction in current Tango connection.
             MarkerData temp = new MarkerData();
-            temp.m_type = obj.GetComponent<TangoARMarker>().m_type;
+            temp.m_type = obj.GetComponent<ARMarker>().m_type;
             temp.m_position = obj.transform.position;
             temp.m_orientation = obj.transform.rotation;
             xmlDataList.Add(temp);
@@ -654,13 +658,13 @@ public class AreaLearningInGameController : MonoBehaviour, ITangoPose, ITangoEve
                                     planeCenter,
                                     Quaternion.LookRotation(forward, up)) as GameObject;
 
-        TangoARMarker markerScript = newMarkObject.GetComponent<TangoARMarker>();
+        ARMarker markerScript = newMarkObject.GetComponent<ARMarker>();
 
         markerScript.m_type = m_currentMarkType;
-        markerScript.m_timestamp = (float)m_poseController.m_poseTimestamp;
+        markerScript.m_timestamp = (float)m_poseController.LastPoseTimestamp;
         
-        Matrix4x4 uwTDevice = Matrix4x4.TRS(m_poseController.m_tangoPosition,
-                                            m_poseController.m_tangoRotation,
+        Matrix4x4 uwTDevice = Matrix4x4.TRS(m_poseController.transform.position,
+                                            m_poseController.transform.rotation,
                                             Vector3.one);
         Matrix4x4 uwTMarker = Matrix4x4.TRS(newMarkObject.transform.position,
                                             newMarkObject.transform.rotation,

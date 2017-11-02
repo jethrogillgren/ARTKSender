@@ -30,8 +30,6 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 	public Material m_depthMaskMat;// The reference to the depth mask material to be applied to occlusion meshes.
 	public Material m_visibleMat;// The reference to the visible material applied to the mesh.
 
-	[Header("ARToolkit")]
-	public ARController m_ARController;
 	public TrackOtherObject m_temp;
 
 	private ApplicationStateMachine state;

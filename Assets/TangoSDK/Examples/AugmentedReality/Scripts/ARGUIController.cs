@@ -98,7 +98,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// <summary>
     /// If set, this is the selected marker.
     /// </summary>
-    private TangoARMarker m_selectedMarker;
+    private ARMarker m_selectedMarker;
 
     /// <summary>
     /// If set, this is the rectangle bounding the selected marker.
@@ -184,7 +184,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             m_arCameraPostProcess.enabled = !m_arCameraPostProcess.enabled;
         }
 
-        if (m_showDebug && m_tangoApplication.HasRequestedPermissions())
+        if (m_showDebug && m_tangoApplication.HasRequiredPermissions)
         {
             Color oldColor = GUI.color;
             GUI.color = Color.white;
@@ -257,7 +257,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             m_selectedRect = new Rect();
         }
 
-        if (GameObject.FindObjectOfType<TangoARMarker>() != null)
+        if (GameObject.FindObjectOfType<ARMarker>() != null)
         {
             m_hideAllRect = new Rect(Screen.width - UI_BUTTON_SIZE_X - UI_BUTTON_GAP_X,
                                      Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
@@ -265,7 +265,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
                                      UI_BUTTON_SIZE_Y);
             if (GUI.Button(m_hideAllRect, "<size=30>Hide All</size>"))
             {
-                foreach (TangoARMarker marker in GameObject.FindObjectsOfType<TangoARMarker>())
+                foreach (ARMarker marker in GameObject.FindObjectsOfType<ARMarker>())
                 {
                     marker.SendMessage("Hide");
                 }
@@ -276,7 +276,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             m_hideAllRect = new Rect(0, 0, 0, 0);
         }
     }
-    
+
     /// <summary>
     /// This is called when the permission granting process is finished.
     /// </summary>
@@ -284,7 +284,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     public void OnTangoPermissions(bool permissionsGranted)
     {
     }
-    
+
     /// <summary>
     /// This is called when successfully connected to the Tango service.
     /// </summary>
@@ -292,7 +292,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     {
         m_tangoApplication.SetDepthCameraRate(TangoEnums.TangoDepthCameraRate.DISABLED);
     }
-    
+
     /// <summary>
     /// This is called when disconnected from the Tango service.
     /// </summary>
@@ -302,7 +302,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 
     /// <summary>
     /// This is called each time new depth data is available.
-    /// 
+    ///
     /// On the Tango tablet, the depth callback occurs at 5 Hz.
     /// </summary>
     /// <param name="tangoDepth">Tango depth.</param>
@@ -469,7 +469,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
                 GameObject tapped = hitInfo.collider.gameObject;
                 if (!tapped.GetComponent<Animation>().isPlaying)
                 {
-                    m_selectedMarker = tapped.GetComponent<TangoARMarker>();
+                    m_selectedMarker = tapped.GetComponent<ARMarker>();
                 }
             }
             else
