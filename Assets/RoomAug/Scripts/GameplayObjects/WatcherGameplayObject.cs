@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class WatcherGameplayObject : BaseGameplayObject {
 
+	[SyncVar]
 	public GameObject m_LookTarget; //Optional
 
 	// Use this for initialization

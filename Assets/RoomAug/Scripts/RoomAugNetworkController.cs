@@ -27,7 +27,7 @@ public class RoomAugNetworkController : MonoBehaviour {
 		Debug.Log ("J# Hosting Game");
 
 		RoomAugNetworkDiscovery.Instance.StartBroadcasting();
-		NetworkManager.singleton.StartHost();
+		NetworkManager.singleton.StartServer();
 	}
 
 	public void ListenForGame() {

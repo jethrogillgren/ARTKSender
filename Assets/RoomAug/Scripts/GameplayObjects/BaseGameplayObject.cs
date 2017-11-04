@@ -16,6 +16,7 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 		Started, //Either interactible with the world, or visible to the user, or both.
 		Finished //All interaction is finished.
 	}
+
 	public GameplayState gameplayState
 	{
 		get
@@ -44,7 +45,8 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 		}
 	}
 
-	public GameplayState m_GameplayState = GameplayState.Started ;
+	[SyncVar]
+	public GameplayState m_GameplayState = GameplayState.Started;
 
 
 //	public abstract void test(); //Must be implemented
