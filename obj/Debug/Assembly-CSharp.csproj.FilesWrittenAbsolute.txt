@@ -47,3 +47,15 @@
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Mono.Cecil.Mdb.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.TestRunner.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/nunit.framework.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.Timeline.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.UIAutomation.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.GoogleAudioSpatializer.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.SpatialTracking.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.Purchasing.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.Cecil.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/ExCSS.Unity.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.Legacy.NRefactory.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.Cecil.Pdb.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.Cecil.Mdb.dll

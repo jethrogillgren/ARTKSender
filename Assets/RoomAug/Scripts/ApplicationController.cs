@@ -86,7 +86,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 			state.setPermitted();
 			AreaDescription[] list = AreaDescription.GetList();
 
-			JLog(" There are " + list.Length + " Area Descriptions Available: ");
+			JLog(" There are " + (list == null ? 0 : list.Length ) + " Area Descriptions Available: ");
 
 			if (list != null && list.Length != 0) {
 				
@@ -103,7 +103,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 				}
 
 				if (m_areaDescription == null) {
-					JLogErr("J# No AreaDescription Found matching " + m_areaDescriptionName + "   Starting without one");
+					JLogErr("No AreaDescription Found matching " + m_areaDescriptionName + "   Starting without one");
 					m_tangoApplication.Startup (null);
 					state.MoveNext (Command.Localise);
 				}
@@ -112,7 +112,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 			else
 			{
 				// No Area Descriptions available.
-				JLogErr("J# No area descriptions available.  Starting without one");
+				JLogErr("No area descriptions available.  Starting without one");
 				m_tangoApplication.Startup(null);
 				state.MoveNext (Command.Localise);
 			}
@@ -284,7 +284,7 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 				JLogErr("Lost Localisation");
 				state.MoveNext (Command.Unlocalise);
 //			} else {
-//				JLog( "J#  Unhandled Tango Pose Event: " + pose.status_code.ToString() );
+//				JLog( "Unhandled Tango Pose Event: " + pose.status_code.ToString() );
 			}
 		}
 	}

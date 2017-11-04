@@ -5,9 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/NetworkDiscoveryExample/Scenes/OfflineScene.unity
     guid: 3aff1e250761b8e4f926b327b0266f26
+  - enabled: 0
+    path: Assets/NetworkDiscoveryExample/Scenes/OnlineScene.unity
+    guid: 0bcef4b7ce1a1a946af851db556c21e6
   - enabled: 0
     path: Assets/TangoSDK/Examples/Scenes/DetectTangoCore.unity
     guid: 8cd645b9db91744228609df129d24cc2
@@ -26,7 +29,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/TangoSDK/Examples/Scenes/PointToPoint.unity
     guid: a38574aed0d664ee995dba3e1c564494
-  - enabled: 1
+  - enabled: 0
     path: Assets/TangoSDK/Examples/Scenes/SimpleAugmentedReality.unity
     guid: a1510a21b25fb4d9ab3be3eeb1d3290a
   - enabled: 0
@@ -56,6 +59,15 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: Assets/NetworkDiscoveryExample/Scenes/OnlineScene.unity
-    guid: 0bcef4b7ce1a1a946af851db556c21e6
+  - enabled: 1
+    path: Assets/Scenes/Offline.unity
+    guid: 244a6cd7f2ec1462eaef9a575b426623
+  - enabled: 1
+    path: Assets/Scenes/CommonOnline.unity
+    guid: 9f0204a1d35fe4d78bc523bb12ee0d57
+  - enabled: 1
+    path: Assets/Scenes/ServerOnline.unity
+    guid: 701e1e08df4c54b5592838a82de5e38d
+  - enabled: 1
+    path: Assets/Scenes/ClientOnline.unity
+    guid: de9023af851f64e0dbfa6cce650f5df5
