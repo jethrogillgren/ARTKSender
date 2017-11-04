@@ -32,4 +32,10 @@ public class PlayerController : NetworkBehaviour
 		}
 	}
 
+	[Command]
+	public void CmdWatchEarth()
+	{
+		FindObjectOfType<WatcherGameplayObject>().m_LookTarget = GameObject.Find ("Earth");
+	}
+
 }

@@ -23,10 +23,22 @@ public class DebugUtil : MonoBehaviour {
 	}
 
 	public void OnButtonToggleClick() {
-		if( GameObject.Find("TestMonkey").GetComponent<WatcherGameplayObject>().gameplayState == BaseGameplayObject.GameplayState.Started )
-			GameObject.Find("TestMonkey").GetComponent<WatcherGameplayObject>().gameplayState = BaseGameplayObject.GameplayState.Finished;
-		else if ( GameObject.Find("TestMonkey").GetComponent<WatcherGameplayObject>().gameplayState == BaseGameplayObject.GameplayState.Finished )
-			GameObject.Find("TestMonkey").GetComponent<WatcherGameplayObject>().gameplayState = BaseGameplayObject.GameplayState.Started;
-		
+		Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Earth") );
+
+		FindObjectOfType<PlayerController>().CmdWatchEarth ();
+
+//		if (GameObject.Find ("TestMonkey").GetComponent<WatcherGameplayObject> ().m_LookTarget == GameObject.Find ("Earth")) {
+//			Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Moon") );
+//
+//			GameObject.Find ("TestMonkey").GetComponent<WatcherGameplayObject> ().m_LookTarget = GameObject.Find ("Moon");
+//		} else if (GameObject.Find ("TestMonkey").GetComponent<WatcherGameplayObject> ().m_LookTarget == GameObject.Find ("Moon")) {
+//			Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Earth") );
+//
+//			GameObject.Find ("TestMonkey").GetComponent<WatcherGameplayObject> ().m_LookTarget = GameObject.Find ("Earth");
+//		} else {
+//			Debug.Log ("J# Monkey Business" );
+//
+//		}
+
 	}
 }

@@ -13,8 +13,12 @@ public class WatcherGameplayObject : BaseGameplayObject {
 		
 	}
 
-	// Update is called once per frame
+	// Update is called once per frame.
 	void Update () {
+		//SERVER DOES UPDATE.  CLients just read state and ask their Player to act
+		if (isClient)
+			return;
+		
 		if (gameplayState == GameplayState.Started) {
 
 			if ( m_LookTarget != null  &&  m_LookTarget.activeInHierarchy ) {

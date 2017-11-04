@@ -17,7 +17,7 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 		Finished //All interaction is finished.
 	}
 
-	public GameplayState gameplayState
+	public GameplayState gameplayState 
 	{
 		get
 		{
