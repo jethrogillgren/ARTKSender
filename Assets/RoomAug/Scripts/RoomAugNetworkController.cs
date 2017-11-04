@@ -15,9 +15,10 @@ public class RoomAugNetworkController : MonoBehaviour {
 		} else if (Application.platform == RuntimePlatform.Android) {
 			ListenForGame ();
 		} else {
-			Debug.LogError ("RoomAugNetworkController Unknown Platform - not Initialising/");
+			Debug.LogError ("J# RoomAugNetworkController Unknown Platform - not Initialising/");
 		}
 	}
+	
 	void OnDestroy() {
 		RoomAugNetworkDiscovery.Instance.onServerDetected -= OnReceiveBraodcast;
 	}
@@ -34,6 +35,7 @@ public class RoomAugNetworkController : MonoBehaviour {
 
 		RoomAugNetworkDiscovery.Instance.ReceiveBroadcast();
 	}
+
 
 	public void JoinGame( string serverIp ) {
 

@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public abstract class BaseGameplayObject : MonoBehaviour {
+
+public abstract class BaseGameplayObject : NetworkBehaviour {
 
 	protected string LogTag = "J#";
 
+	[SyncVar]
 	public bool m_IsDecorationOnly = true; //True means there is no interactions - it is just for show or graphics.  False means the user will interact with it as part of a clue.
 
 	public enum GameplayState {

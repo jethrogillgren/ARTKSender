@@ -21,4 +21,18 @@ public class DebugUtil : MonoBehaviour {
 		Debug.Log("J# " + builder.ToString() );
 		AndroidHelper.ShowAndroidToastMessage ( builder.ToString() );
 	}
+
+	public static void shout() {
+		//		string ret = " Current Pose Position.  World: " + Camera.main.transform.position + "   local:" + Camera.main.transform.localPosition;
+		StringBuilder builder = new StringBuilder ();
+
+		GameObject[] objs = (GameObject[]) GameObject.FindObjectsOfType(typeof(GameObject));
+		foreach (GameObject g in objs) {
+			builder.AppendLine (g.name + " - " + (g.activeInHierarchy == true ? "Active" : "Disabled") );
+
+		}
+
+		Debug.Log("J# " + builder.ToString() );
+		AndroidHelper.ShowAndroidToastMessage ( builder.ToString() );
+	}
 }

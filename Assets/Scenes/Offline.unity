@@ -447,7 +447,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &1170780013
 AudioListener:
   m_ObjectHideFlags: 0
@@ -478,9 +478,9 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
+  near clip plane: 0.1
+  far clip plane: 2000
+  field of view: 37.8
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -792,7 +792,7 @@ MonoBehaviour:
   m_ScriptCRCCheck: 1
   m_MaxDelay: 0.01
   m_LogLevel: 2
-  m_PlayerPrefab: {fileID: 1900841820281998, guid: 293bef6e4f08b294b88242414859e1ac,
+  m_PlayerPrefab: {fileID: 1291499814474690, guid: a07fb81dc357c4984a223383c8f20694,
     type: 2}
   m_AutoCreatePlayer: 1
   m_PlayerSpawnMethod: 0

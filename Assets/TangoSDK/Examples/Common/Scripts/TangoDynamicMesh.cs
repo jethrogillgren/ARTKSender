@@ -625,7 +625,7 @@ public class TangoDynamicMesh : MonoBehaviour, ITango3DReconstruction
             if (m_meshRenderer != null)
             {
                 MeshRenderer meshRenderer = newObj.AddComponent<MeshRenderer>();
-				#if UNITY_5 || UNITY_2017
+                #if UNITY_5
                 meshRenderer.shadowCastingMode = m_meshRenderer.shadowCastingMode;
                 meshRenderer.receiveShadows = m_meshRenderer.receiveShadows;
                 meshRenderer.sharedMaterials = m_meshRenderer.sharedMaterials;
