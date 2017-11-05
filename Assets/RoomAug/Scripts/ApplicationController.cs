@@ -424,39 +424,6 @@ public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent
 		#pragma warning restore 618
 	}
 
-	//Debug something to the screen
-	public void OnButtonShoutClick()
-	{
-//		string ret = " Current Pose Position.  World: " + Camera.main.transform.position + "   local:" + Camera.main.transform.localPosition;
-		StringBuilder builder = new StringBuilder ();
-
-		BaseGameplayObject[] objs = FindObjectsOfType(typeof(BaseGameplayObject)) as BaseGameplayObject[];
-		foreach (BaseGameplayObject g in objs) {
-			builder.AppendLine (g.name + " - " + g.gameplayState );
-
-		}
-
-//		if (m_gameplayController != null) {
-//			builder.AppendLine (m_gameplayController.m_gameplayObjects.Count + " Gameplay Objects:");
-//			foreach (BaseGameplayObject g in m_gameplayController.getGameplayObjects() ) { // Loop through all strings
-//			}
-//		} else {
-//			JLogErr ("BADTING");
-//		}
-
-
-//		string ret = string.Join(",", m_gameplayController.getGameplayObjectsByState (BaseGameplayObject.GameplayState.Started) );
-
-		JLog( builder.ToString() );
-		AndroidHelper.ShowAndroidToastMessage ( builder.ToString() );
-	}
-
-	private bool tog = false;
-	public void OnButtonToggleClick()
-	{
-		
-	}
-
 	//Save current Mesh to file
 	public void OnButtonExportMeshClick()
 	{

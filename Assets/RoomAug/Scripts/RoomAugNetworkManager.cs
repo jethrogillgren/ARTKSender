@@ -61,11 +61,11 @@ public class RoomAugNetworkManager : NetworkManager {
 	public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
 	{
 		GameObject player = (GameObject)Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-		player.GetComponent<PlayerController> ().setName( "Player " + numPlayers );
+		player.GetComponent<RoomAugPlayerController> ().setName( "Player " + numPlayers );
 
 		NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
 
-		Debug.Log ( "J# Added a new player: " + player.GetComponent<PlayerController> ().name );
+		Debug.Log ( "J# Added a new player: " + player.GetComponent<RoomAugPlayerController> ().name );
 	}
 
 }

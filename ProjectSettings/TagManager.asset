@@ -6,6 +6,7 @@ TagManager:
   tags:
   - UICamera
   - Ground
+  - Moon
   layers:
   - Default
   - TransparentFX
@@ -22,11 +23,11 @@ TagManager:
   - NonPlayerMoveableObjects
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Earth
+  - Wood
+  - Metal
+  - Fire
+  - Water
   - 
   - 
   - 

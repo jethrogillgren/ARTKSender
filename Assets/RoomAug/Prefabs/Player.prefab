@@ -27,7 +27,6 @@ GameObject:
   - component: {fileID: 114220341599914530}
   - component: {fileID: 114754439918924872}
   - component: {fileID: 114213900434377094}
-  - component: {fileID: 114862286650406256}
   - component: {fileID: 114810059159830938}
   - component: {fileID: 114243043676904734}
   - component: {fileID: 114713894268600928}
@@ -534,21 +533,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enableOcclusion: 0
   m_occlusionShader: {fileID: 4800000, guid: f196a49a50fca482db453a9646bc81f1, type: 3}
---- !u!114 &114862286650406256
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1150655410752992}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb774ed2740684fe0b241e4f0f301277, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  other: {fileID: 0}
-  trackPosition: 1
-  trackRotation: 1
-  autoLocateCamera: Tango Camera
 --- !u!136 &136741208258929424
 CapsuleCollider:
   m_ObjectHideFlags: 1

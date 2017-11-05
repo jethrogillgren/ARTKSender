@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 //This class controlls the UNET conecpt of a player - one on the server for each Client Tango connected.
-public class PlayerController : NetworkBehaviour
+public class RoomAugPlayerController : NetworkBehaviour
 {
 	[SyncVar]
 	public new string name = "Player #"; //Should be set during construction
@@ -20,6 +20,7 @@ public class PlayerController : NetworkBehaviour
 		GetComponentInChildren<TextMesh>().text = name;
 	}
 
+	//This is invoked for NetworkBehaviour objects when they become active on the server.
 	public override void OnStartServer() {
 
 		if (gameObject.GetComponent<Camera> () != null) {
@@ -32,9 +33,16 @@ public class PlayerController : NetworkBehaviour
 		}
 	}
 
+	//Called when the local player object has been set up.
+	//This happens after OnStartClient(), as it is triggered by an ownership message from the server.
+	//This is an appropriate place to activate components or functionality that should only be active
+	//for the local player, such as cameras and input.
+	public void OnStartLocalPlayer() {
+		
+	}
+
 	[Command]
-	public void CmdWatchEarth()
-	{
+	public void CmdWatchEarth() {
 		FindObjectOfType<WatcherGameplayObject>().m_LookTarget = GameObject.Find ("Earth");
 	}
 

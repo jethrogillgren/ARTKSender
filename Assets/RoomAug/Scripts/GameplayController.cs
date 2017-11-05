@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-// 1..n Physical Rooms which can parent 2..n GameplayRooms.  Provides access for triggers to make any switch in the configuration.
-//The switches are local to each client.  All objects exist on server authoratively still, and are hidden using UNET visibility on clients.
 public class GameplayController : NetworkBehaviour {
 
 	public HashSet<BaseGameplayObject> m_gameplayObjects;
@@ -31,27 +29,24 @@ public class GameplayController : NetworkBehaviour {
 		collectPhysicalRooms ();
 		collectGameplayRooms ();
 		collectTeleportTriggers ();
-
-//		m_offscreenPhysicalRoom = new PhysicalRoom ();
-//		m_offscreenPhysicalRoom.transform.position.x
 	}
 
 
-	//Util functions.  Assume a room is loaded already.
+	//Util Teleport functions.  Assume a room is loaded already.
 	public bool LoadEarthRoomInMainRoom () {
-		return unActivate (mainRoom) && activate (earthRoom, mainRoom);
+		return isClient && unActivate (mainRoom) && activate (earthRoom, mainRoom);
 	}
 	public bool LoadWoodRoomInMainRoom () {
-		return unActivate (mainRoom) && activate (woodRoom, mainRoom);
+		return isClient && unActivate (mainRoom) && activate (woodRoom, mainRoom);
 	}
 	public bool LoadMetalRoomInMainRoom () {
-		return unActivate (mainRoom) && activate (metalRoom, mainRoom);
+		return isClient && unActivate (mainRoom) && activate (metalRoom, mainRoom);
 	}
 	public bool LoadFireRoomInMainRoom () {
-		return unActivate (mainRoom) && activate (fireRoom, mainRoom);
+		return isClient && unActivate (mainRoom) && activate (fireRoom, mainRoom);
 	}
 	public bool LoadWaterRoomInMainRoom () {
-		return unActivate (mainRoom) && activate (waterRoom, mainRoom);
+		return isClient && unActivate (mainRoom) && activate (waterRoom, mainRoom);
 	}
 
 

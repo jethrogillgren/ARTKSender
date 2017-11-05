@@ -1508,7 +1508,7 @@ GameObject:
   m_Component:
   - component: {fileID: 72706237}
   - component: {fileID: 72706236}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: EarthRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23089,7 +23089,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1098123594}
   - component: {fileID: 1098123595}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: MetalRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35057,6 +35057,10 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 73cf7735de62a42079fb557788b7ed8a, type: 3}
+      propertyPath: m_Layer
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 73cf7735de62a42079fb557788b7ed8a, type: 3}
   m_IsPrefabParent: 0
@@ -35712,13 +35716,13 @@ GameObject:
   - component: {fileID: 1699111411}
   - component: {fileID: 1699111416}
   - component: {fileID: 1699111417}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1699111410
 Transform:
   m_ObjectHideFlags: 0
@@ -39605,7 +39609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1872272704}
   - component: {fileID: 1872272705}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: WoodRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}

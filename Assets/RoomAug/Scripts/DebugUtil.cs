@@ -63,7 +63,7 @@ public class DebugUtil : MonoBehaviour {
 	public void OnButtonToggleClick() {
 		Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Earth") );
 
-		FindObjectOfType<PlayerController>().CmdWatchEarth ();
+		FindObjectOfType<RoomAugPlayerController>().CmdWatchEarth ();
 
 //		if (GameObject.Find ("TestMonkey").GetComponent<WatcherGameplayObject> ().m_LookTarget == GameObject.Find ("Earth")) {
 //			Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Moon") );
