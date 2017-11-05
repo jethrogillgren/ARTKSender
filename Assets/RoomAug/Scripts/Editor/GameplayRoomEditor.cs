@@ -8,6 +8,7 @@ using UnityEngine;
 [CustomEditor(typeof(GameplayRoom))] 
 public class GameplayRoomEditor : Editor {
 
+
 	public override void OnInspectorGUI()
 	{
 		GameplayRoom gr = (GameplayRoom)target;
@@ -17,8 +18,7 @@ public class GameplayRoomEditor : Editor {
 		gr.roomName = EditorGUILayout.TextField("Room Name", gr.roomName);
 
 		gr.registerAnyParentPhysicalRoom ();
-		if (!gr.roomActive)
-			gr.deactivateAllGameplayObjects ();
+		gr.updateAllGameplayObjectsVisibility ();
 		EditorGUILayout.LabelField("Active", gr.roomActive ? "yes" : "no");
 	}
 }

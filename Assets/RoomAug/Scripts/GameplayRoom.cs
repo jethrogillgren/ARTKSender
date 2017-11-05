@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class GameplayRoom : MonoBehaviour {
+
+public class GameplayRoom : NetworkBehaviour {
 
 	public string roomName;
 
@@ -36,21 +38,23 @@ public class GameplayRoom : MonoBehaviour {
 		physicalRoom  = GetComponentInParent<PhysicalRoom> (); //TODO check depth
 	}
 
-	public void activateAllGameplayObjects() {
-		setAllGameplayObjects (BaseGameplayObject.GameplayState.Started, true);
-	}
-
-	public void deactivateAllGameplayObjects() {
-		setAllGameplayObjects (BaseGameplayObject.GameplayState.Inactive, true);
-	}
-
-	public void setAllGameplayObjects(BaseGameplayObject.GameplayState state, bool includeInactive) {
-		BaseGameplayObject[] objs = GetComponentsInChildren<BaseGameplayObject> (includeInactive);
-		Util.JLog ("Setting all " + objs.Length + " Gamepbjects in room: " + roomName + " to " + state );
-
-		foreach (BaseGameplayObject o in objs) {
-			o.gameplayState = state;
+	public void updateAllGameplayObjectsVisibility() {
+		foreach (BaseGameplayObject o in GetComponentsInChildren<BaseGameplayObject> (true)) {
+			o.updateClientVisibility ();
 		}
 	}
+
+//	public void deactivateAllGameplayObjects() {
+//		setAllGameplayObjects (BaseGameplayObject.GameplayState.Inactive, true);
+//	}
+
+//	public void setAllGameplayObjects(BaseGameplayObject.GameplayState state, bool includeInactive) {
+//		BaseGameplayObject[] objs = GetComponentsInChildren<BaseGameplayObject> (includeInactive);
+//		Util.JLog ("Setting all " + objs.Length + " Gamepbjects in room: " + roomName + " to " + state );
+//
+//		foreach (BaseGameplayObject o in objs) {
+//			o.gameplayState = state;
+//		}
+//	}
 
 }

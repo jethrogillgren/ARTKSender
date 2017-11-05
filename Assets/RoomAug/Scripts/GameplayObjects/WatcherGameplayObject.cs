@@ -16,6 +16,7 @@ public class WatcherGameplayObject : BaseGameplayObject {
 	// Update is called once per frame.
 	void Update () {
 		//SERVER DOES UPDATE.  CLients just read state and ask their Player to act
+
 		if (isClient)
 			return;
 		

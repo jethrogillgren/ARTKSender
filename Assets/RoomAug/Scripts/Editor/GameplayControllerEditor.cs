@@ -23,16 +23,16 @@ public class GameplayControllerEditor : Editor {
 		gc.collectTeleportTriggers();
 		EditorGUILayout.LabelField("Teleport Tiggers", gc.m_teleportTriggers == null ? "0" : gc.m_teleportTriggers.Count.ToString() );
 
-		if( gc.m_gameplayObjects.Count == 0  ||  gc.m_physicalRooms.Count == 0  || gc.m_teleportTriggers.Count == 0  ) {		
-			EditorGUILayout.HelpBox("SCENE IS MISSING REQUIRED ELEMENTS", MessageType.Error);
-		}
+//		if( gc.m_gameplayObjects.Count == 0  ||  gc.m_physicalRooms.Count == 0  || gc.m_teleportTriggers.Count == 0  ) {		
+//			EditorGUILayout.HelpBox("SCENE IS MISSING REQUIRED ELEMENTS", MessageType.Error);
+//		}
+	
 
+//		EditorGUILayout.Separator();
 
-		EditorGUILayout.Separator();
-
-
-		gc.m_currentPhysicalRoom = (PhysicalRoom)EditorGUILayout.ObjectField("Start Physical Room:", gc.m_currentPhysicalRoom, typeof(PhysicalRoom), true);
-		gc.m_extraGameplayRoom = (GameplayRoom)EditorGUILayout.ObjectField("Extra Gameplay Room:", gc.m_extraGameplayRoom, typeof(GameplayRoom), true);
+//
+//		gc.m_currentPhysicalRoom = (PhysicalRoom)EditorGUILayout.ObjectField("Start Physical Room:", gc.m_currentPhysicalRoom, typeof(PhysicalRoom), true);
+//		gc.m_startGameplayRoom = (GameplayRoom)  EditorGUILayout.ObjectField("Start Gameplay Room:", gc.m_startGameplayRoom, typeof(GameplayRoom), true);
 
 
 	}

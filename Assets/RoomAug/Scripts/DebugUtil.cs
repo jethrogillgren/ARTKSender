@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 using System.Text;
 using UnityEngine.SceneManagement;
 
 public class DebugUtil : MonoBehaviour {
+
 
 	//Debug something to the screen
 	public void OnButtonShoutClick()
@@ -14,13 +17,48 @@ public class DebugUtil : MonoBehaviour {
 
 		GameObject[] objs = (GameObject[]) GameObject.FindObjectsOfType(typeof(GameObject));
 		foreach (GameObject g in objs) {
-			builder.AppendLine (g.name + " - " + (g.activeInHierarchy == true ? "Active" : "Disabled") );
+			builder.AppendLine (g.name + " - " + (g.activeInHierarchy == true ? "Active in Hierachy" : "Disabled in Hierachy") + " - " + (g.activeSelf == true ? "Active" : "Disabled") );
 
 		}
+
 
 		Debug.Log("J# " + builder.ToString() );
 		AndroidHelper.ShowAndroidToastMessage ( builder.ToString() );
 	}
+
+	//TEMP assumes 1 physicalroom
+	public void OnSwapRoomButtonClick() {
+		GameplayController gc = FindObjectOfType<GameplayController> ();
+
+
+		GameplayRoom newRoom = null;
+		foreach (GameplayRoom gr in gc.m_gameplayRooms) {
+			if (gr != gc.m_physicalRooms.FirstOrDefault().gameplayRoom)
+				newRoom = gr;
+		}
+		gc.replace (gc.m_physicalRooms.FirstOrDefault().gameplayRoom, newRoom, gc.m_physicalRooms.FirstOrDefault());
+		ShoutPhysicalAndGameplayState ();
+
+	}
+	public void ShoutPhysicalAndGameplayState() {
+		StringBuilder builder = new StringBuilder ();
+		GameplayController gc = FindObjectOfType<GameplayController> ();
+
+		foreach (GameplayRoom gr in gc.m_gameplayRooms) {
+			if (gr.physicalRoom == null) {
+				builder.AppendLine (gr.roomName);
+
+			} else {
+				builder.AppendLine (gr.physicalRoom.roomName);
+				builder.AppendLine ("-" + gr.roomName);
+
+			}
+		}
+			
+		Util.JLog( builder.ToString() );
+		AndroidHelper.ShowAndroidToastMessage ( builder.ToString() );
+	}
+
 
 	public void OnButtonToggleClick() {
 		Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Earth") );
@@ -40,5 +78,10 @@ public class DebugUtil : MonoBehaviour {
 //
 //		}
 
+	}
+
+	public void OnButton2Click() {
+		Debug.Log("J# Button 3 - Locally disabling Monkey");
+		GameObject.Find ("TestMonkey").SetActive (false);//local only?
 	}
 }

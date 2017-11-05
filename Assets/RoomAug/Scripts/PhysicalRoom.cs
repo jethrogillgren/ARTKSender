@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class PhysicalRoom : MonoBehaviour {
+
+public class PhysicalRoom : NetworkBehaviour {
 
 	public string roomName;
+
+	public GameplayRoom m_startGameplayRoom;//Only used if no child is present
 
 	private GameplayRoom m_gameplayRoom; //1 to 1 relationship, or empty.  Use accessor below
 	public GameplayRoom gameplayRoom
@@ -33,6 +37,10 @@ public class PhysicalRoom : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		registerAnyChildGameplayRoom ();
+		if( !gameplayRoom ) {
+			GameplayController gc = FindObjectOfType<GameplayController> ();
+			gc.activate (m_startGameplayRoom, this);
+		}
 	}
 
 

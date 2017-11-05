@@ -17,7 +17,10 @@ public class PhysicalRoomEditor : Editor {
 		pr.roomName = EditorGUILayout.TextField("Room Name", pr.roomName);
 
 		pr.registerAnyChildGameplayRoom ();
-		EditorGUILayout.LabelField("Got GameplayRoom", pr.gameplayRoom == null ? "no" : "yes");
+		if (pr.gameplayRoom)
+			EditorGUILayout.LabelField ("Got GameplayRoom", pr.gameplayRoom.roomName);
+		else
+			pr.m_startGameplayRoom = (GameplayRoom) EditorGUILayout.ObjectField ("Starting GameplayRoom:", pr.m_startGameplayRoom, typeof(GameplayRoom), true);
 
 	}
 }

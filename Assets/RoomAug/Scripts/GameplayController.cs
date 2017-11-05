@@ -4,19 +4,25 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
+// 1..n Physical Rooms which can parent 2..n GameplayRooms.  Provides access for triggers to make any switch in the configuration.
+//The switches are local to each client.  All objects exist on server authoratively still, and are hidden using UNET visibility on clients.
 public class GameplayController : NetworkBehaviour {
 
 	public HashSet<BaseGameplayObject> m_gameplayObjects;
 	public HashSet<PhysicalRoom> m_physicalRooms;
-	public HashSet<TeleportTriggerGameplayObject> m_teleportTriggers;
+	public HashSet<GameplayRoom> m_gameplayRooms;
+	public HashSet<TeleportDoorwayToggleTriggerGameplayObject> m_teleportTriggers;
 
-	public GameplayRoom m_extraGameplayRoom;//TODO - hardcoding in a 2/3 Room Toggle Teleport... add in Mesh n room!
-	public PhysicalRoom m_currentPhysicalRoom; //TODO initialization?
+
+//	public GameplayRoom m_extraGameplayRoom;//TODO - hardcoding in a 2/3 Room Toggle Teleport... add in Mesh n room!
+//	public PhysicalRoom m_currentPhysicalRoom; //TODO initialization?
 
 	// Use this for initialization
 	void Start () {
 		collectGameplayObjects ();
 		collectPhysicalRooms ();
+		collectGameplayRooms ();
+		collectTeleportTriggers ();
 
 //		m_offscreenPhysicalRoom = new PhysicalRoom ();
 //		m_offscreenPhysicalRoom.transform.position.x
@@ -25,26 +31,26 @@ public class GameplayController : NetworkBehaviour {
 
 
 
-	public void teleportTriggered (TeleportTriggerGameplayObject t, PhysicalRoom oldRoom, PhysicalRoom newRoom, bool backwards = false) {
-		if(backwards) {
-			//Do nothing otherwise the jump would be watched by the player...
+//	public void teleportTriggered (TeleportDoorwayToggleTriggerGameplayObject t, PhysicalRoom oldRoom, PhysicalRoom newRoom, bool backwards = false) {
+//		if(backwards) {
+//			//Do nothing otherwise the jump would be watched by the player...
+//
+//		} else {
+//			//Travelling fowards
+//			GameplayRoom oldGameplayRoom = oldRoom.gameplayRoom;
+//
+//			Util.JLog ("Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
+//			AndroidHelper.ShowAndroidToastMessage ("TELEPORT:  Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
+//
+//			replace (oldGameplayRoom, m_extraGameplayRoom, oldRoom);
+////			unActivate (oldRoom.gameplayRoom);
+////			activate (new GameplayRoom(), oldRoom);
+//			m_extraGameplayRoom = oldGameplayRoom;
+//			m_currentPhysicalRoom = newRoom;
+//		}
+//	}
 
-		} else {
-			//Travelling fowards
-			GameplayRoom oldGameplayRoom = oldRoom.gameplayRoom;
-
-			Util.JLog ("Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
-			AndroidHelper.ShowAndroidToastMessage ("TELEPORT:  Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
-
-			replace (oldGameplayRoom, m_extraGameplayRoom, oldRoom);
-//			unActivate (oldRoom.gameplayRoom);
-//			activate (new GameplayRoom(), oldRoom);
-			m_extraGameplayRoom = oldGameplayRoom;
-			m_currentPhysicalRoom = newRoom;
-		}
-	}
-
-	private bool replace(GameplayRoom oldGr, GameplayRoom newGr, PhysicalRoom pr) {
+	public bool replace(GameplayRoom oldGr, GameplayRoom newGr, PhysicalRoom pr) {
 		if (oldGr.physicalRoom == pr) {
 			return (unActivate (oldGr) && activate (newGr, pr));
 
@@ -54,14 +60,15 @@ public class GameplayController : NetworkBehaviour {
 		}
 	}
 
-	private bool unActivate(GameplayRoom gr) {
-		
+	//Hide a GameplayRoom from whichever Physical Room it was in.  Done on Client
+	public bool unActivate(GameplayRoom gr) {
+
 		if( gr && gr.roomActive ) { //If room is currently Active
 			if (gr.physicalRoom)
 				gr.physicalRoom.gameplayRoom = null;
 			gr.transform.SetParent(this.transform, false );
 			gr.physicalRoom = null;
-			gr.deactivateAllGameplayObjects();
+			gr.updateAllGameplayObjectsVisibility ();
 			return true;
 
 		} else {
@@ -69,12 +76,14 @@ public class GameplayController : NetworkBehaviour {
 			return false;
 		}
 	}
-	private bool activate(GameplayRoom gr, PhysicalRoom pr) {
+
+	//Show a GameplayRoom in a specified PhysicalRoom
+	public bool activate(GameplayRoom gr, PhysicalRoom pr) {
 		
 		if( gr && !gr.roomActive && pr && pr.roomEmpty ) {
 			gr.transform.SetParent(pr.transform);
 			pr.gameplayRoom = gr;
-			gr.activateAllGameplayObjects ();
+			gr.updateAllGameplayObjectsVisibility ();
 			gr.transform.localPosition = new Vector3 (0, 0, 0);
 
 			Util.JLog ("GR lPos: " + gr.transform.localPosition + "     pr lpos: " + pr.transform.localPosition);
@@ -135,42 +144,30 @@ public class GameplayController : NetworkBehaviour {
 	}
 
 
-	//Add only new Gameplay Objects
+	//Collecting Objects
 	public void collectGameplayObjects() {
-		if(	m_gameplayObjects == null)
-			m_gameplayObjects = new HashSet<BaseGameplayObject>();
-		else
-			m_gameplayObjects.Clear ();
-
-		BaseGameplayObject[] objs = FindObjectsOfType(typeof(BaseGameplayObject)) as BaseGameplayObject[];
-		foreach (BaseGameplayObject o in objs) {
-			if (m_gameplayObjects.Add (o)) //Returns false if already exists
-				Util.JLog ("Tracking " + o.name + " as a  " + o.GetType ());
-		}
-
+		collectHashSetOfComponents<BaseGameplayObject> (ref m_gameplayObjects);
 	}
-
 	public void collectPhysicalRooms() {
-		if (m_physicalRooms == null)
-			m_physicalRooms = new HashSet<PhysicalRoom>();
-		else
-			m_physicalRooms.Clear ();
+		collectHashSetOfComponents<PhysicalRoom> (ref m_physicalRooms);
 
-		PhysicalRoom[] prs = FindObjectsOfType( typeof(PhysicalRoom) ) as PhysicalRoom[];
-		foreach (PhysicalRoom pr in prs) {
-			m_physicalRooms.Add (pr);
-		}
+	}
+	public void collectGameplayRooms() {
+		collectHashSetOfComponents<GameplayRoom> (ref m_gameplayRooms);
+	}
+	public void collectTeleportTriggers() {
+		collectHashSetOfComponents<TeleportDoorwayToggleTriggerGameplayObject> (ref m_teleportTriggers);
 	}
 
-	public void collectTeleportTriggers() {
-		if (m_teleportTriggers == null)
-			m_teleportTriggers = new HashSet<TeleportTriggerGameplayObject>();
+	public void collectHashSetOfComponents<T>( ref HashSet<T> setToFill ) {
+		if (setToFill == null)
+			setToFill = new HashSet<T>();
 		else
-			m_teleportTriggers.Clear ();
+			setToFill.Clear ();
 
-		TeleportTriggerGameplayObject[] tt = FindObjectsOfType( typeof(TeleportTriggerGameplayObject) ) as TeleportTriggerGameplayObject[];
-		foreach (TeleportTriggerGameplayObject t in tt) {
-			m_teleportTriggers.Add (t);
+		T[] prs = FindObjectsOfType( typeof(T) ) as T[];
+		foreach (T pr in prs) {
+			setToFill.Add (pr);
 		}
 	}
 }
