@@ -1,32 +1,50 @@
 ﻿using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using System.Collections;
+
 
 using UnityEngine;
 
 //This is a specialised NetworkManager.  NetworkManager wraps the actual Link connection between Server and Client.
 public class RoomAugNetworkManager : NetworkManager {
 
-//	//TODO - we are cancelling out the autoHost started... can we configure it not to do that instead?
-//	public void Start() {
-//		StopHost ();
-//		StartServer ();
-//	}
 
-	//Add in Client Unique Scene assets for clients only
+	//Start loading the scene and flag ClientScene.ready once done
+	IEnumerator AsyncAddClientSpecificScene(NetworkConnection conn)
+	{
+		Util.JLog ("Loading in ClientOnline specialisations");
+
+		// The Application loads the Scene in the background at the same time as the current Scene.
+		//This is particularly good for creating loading screens. You could also load the scene by build //number.
+		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("ClientOnline", LoadSceneMode.Additive);
+
+		//Wait until the last operation fully loads to return anything
+		while (!asyncLoad.isDone)
+		{
+			yield return null;
+		}
+
+		ClientScene.Ready (conn);
+		ClientScene.AddPlayer (conn, 0);
+	}
+
+	//Add in Client Unique Scene assets for clients only.
 	public override void OnClientSceneChanged(NetworkConnection conn)
 	{
 		if (Application.platform == RuntimePlatform.Android) {
-			Debug.Log ("J# Loading in ClientOnline specialisations");
-			SceneManager.LoadScene ("ClientOnline", LoadSceneMode.Additive);
-			ClientScene.Ready (conn);
-			ClientScene.AddPlayer (conn, 0);
+			
+			StartCoroutine( AsyncAddClientSpecificScene (conn) );
+//
+//			SceneManager.LoadScene("ClientOnline", LoadSceneMode.Additive);
+//			ClientScene.Ready (conn);
+//			ClientScene.AddPlayer (conn, 0);
 
 		} else {
-			Debug.LogError ("J# Tried to load the ClientScene from a Non-Android Device.");
+			Util.JLogErr("Tried to load the ClientScene from a Non-Android Device.");
 		}
 	}
 
-	//Add in Server Unique Scene assets for servers only
+	//Add in Server Unique Scene assets for servers only.
 	public override void OnServerSceneChanged(string sceneName)
 	{
 		if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.OSXEditor) {
@@ -35,7 +53,7 @@ public class RoomAugNetworkManager : NetworkManager {
 			SceneManager.LoadScene ("ServerOnline", LoadSceneMode.Additive);
 
 		} else {
-			Debug.LogError ("J# Tried to load the ServerScene from a Non-Server Device.");
+			Util.JLogErr("Tried to load the ServerScene from a Non-Server Device.");
 		}
 	}
 

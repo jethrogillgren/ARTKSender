@@ -80,8 +80,29 @@ public class DebugUtil : MonoBehaviour {
 
 	}
 
+	public void OnTeleportDropdownChange(string i) {
+		Util.JLog ("DROPDOWN "+ i);
+	}
+
 	public void OnButton2Click() {
 		Debug.Log("J# Button 3 - Locally disabling Monkey");
 		GameObject.Find ("TestMonkey").SetActive (false);//local only?
 	}
+
+	public void OnEarthTeleport() {
+		FindObjectOfType<GameplayController> ().LoadEarthRoomInMainRoom ();
+	}
+	public void OnWoodTeleport() {
+		FindObjectOfType<GameplayController> ().LoadWoodRoomInMainRoom ();
+	}
+	public void OnMetalTeleport() {
+		FindObjectOfType<GameplayController> ().LoadMetalRoomInMainRoom ();
+	}
+	public void OnFireTeleport() {
+		FindObjectOfType<GameplayController> ().LoadFireRoomInMainRoom ();
+	}
+	public void OnWaterTeleport() {
+		FindObjectOfType<GameplayController> ().LoadWaterRoomInMainRoom ();
+	}
+
 }

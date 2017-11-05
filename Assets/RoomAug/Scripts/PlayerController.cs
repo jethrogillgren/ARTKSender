@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 public class PlayerController : NetworkBehaviour
 {
 	[SyncVar]
-	public string name = "Player #"; //Should be set during construction
+	public new string name = "Player #"; //Should be set during construction
 
 
 	public void setName(string name) {

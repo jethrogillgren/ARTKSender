@@ -13,6 +13,14 @@ public class GameplayController : NetworkBehaviour {
 	public HashSet<GameplayRoom> m_gameplayRooms;
 	public HashSet<TeleportDoorwayToggleTriggerGameplayObject> m_teleportTriggers;
 
+	public PhysicalRoom mainRoom;
+
+	public GameplayRoom earthRoom;
+	public GameplayRoom woodRoom;
+	public GameplayRoom metalRoom;
+	public GameplayRoom fireRoom;
+	public GameplayRoom waterRoom;
+
 
 //	public GameplayRoom m_extraGameplayRoom;//TODO - hardcoding in a 2/3 Room Toggle Teleport... add in Mesh n room!
 //	public PhysicalRoom m_currentPhysicalRoom; //TODO initialization?
@@ -28,6 +36,23 @@ public class GameplayController : NetworkBehaviour {
 //		m_offscreenPhysicalRoom.transform.position.x
 	}
 
+
+	//Util functions.  Assume a room is loaded already.
+	public bool LoadEarthRoomInMainRoom () {
+		return unActivate (mainRoom) && activate (earthRoom, mainRoom);
+	}
+	public bool LoadWoodRoomInMainRoom () {
+		return unActivate (mainRoom) && activate (woodRoom, mainRoom);
+	}
+	public bool LoadMetalRoomInMainRoom () {
+		return unActivate (mainRoom) && activate (metalRoom, mainRoom);
+	}
+	public bool LoadFireRoomInMainRoom () {
+		return unActivate (mainRoom) && activate (fireRoom, mainRoom);
+	}
+	public bool LoadWaterRoomInMainRoom () {
+		return unActivate (mainRoom) && activate (waterRoom, mainRoom);
+	}
 
 
 
@@ -56,6 +81,17 @@ public class GameplayController : NetworkBehaviour {
 
 		} else {
 			Util.JLogErr ("Cannot replace " + oldGr.roomName + " with " + newGr.roomName + "  in " + pr.roomName );
+			return false;
+		}
+	}
+
+	//Hide whichever GameplayRoom was active in a physical room
+	public bool unActivate(PhysicalRoom pr) {
+		if( pr && pr.gameplayRoom ) { //If room is currently Active
+			return unActivate (pr.gameplayRoom);
+
+		} else {
+			Util.JLogErr ( "Unable to Unactivate any GameplayRooms from: " + pr );
 			return false;
 		}
 	}
@@ -141,6 +177,16 @@ public class GameplayController : NetworkBehaviour {
 			return true;
 		}
 		return false;
+	}
+
+	public Component getRoomByName(string roomName) {
+		foreach (GameplayRoom gr in m_gameplayRooms)
+			if (gr.roomName == roomName)
+				return gr;
+		foreach (PhysicalRoom pr in m_physicalRooms)
+			if (pr.roomName == roomName)
+				return pr;
+		return null;
 	}
 
 
