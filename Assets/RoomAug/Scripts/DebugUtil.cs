@@ -60,24 +60,11 @@ public class DebugUtil : MonoBehaviour {
 	}
 
 
-	public void OnButtonToggleClick() {
-		Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Earth") );
+	public void OnButtonToggleClick(bool newVal) {
+//		Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Earth") );
+//		FindObjectOfType<RoomAugPlayerController>().CmdWatchEarth ();
 
-		FindObjectOfType<RoomAugPlayerController>().CmdWatchEarth ();
-
-//		if (GameObject.Find ("TestMonkey").GetComponent<WatcherGameplayObject> ().m_LookTarget == GameObject.Find ("Earth")) {
-//			Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Moon") );
-//
-//			GameObject.Find ("TestMonkey").GetComponent<WatcherGameplayObject> ().m_LookTarget = GameObject.Find ("Moon");
-//		} else if (GameObject.Find ("TestMonkey").GetComponent<WatcherGameplayObject> ().m_LookTarget == GameObject.Find ("Moon")) {
-//			Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Earth") );
-//
-//			GameObject.Find ("TestMonkey").GetComponent<WatcherGameplayObject> ().m_LookTarget = GameObject.Find ("Earth");
-//		} else {
-//			Debug.Log ("J# Monkey Business" );
-//
-//		}
-
+		FindObjectOfType<TangoPlayerApplicationController> ().debugSetOccludersVis (newVal);
 	}
 
 	public void OnTeleportDropdownChange(string i) {

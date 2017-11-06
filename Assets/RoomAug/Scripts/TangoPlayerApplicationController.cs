@@ -23,8 +23,6 @@ public class TangoPlayerApplicationController : MonoBehaviour, ITangoLifecycle {
 	public GameplayController m_gameplayController;
 	[HideInInspector]
 	public TangoARPoseController m_poseController;
-	[HideInInspector]
-	public TangoDynamicMesh m_dynamicMesh;
 
 
 
@@ -37,7 +35,6 @@ public class TangoPlayerApplicationController : MonoBehaviour, ITangoLifecycle {
 		m_tangoApplication = FindObjectOfType<TangoApplication>();
 		m_gameplayController = FindObjectOfType<GameplayController>();
 		m_poseController = FindObjectOfType<TangoARPoseController>();
-		m_dynamicMesh = FindObjectOfType<TangoDynamicMesh>();
 
 		if (m_tangoApplication != null)
 		{
@@ -137,9 +134,6 @@ public class TangoPlayerApplicationController : MonoBehaviour, ITangoLifecycle {
 	public void OnApplicationPause(bool pauseStatus)
 	{
 
-		if(m_dynamicMesh != null)
-			m_dynamicMesh.Clear();
-
 		// If we have just resumed
 		if ( !pauseStatus ) {
 			//If we have had Permissions granted already, we can reconnect.  Otherwise, the Start() code is still in control so we leave alone.
@@ -148,4 +142,10 @@ public class TangoPlayerApplicationController : MonoBehaviour, ITangoLifecycle {
 		}
 	}
 
+
+	public void debugSetOccludersVis(bool newVal) {
+		foreach (OcclusionGameplayObject occluder in m_gameplayController.getOcclusionGameplayObjects()) {
+			occluder.setOcclusion (!newVal);
+		}
+	}
 }

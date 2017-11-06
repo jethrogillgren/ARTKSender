@@ -351,7 +351,7 @@ MonoBehaviour:
   m_enableAreaLearning: 0
   m_enableADFLoading: 0
   m_enableCloudADF: 0
-  m_enable3DReconstruction: 1
+  m_enable3DReconstruction: 0
   m_3drResolutionMeters: 0.05
   m_3drGenerateColor: 0
   m_3drGenerateNormal: 1
@@ -363,7 +363,7 @@ MonoBehaviour:
   m_enableVideoOverlay: 1
   m_videoOverlayUseTextureMethod: 1
   m_videoOverlayUseYUVTextureIdMethod: 0
-  m_videoOverlayUseByteBufferMethod: 0
+  m_videoOverlayUseByteBufferMethod: 1
   m_keepScreenAwake: 0
   m_adjustScreenResolution: 0
   m_targetResolution: 1080
@@ -447,13 +447,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b999919fd24f94eff9013b1cbaa09261, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_areaDescriptionName: JethroTestAreaDescription
+  m_areaDescriptionName: Hackspace1
   m_relocalizationOverlay: {fileID: 1907177155518574, guid: 48c48fe0d3a064891898892a9070313e,
     type: 2}
   m_tangoApplication: {fileID: 0}
   m_gameplayController: {fileID: 0}
   m_poseController: {fileID: 0}
-  m_dynamicMesh: {fileID: 0}
 --- !u!114 &114624241431315110
 MonoBehaviour:
   m_ObjectHideFlags: 1
