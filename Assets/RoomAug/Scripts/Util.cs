@@ -4,7 +4,6 @@ using UnityEngine;
 
 public static class Util  {
 
-
 	public static void JLog(string val) {
 		Debug.Log ("J# " + val);
 	}

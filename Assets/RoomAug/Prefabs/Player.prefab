@@ -19,11 +19,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4041014330682014}
-  - component: {fileID: 114173241063040538}
+  - component: {fileID: 114291506028156184}
+  - component: {fileID: 114312274416013572}
   - component: {fileID: 114155730126441940}
   - component: {fileID: 114624241431315110}
   - component: {fileID: 20509109457675096}
-  - component: {fileID: 114625812326436394}
   - component: {fileID: 114220341599914530}
   - component: {fileID: 114754439918924872}
   - component: {fileID: 114213900434377094}
@@ -340,27 +340,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f51549b4778944861a78b99341a9c5db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_autoConnectToService: 1
+  m_autoConnectToService: 0
   m_allowOutOfDateTangoAPI: 0
   m_enableMotionTracking: 1
   m_motionTrackingAutoReset: 1
-  m_enableAreaDescriptions: 0
+  m_enableAreaDescriptions: 1
   m_areaDescriptionLearningMode: 0
   m_enableDriftCorrection: 0
-  m_enableDepth: 0
+  m_enableDepth: 1
   m_enableAreaLearning: 0
   m_enableADFLoading: 0
   m_enableCloudADF: 0
-  m_enable3DReconstruction: 0
-  m_3drResolutionMeters: 0.1
+  m_enable3DReconstruction: 1
+  m_3drResolutionMeters: 0.05
   m_3drGenerateColor: 0
-  m_3drGenerateNormal: 0
-  m_3drGenerateTexCoord: 0
-  m_3drSpaceClearing: 0
-  m_3drUseAreaDescriptionPose: 0
+  m_3drGenerateNormal: 1
+  m_3drGenerateTexCoord: 1
+  m_3drSpaceClearing: 1
+  m_3drUseAreaDescriptionPose: 1
   m_3drMinNumVertices: 20
   m_3drUpdateMethod: 1
-  m_enableVideoOverlay: 0
+  m_enableVideoOverlay: 1
   m_videoOverlayUseTextureMethod: 1
   m_videoOverlayUseYUVTextureIdMethod: 0
   m_videoOverlayUseByteBufferMethod: 0
@@ -377,18 +377,6 @@ MonoBehaviour:
   m_doSlowEmulation: 1
   m_emulationVideoOverlaySimpleLighting: 1
   m_emulatedAreaDescriptionStartOffset: {x: 0, y: 0, z: 0}
---- !u!114 &114173241063040538
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1150655410752992}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7abe88025d7bd46cda5ae6d7de980fa8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Named During Construction
 --- !u!114 &114213900434377094
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -436,6 +424,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_postProcessMaterial: {fileID: 2100000, guid: ccd39aeaff7fe4b629a797eb73526e36,
     type: 2}
+--- !u!114 &114291506028156184
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1150655410752992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 531f45fb6924641c3afb19489d01f6af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: 'Player #'
+--- !u!114 &114312274416013572
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1150655410752992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b999919fd24f94eff9013b1cbaa09261, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_areaDescriptionName: JethroTestAreaDescription
+  m_relocalizationOverlay: {fileID: 1907177155518574, guid: 48c48fe0d3a064891898892a9070313e,
+    type: 2}
+  m_tangoApplication: {fileID: 0}
+  m_gameplayController: {fileID: 0}
+  m_poseController: {fileID: 0}
+  m_dynamicMesh: {fileID: 0}
 --- !u!114 &114624241431315110
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -451,30 +469,6 @@ MonoBehaviour:
   m_drawDefaultUXExceptions: 1
   m_showConnectionScreen: 1
   m_holdPosture: 0
---- !u!114 &114625812326436394
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1150655410752992}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a6f164aa932e4413a364fb756feeb9b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_areaDescriptionName: beccis1
-  m_areaMeshPrefab: {fileID: 0}
-  m_relocalizationOverlay: {fileID: 0}
-  m_buttonsPanel: {fileID: 0}
-  m_exportButton: {fileID: 0}
-  m_prefabMarker: {fileID: 188320, guid: eca66899b90504167b643aadeaadf7e2, type: 2}
-  m_pointCloud: {fileID: 0}
-  m_prefabTouchEffect: {fileID: 22497430, guid: 5a77b678bf7604d5fb4f0b5399e89224,
-    type: 2}
-  m_canvas: {fileID: 0}
-  m_depthMaskMat: {fileID: 2100000, guid: b5a44d77fcbf843b0858cbdf5f1511c4, type: 2}
-  m_visibleMat: {fileID: 2100000, guid: a0a81df3f0960457aad0a8d1338d9dc7, type: 2}
-  m_temp: {fileID: 0}
 --- !u!114 &114713894268600928
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -60,12 +60,13 @@ public class RoomAugNetworkManager : NetworkManager {
 	//Control adding new Players on client connection
 	public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
 	{
+		Debug.Log ( "J# Adding a new player: " + conn + " " + playerControllerId );
+
 		GameObject player = (GameObject)Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
 		player.GetComponent<RoomAugPlayerController> ().setName( "Player " + numPlayers );
 
 		NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
 
-		Debug.Log ( "J# Added a new player: " + player.GetComponent<RoomAugPlayerController> ().name );
 	}
 
 }
