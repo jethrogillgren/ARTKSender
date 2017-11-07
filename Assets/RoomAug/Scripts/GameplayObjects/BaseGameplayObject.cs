@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-[RequireComponent(typeof(NetworkIdentity))]
+//[RequireComponent(typeof(NetworkIdentity))]
 public abstract class BaseGameplayObject : NetworkBehaviour {
 
 	protected string LogTag = "J#";

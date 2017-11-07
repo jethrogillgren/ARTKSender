@@ -59,15 +59,18 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Offline.unity
     guid: 244a6cd7f2ec1462eaef9a575b426623
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/CommonOnline.unity
     guid: 9f0204a1d35fe4d78bc523bb12ee0d57
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ServerOnline.unity
     guid: 701e1e08df4c54b5592838a82de5e38d
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ClientOnline.unity
     guid: de9023af851f64e0dbfa6cce650f5df5
+  - enabled: 1
+    path: Assets/Scenes/WaterPuzzleDev.unity
+    guid: cb6cbb59c848142db88d698d43642459
