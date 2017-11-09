@@ -447,7 +447,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b999919fd24f94eff9013b1cbaa09261, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_areaDescriptionName: Hackspace1
+  m_areaDescriptionName: Maxines1
   m_relocalizationOverlay: {fileID: 1907177155518574, guid: 48c48fe0d3a064891898892a9070313e,
     type: 2}
   m_tangoApplication: {fileID: 0}

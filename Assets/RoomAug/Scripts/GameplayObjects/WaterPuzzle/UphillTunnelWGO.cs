@@ -22,7 +22,7 @@ public class UphillTunnelWGO : WGO {
 	
     //Word way towards equalibrium.
 	void Update () {
-        Debug.Log();
+        //Debug.Log();
         //Flow in
         if( WaterIn > 0 ) {
 
