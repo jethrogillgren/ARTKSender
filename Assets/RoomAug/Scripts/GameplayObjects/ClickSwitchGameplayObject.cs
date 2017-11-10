@@ -6,6 +6,11 @@ public class ClickSwitchGameplayObject : BaseGameplayObject {
 
 	private int m_count = 0;
 
+    public override void Start() {
+        base.Start();
+
+    }
+
 	void OnMouseDown() {
 		m_count++;
 		GetComponent<Animation>().Play("SpinAnimation");

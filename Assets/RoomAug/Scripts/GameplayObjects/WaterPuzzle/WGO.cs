@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Base Water Gameplay Object
-public abstract class WGO : MonoBehaviour // : BaseGameplayObject
+public abstract class WGO : BaseGameplayObject
 {
 
     //If true, there are more than 1 input or 1 output.

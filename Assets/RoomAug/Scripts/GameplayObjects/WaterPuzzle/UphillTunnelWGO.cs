@@ -16,8 +16,8 @@ public class UphillTunnelWGO : WGO {
     public double speed = 0.1;
 
 	// Use this for initialization
-	void Start () {
-		
+    public override void Start() {
+        base.Start();
 	}
 	
     //Word way towards equalibrium.

@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
-
 public class GameplayController : NetworkBehaviour {
 
 	public HashSet<BaseGameplayObject> m_gameplayObjects;
@@ -28,6 +27,17 @@ public class GameplayController : NetworkBehaviour {
 		collectPhysicalRooms ();
 		collectGameplayRooms ();
 		collectTeleportTriggers ();
+
+        //If we disabled while editing, undo that.  Then make them all appropiately visible for the start
+        foreach ( GameplayRoom gr in m_gameplayRooms ) {
+            gr.enabled = true;
+
+            //Servers have all scenes enabled and seperate cameras.  Clients only enable the current Phys/GPRooms
+            gr.updateAllGameplayObjectsVisibility();
+            gr.SetAppropiateLayers();
+        }
+
+
 	}
 
 
@@ -111,14 +121,16 @@ public class GameplayController : NetworkBehaviour {
 		}
 	}
 
-	//Show a GameplayRoom in a specified PhysicalRoom
+	//Show a GameplayRoom in a specified PhysicalRoom.
 	public bool activate(GameplayRoom gr, PhysicalRoom pr) {
-		
+        
 		if( gr && !gr.roomActive && pr && pr.roomEmpty ) {
 			gr.transform.SetParent(pr.transform);
 			pr.gameplayRoom = gr;
 			gr.updateAllGameplayObjectsVisibility ();
 			gr.transform.localPosition = new Vector3 (0, 0, 0);
+
+            Handheld.Vibrate();
 
 			Util.JLog ("GR lPos: " + gr.transform.localPosition + "     pr lpos: " + pr.transform.localPosition);
 			return true;

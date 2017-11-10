@@ -9,7 +9,7 @@ public class UIDropdown : NetworkBehaviour {
 
     void Awake() {
 		
-		if (isServer)
+        if (!isClient)
 			return;
 
 		

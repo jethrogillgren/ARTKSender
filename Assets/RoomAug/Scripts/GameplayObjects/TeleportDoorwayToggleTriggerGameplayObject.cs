@@ -13,8 +13,9 @@ public class TeleportDoorwayToggleTriggerGameplayObject : BaseGameplayObject {
 	public PhysicalRoom otherRoom; //If null, gameplaycontroller decides what is linked next
 
 	// Use this for initialization
-	void Start () {
-	}
+    public override void Start() {
+        base.Start();
+    }
 
 	void setRooms(PhysicalRoom originalRoom, PhysicalRoom otherRoom) {
 		this.originalRoom = originalRoom;

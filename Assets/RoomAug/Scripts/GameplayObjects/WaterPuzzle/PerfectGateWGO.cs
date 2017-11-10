@@ -7,8 +7,8 @@ using UnityEngine;
 public class PerfectGateWGO : WGO {
 
     // Use this for initialization
-    void Start() {
-
+    public override void Start() {
+        base.Start();
     }
 
     // Update is called once per frame

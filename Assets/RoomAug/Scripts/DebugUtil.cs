@@ -51,8 +51,8 @@ public class DebugUtil : MonoBehaviour {
 				builder.AppendLine (gr.roomName);
 
 			} else {
-				builder.AppendLine (gr.physicalRoom.roomName);
-				builder.AppendLine ("-" + gr.roomName);
+                builder.AppendLine (gr.physicalRoom.roomName + " Pos: " + gr.physicalRoom.transform.position );
+                builder.AppendLine ("-" + gr.roomName + " is " + (gr.enabled ? "Enabled" : "Not Enabled") + " Pos: " + gr.transform.position);
 
 			}
 		}

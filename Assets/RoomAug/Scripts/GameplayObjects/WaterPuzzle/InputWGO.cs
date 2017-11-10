@@ -5,8 +5,8 @@ using UnityEngine;
 public class InputWGO : WGO {
 
 	// Use this for initialization
-	void Start () {
-		
+	public override void Start () {
+        base.Start();
 	}
 
     //Start/Stop creating water

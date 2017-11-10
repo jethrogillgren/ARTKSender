@@ -23,7 +23,9 @@ public class SlidingFloorGameplayObject : BaseGameplayObject {
 		}
 	}
 	
-	void Start () {
+    public override void Start() {
+        base.Start();
+
 		collectAdjoiningFloors ();
 		collectSlidingCube ();
 	}

@@ -27,6 +27,10 @@ public class OrbitGameplayObject : BaseGameplayObject {
 	[SyncVar]
 	public bool m_rotateY = true;
 
+    public override void Start() {
+        base.Start();
+    }
+
 	/// <summary>
 	/// Update is called once per frame.
 	/// </summary>

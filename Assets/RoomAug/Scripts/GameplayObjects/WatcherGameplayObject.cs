@@ -8,10 +8,10 @@ public class WatcherGameplayObject : BaseGameplayObject {
 	[SyncVar]
 	public GameObject m_LookTarget; //Optional
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+    // Use this for initialization
+    public override void Start() {
+        base.Start();
+    }
 
 	// Update is called once per frame.
 	void Update () {

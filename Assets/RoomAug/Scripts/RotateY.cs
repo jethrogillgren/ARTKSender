@@ -13,7 +13,7 @@ public class RotateY : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(isServer)
+        if(!isClient)
 			this.gameObject.transform.Rotate (new Vector3 (0, 1, 0));
 	}
 }

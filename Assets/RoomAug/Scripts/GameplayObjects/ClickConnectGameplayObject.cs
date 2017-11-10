@@ -20,7 +20,9 @@ public class ClickConnectGameplayObject : BaseGameplayObject {
 
 
 	// Use this for initialization
-	void Start () {
+    public override void Start() {
+        base.Start();
+
 		m_renderer = gameObject.GetComponent<MeshRenderer> ();
 		m_startMaterial = m_renderer.material;
 	}

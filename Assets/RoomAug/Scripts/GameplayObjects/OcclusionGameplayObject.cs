@@ -13,7 +13,9 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 	}
 
 	// Use this for initialization
-	void Start () {
+    public override void Start() {
+        base.Start();
+
 		setOcclusion (false);
 	}
 

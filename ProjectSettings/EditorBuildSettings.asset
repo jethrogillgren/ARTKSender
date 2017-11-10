@@ -6,47 +6,47 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/NetworkDiscoveryExample/Scenes/OfflineScene.unity
-    guid: 3aff1e250761b8e4f926b327b0266f26
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/NetworkDiscoveryExample/Scenes/OnlineScene.unity
-    guid: 0bcef4b7ce1a1a946af851db556c21e6
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/DetectTangoCore.unity
-    guid: 8cd645b9db91744228609df129d24cc2
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/MotionTracking.unity
-    guid: c59df9c1a9ba84c2db0075046a9c8f31
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/PointCloud.unity
-    guid: da1e5db8a721743a2938ebcc9b514f22
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/AreaLearning.unity
-    guid: 3fe863707b0b9426d9ea313be426fbf5
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/AreaDescriptionManagement.unity
-    guid: 2ed91207e1f3949a79b14b2435302de1
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/PointToPoint.unity
-    guid: a38574aed0d664ee995dba3e1c564494
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/SimpleAugmentedReality.unity
-    guid: a1510a21b25fb4d9ab3be3eeb1d3290a
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/AugmentedReality.unity
-    guid: f1aab0b9b6c394f64b573456134db7ac
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/ExperimentalMeshBuilderWithColor.unity
-    guid: 4e584beb7414842c1b9e16ef4ee7420a
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/ExperimentalMeshBuilderWithPhysics.unity
-    guid: 22b16037c41994dcaaf663bec7c0bc4b
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/ExperimentalMeshOcclusion.unity
-    guid: f3526adf21a894c2fa15e0ce8bad168a
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/TangoSDK/Examples/Scenes/ExperimentalFloorFinding.unity
-    guid: 41d3b0f2be66c4f89938682fa7778923
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
@@ -74,3 +74,6 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/WaterPuzzleDev.unity
     guid: cb6cbb59c848142db88d698d43642459
+  - enabled: 0
+    path: Assets/___/Low Poly Modular Terrain Pack/Demo/Demo_Scenes/Demo_04.unity
+    guid: c1c412f3c78506d4ca2b658bf42900b9

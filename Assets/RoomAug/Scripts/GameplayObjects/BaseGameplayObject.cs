@@ -49,16 +49,52 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 	[SyncVar]
 	public GameplayState m_GameplayState = GameplayState.Started;
 
+    //Can be implemented.  (abstract must be).  All implementers must call base.start();
+    public virtual void Start() {
+        updateVisibility();
+        SetLayer();
+    }
+
+    //If you exist in a GameplayRoom, you have to have that rooms layer otherwise the server don't cull you properly
+    //gameobjects are allow to be roomless (global under physicalroom).
+    public void SetLayer( string roomName = "" ) {
+        
+        //If not specified, find our current parent
+        if ( roomName == null || roomName.Length == 0 ) {
+            GameplayRoom gr = GetComponentInParent<GameplayRoom>();
+            if ( gr ) roomName = gr.roomName;
+        }
+
+        //We got it
+        if ( roomName != null && roomName.Length > 0 )
+            SetLayerRecursively( gameObject, LayerMask.NameToLayer( roomName ) );
+            //gameObject.layer = LayerMask.NameToLayer( roomName );?
+    }
+
+    //Includes all non-GameplayObject children
+    public void SetLayerRecursively( GameObject obj, int newLayer  ) {
+        obj.layer = newLayer;
+
+        foreach ( Transform child in obj.transform ) {
+            SetLayerRecursively( child.gameObject, newLayer );
+        }
+    }
+
 	//Called to enable or disable this GameplayObject depending on wether it currently exsts in the clients view of the world
-	public virtual void updateClientVisibility() {
-		//TODO
-		if (isServer) {
-			Util.JLogErr ("Server tried to set Client Visibility - this can only be done by the client as it is local");
+    public virtual void updateVisibility() {
+        //GameplayState has first priority on setting enabled state.
+        if ( gameplayState != GameplayState.Started )
+            return;
+                                      
+        //Servers see evvveeerythiiiing.  If it knows it shouldn't be turned on, the server trusts that.
+        if ( !isClient ) {
+            gameObject.SetActive( true );
 			return;
 		}
 
+        //Clients see their current room only.
 		PhysicalRoom pr = GetComponentInParent<PhysicalRoom>();
-		if( pr )
+        if( pr )
 			gameObject.SetActive (true);
 		else 
 			gameObject.SetActive (false);

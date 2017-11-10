@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114786394857458616}
   - component: {fileID: 114624241431315110}
   - component: {fileID: 20509109457675096}
+  - component: {fileID: 114592581837518966}
   - component: {fileID: 114220341599914530}
   - component: {fileID: 65655855526954800}
   - component: {fileID: 114754439918924872}
@@ -172,7 +173,7 @@ Camera:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: -1
+  m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -468,6 +469,18 @@ MonoBehaviour:
   m_gameplayController: {fileID: 0}
   m_poseController: {fileID: 0}
   m_dynamicMesh: {fileID: 0}
+--- !u!114 &114592581837518966
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1150655410752992}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  profile: {fileID: 11400000, guid: e6b17739cca964877843ed2be4368593, type: 2}
 --- !u!114 &114624241431315110
 MonoBehaviour:
   m_ObjectHideFlags: 1

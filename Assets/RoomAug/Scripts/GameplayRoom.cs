@@ -40,9 +40,14 @@ public class GameplayRoom : NetworkBehaviour {
 
 	public void updateAllGameplayObjectsVisibility() {
 		foreach (BaseGameplayObject o in GetComponentsInChildren<BaseGameplayObject> (true)) {
-			o.updateClientVisibility ();
+			o.updateVisibility ();
 		}
 	}
+    public void SetAppropiateLayers() {
+        foreach ( BaseGameplayObject o in GetComponentsInChildren<BaseGameplayObject>( true ) ) {
+            o.SetLayer( roomName );
+        }
+    }
 
 //	public void deactivateAllGameplayObjects() {
 //		setAllGameplayObjects (BaseGameplayObject.GameplayState.Inactive, true);

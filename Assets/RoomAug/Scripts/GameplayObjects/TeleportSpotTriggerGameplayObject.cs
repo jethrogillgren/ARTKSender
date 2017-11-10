@@ -11,7 +11,9 @@ public class TeleportSpotTriggerGameplayObject : BaseGameplayObject {
     private PhysicalRoom physicalRoom;
 
 	// Use this for initialization
-	void Start () {
+    public override void Start() {
+        base.Start();
+
         gameplayController = FindObjectOfType<GameplayController>();
         physicalRoom = GetComponentInParent<PhysicalRoom>();
 
@@ -35,11 +37,8 @@ public class TeleportSpotTriggerGameplayObject : BaseGameplayObject {
                 gameplayController.LoadRoomInMainRoom(targetGameplayRoom);
             }
 
-        } else if(isServer) {
-            Util.JLogErr("Server ignoring collission for " + name + " and " + collision.name );
-
         } else {
-            Util.JLogErr("THIS IS WEIRD....");
+            Util.JLogErr("Server ignoring collission for " + name + " and " + collision.name );
         }
     }
 }

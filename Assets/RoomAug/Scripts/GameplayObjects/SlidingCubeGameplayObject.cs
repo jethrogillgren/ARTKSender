@@ -27,7 +27,9 @@ public class SlidingCubeGameplayObject : BaseGameplayObject {
 	}
 
 	// Use this for initialization
-	void Start () {
+    public override void Start() {
+        base.Start();
+
 		collectSlidingFloor ();
 //		pushableFaces = new Face[]{Face.North, Face.West, Face.South, Face.East};
 	}

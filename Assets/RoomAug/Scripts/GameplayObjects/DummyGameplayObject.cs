@@ -5,13 +5,13 @@ using UnityEngine;
 public class DummyGameplayObject : BaseGameplayObject {
 
 	// Use this for initialization
-	void Start () {
-		
+    public override void Start() {
+        base.Start();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if( isServer && gameplayState == GameplayState.Started) {
+        if( !isClient && gameplayState == GameplayState.Started) {
 			//
 		}
 	}
