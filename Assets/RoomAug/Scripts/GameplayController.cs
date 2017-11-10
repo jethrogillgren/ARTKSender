@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -48,6 +47,10 @@ public class GameplayController : NetworkBehaviour {
 	public bool LoadWaterRoomInMainRoom () {
 		return isClient && unActivate (mainRoom) && activate (waterRoom, mainRoom);
 	}
+    public bool LoadRoomInMainRoom (GameplayRoom g) {
+        return isClient && unActivate (mainRoom) && activate (g, mainRoom);
+    }
+
 
 
 

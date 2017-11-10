@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Text;
 using UnityEngine.SceneManagement;
 
+//This is debug stuff that will be removed before release.  Client GUIs, 3DR mapping etc...
 public class DebugUtil : MonoBehaviour {
 
 
@@ -40,6 +41,7 @@ public class DebugUtil : MonoBehaviour {
 		ShoutPhysicalAndGameplayState ();
 
 	}
+
 	public void ShoutPhysicalAndGameplayState() {
 		StringBuilder builder = new StringBuilder ();
 		GameplayController gc = FindObjectOfType<GameplayController> ();
@@ -59,20 +61,36 @@ public class DebugUtil : MonoBehaviour {
 		AndroidHelper.ShowAndroidToastMessage ( builder.ToString() );
 	}
 
+    //Debug GUI is asking for either 3DR mapping to start, or it to be stopped and saved.
+    public void OnButtonCreate3DRToggleClick( bool active ) {
 
-	public void OnButtonToggleClick(bool newVal) {
-//		Debug.Log ("J# Turning Monkey towards" + GameObject.Find ("Earth") );
-//		FindObjectOfType<RoomAugPlayerController>().CmdWatchEarth ();
+        //the parameter given is stuck to true?!?!?!?!
+        bool actualActive = GameObject.Find( "Make3DR" ).GetComponent<UnityEngine.UI.Toggle>().isOn;
+        Util.JLog("3DR Toggle Button to: " + active + " but it lied it was actually " + actualActive );
 
-		FindObjectOfType<TangoPlayerApplicationController> ().debugSetOccludersVis (newVal);
-	}
+        TangoPlayerApplicationController tac = FindObjectOfType<TangoPlayerApplicationController>();
+
+        if( !actualActive ){
+            //We have something to save
+            if ( tac.m_dynamicMesh.enabled ) {
+                tac.DebugExport3DRMesh();//Save it
+            }
+        }
+
+        tac.DebugEnable3DR( actualActive );
+    }
+
+ //   //Either enable the meshes visibally, or make them occlude only.
+ //   public void OnButtonViewMeshToggleClick( bool active ) {
+	//	FindObjectOfType<TangoPlayerApplicationController> ().DebugSetOccludersVis (active);
+	//}
 
 	public void OnTeleportDropdownChange(string i) {
 		Util.JLog ("DROPDOWN "+ i);
 	}
 
 	public void OnButton2Click() {
-		Debug.Log("J# Button 3 - Locally disabling Monkey");
+		Util.JLog("J# Button 3 - Locally disabling Monkey");
 		GameObject.Find ("TestMonkey").SetActive (false);//local only?
 	}
 

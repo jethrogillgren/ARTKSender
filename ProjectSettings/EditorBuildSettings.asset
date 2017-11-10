@@ -65,7 +65,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CommonOnline.unity
     guid: 9f0204a1d35fe4d78bc523bb12ee0d57
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/ServerOnline.unity
     guid: 701e1e08df4c54b5592838a82de5e38d
   - enabled: 1

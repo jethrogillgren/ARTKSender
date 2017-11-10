@@ -22,9 +22,11 @@ GameObject:
   - component: {fileID: 114291506028156184}
   - component: {fileID: 114312274416013572}
   - component: {fileID: 114155730126441940}
+  - component: {fileID: 114786394857458616}
   - component: {fileID: 114624241431315110}
   - component: {fileID: 20509109457675096}
   - component: {fileID: 114220341599914530}
+  - component: {fileID: 65655855526954800}
   - component: {fileID: 114754439918924872}
   - component: {fileID: 114213900434377094}
   - component: {fileID: 114810059159830938}
@@ -304,9 +306,21 @@ BoxCollider:
   m_GameObject: {fileID: 1312484147660856}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &65655855526954800
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1150655410752992}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.2, y: 0.2, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!102 &102761475066329094
 TextMesh:
@@ -351,7 +365,7 @@ MonoBehaviour:
   m_enableAreaLearning: 0
   m_enableADFLoading: 0
   m_enableCloudADF: 0
-  m_enable3DReconstruction: 0
+  m_enable3DReconstruction: 1
   m_3drResolutionMeters: 0.05
   m_3drGenerateColor: 0
   m_3drGenerateNormal: 1
@@ -453,6 +467,7 @@ MonoBehaviour:
   m_tangoApplication: {fileID: 0}
   m_gameplayController: {fileID: 0}
   m_poseController: {fileID: 0}
+  m_dynamicMesh: {fileID: 0}
 --- !u!114 &114624241431315110
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -513,6 +528,19 @@ MonoBehaviour:
     i15: 177
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 1
+--- !u!114 &114786394857458616
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1150655410752992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6faac4c9c45314fb58ffce5a784ee707, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_enableDebugUI: 1
+  m_enableSelectiveMeshing: 0
 --- !u!114 &114810059159830938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -534,7 +562,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 1269536878397174}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
