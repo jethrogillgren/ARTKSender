@@ -30,7 +30,8 @@ public class GameplayController : NetworkBehaviour {
 
         //If we disabled while editing, undo that.  Then make them all appropiately visible for the start
         foreach ( GameplayRoom gr in m_gameplayRooms ) {
-            gr.enabled = true;
+            gr.gameObject.SetActive(true);
+            Debug.LogError("I Just set " + gr.roomName + " enabled: " + gr.enabled);
 
             //Servers have all scenes enabled and seperate cameras.  Clients only enable the current Phys/GPRooms
             gr.updateAllGameplayObjectsVisibility();
@@ -205,23 +206,24 @@ public class GameplayController : NetworkBehaviour {
 		collectHashSetOfComponents<BaseGameplayObject> (ref m_gameplayObjects);
 	}
 	public void collectPhysicalRooms() {
-		collectHashSetOfComponents<PhysicalRoom> (ref m_physicalRooms);
+		collectHashSetOfComponents<PhysicalRoom> (ref m_physicalRooms, true);
 
 	}
 	public void collectGameplayRooms() {
-		collectHashSetOfComponents<GameplayRoom> (ref m_gameplayRooms);
+		collectHashSetOfComponents<GameplayRoom> (ref m_gameplayRooms, true);
 	}
 	public void collectTeleportTriggers() {
-		collectHashSetOfComponents<TeleportDoorwayToggleTriggerGameplayObject> (ref m_teleportTriggers);
+		collectHashSetOfComponents<TeleportDoorwayToggleTriggerGameplayObject> ( ref m_teleportTriggers);
 	}
 
-	public void collectHashSetOfComponents<T>( ref HashSet<T> setToFill ) {
+	public void collectHashSetOfComponents<T>( ref HashSet<T> setToFill, bool inclDisabled = false ) {
 		if (setToFill == null)
 			setToFill = new HashSet<T>();
 		else
 			setToFill.Clear ();
 
-		T[] prs = FindObjectsOfType( typeof(T) ) as T[];
+        T[] prs = inclDisabled ?  Resources.FindObjectsOfTypeAll( typeof(T) ) as T[] :  FindObjectsOfType( typeof( T ) ) as T[] ;
+
 		foreach (T pr in prs) {
 			setToFill.Add (pr);
 		}

@@ -85,14 +85,16 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
         //GameplayState has first priority on setting enabled state.
         if ( gameplayState != GameplayState.Started )
             return;
-                                      
+        
         //Servers see evvveeerythiiiing.  If it knows it shouldn't be turned on, the server trusts that.
-        if ( !isClient ) {
+        //But if we are not Playing (ie we are editing) skip to the next bit
+        if ( !isClient && Application.isPlaying ) {
             gameObject.SetActive( true );
 			return;
 		}
 
         //Clients see their current room only.
+        //When editing we do this bit
 		PhysicalRoom pr = GetComponentInParent<PhysicalRoom>();
         if( pr )
 			gameObject.SetActive (true);
