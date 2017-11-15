@@ -48,8 +48,12 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 
     //If you exist in a GameplayRoom, you have to have that rooms layer otherwise the server don't cull you properly
     //gameobjects are allow to be roomless (global under physicalroom).
+    //occlusion gameplayobjects are exempt
     public void SetLayer( string roomName = "" ) {
-        
+
+        if ( GetType() == typeof(OcclusionGameplayObject) )
+            return;
+
         //If not specified, find our current parent
         if ( roomName == null || roomName.Length == 0 ) {
             GameplayRoom gr = GetComponentInParent<GameplayRoom>();
@@ -89,7 +93,6 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 
         //Server which is running
         if( Application.platform != RuntimePlatform.Android  &&  Application.isPlaying ) {
-            Debug.Log( name + " is being drawn on server because we are not a client and we are playing" );
             gameObject.SetActive( true );
 			return;
 

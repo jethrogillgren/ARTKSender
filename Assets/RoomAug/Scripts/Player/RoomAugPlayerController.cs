@@ -43,9 +43,9 @@ public class RoomAugPlayerController : NetworkBehaviour
 			Debug.Log ("J# Disabling TangoPoseController " + name + " on Server");
 			gameObject.GetComponent<TangoPoseController>().enabled = false;
 		}
-		if (gameObject.GetComponent<TangoPlayerApplicationController> () != null) {
+		if (gameObject.GetComponent<TangoApplicationController> () != null) {
 			Debug.Log ("J# Disabling Tango Player ApplicationController " + name + " on Server");
-			gameObject.GetComponent<TangoPlayerApplicationController>().enabled = false;
+			gameObject.GetComponent<TangoApplicationController>().enabled = false;
 		}
         if ( gameObject.GetComponent<TangoDynamicMesh>() != null ) {
             Debug.Log( "J# Disabling Tango DynamicMesh " + name + " on Server" );
@@ -76,4 +76,35 @@ public class RoomAugPlayerController : NetworkBehaviour
 		FindObjectOfType<WatcherGameplayObject>().m_LookTarget = GameObject.Find ("Earth");
 	}
 
+
+    //Either enable the mesh visibally, or make it occlude only.
+    [Command]
+    public void CmdSetOccludersVis( bool occluding ) {
+
+        foreach ( OcclusionGameplayObject occluder in FindObjectOfType<GameplayController>().getOcclusionGameplayObjects() ) {
+
+            if ( occluder.gameplayState == BaseGameplayObject.GameplayState.Started ) {
+                Debug.Log( "Server: Setting " + occluder.gameObject.name + " to Occluding: " + occluding );
+                occluder.setOcclusion( occluding );
+            } else {
+                Debug.Log( "Ignoring Occlusion toggle " + occluding + " as " + occluder.name + " is " + occluder.gameplayState );
+            }
+
+        }
+        //          Util.JLog("Setting Occluder: " + occluder.gameObject.name + " to " + occludingOnly);
+        //          if (occludingOnly) {//Make it invisible but occluding
+        //              RoomAugPlayerController p = GetComponent<RoomAugPlayerController>();
+        //              //occluder.setOcclusion( true );
+        //              //TODO this is doing the wrong thing
+        //              //occluder.gameplayState = BaseGameplayObject.GameplayState.Inactive;
+
+
+        //          } else { //Let's see it
+        //              occluder.gameObject.SetActive(false);
+        //              //occluder.gameplayState = BaseGameplayObject.GameplayState.Started;
+        //              //occluder.setOcclusion( false );
+        //          }
+
+        //}
+    }
 }

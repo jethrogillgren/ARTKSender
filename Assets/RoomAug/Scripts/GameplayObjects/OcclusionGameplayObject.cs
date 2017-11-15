@@ -16,7 +16,10 @@ public class OcclusionGameplayObject : BaseGameplayObject {
     public override void Start() {
         base.Start();
 
-		setOcclusion (false);
+        if( m_GameplayState == GameplayState.Started )
+		    setOcclusion (true);
+        else
+            setOcclusion( false );
 	}
 
 	// Update is called once per frame
@@ -29,7 +32,7 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 	//Used to disable occulusion while running.  You can also just set GameplayState to Inactive, which os cheaper and more clear.
 	public void setOcclusion( bool turnOn ) {
 
-		//Turn occluson on, making the pject invisible but blocking further back objects
+		//Turn occluson on, making the object invisible but blocking further back objects
 		if (turnOn  &&  m_depthMaskMat != null) {
 			Util.JLog ("Turning " + name + "'s Occlusion On");
 

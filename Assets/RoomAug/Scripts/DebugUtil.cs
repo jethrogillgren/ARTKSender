@@ -20,7 +20,7 @@ public class DebugUtil : MonoBehaviour {
 
         GameObject[] objs = (GameObject[]) Object.FindObjectsOfType(typeof(GameObject));
 		foreach (GameObject g in objs) {
-            builder.AppendLine (g.name );
+            builder.AppendLine (g.name + " " + LayerMask.LayerToName( g.layer) );
 
 		}
 
@@ -69,10 +69,9 @@ public class DebugUtil : MonoBehaviour {
     public void OnButtonCreate3DRToggleClick( bool active ) {
 
         //the parameter given is stuck to true?!?!?!?!
-        bool actualActive = GameObject.Find( "Make3DR" ).GetComponent<UnityEngine.UI.Toggle>().isOn;
-        Util.JLog("3DR Toggle Button to: " + active + " but it lied it was actually " + actualActive );
+        bool actualActive = getActualToggleBoxParam( "Make3DR" );
 
-        TangoPlayerApplicationController tac = FindObjectOfType<TangoPlayerApplicationController>();
+        TangoApplicationController tac = FindObjectOfType<TangoApplicationController>();
 
         if( !actualActive ){
             //We have something to save
@@ -84,10 +83,19 @@ public class DebugUtil : MonoBehaviour {
         tac.DebugEnable3DR( actualActive );
     }
 
- //   //Either enable the meshes visibally, or make them occlude only.
- //   public void OnButtonViewMeshToggleClick( bool active ) {
-	//	FindObjectOfType<TangoPlayerApplicationController> ().DebugSetOccludersVis (active);
-	//}
+    private bool getActualToggleBoxParam(string gameobjectName) {
+        return GameObject.Find( gameobjectName ).GetComponent<UnityEngine.UI.Toggle>().isOn;
+    }
+
+    //Either enable the meshes visibally, or make them occlude only.
+    public void OnButtonViewMeshToggleClick( bool active ) {
+        bool actualActive = getActualToggleBoxParam( "ToggleMeshView" );
+
+        Debug.Log("OnButtonViewMeshToggleClick: " + actualActive );
+        //FindObjectOfType<RoomAugPlayerController> ().CmdSetOccludersVis (actualActive);//Request on server
+        FindObjectOfType<TangoApplicationController>().DebugSetOccludersVis( !actualActive );//Request on server
+
+	}
 
 	public void OnTeleportDropdownChange(string i) {
 		Util.JLog ("DROPDOWN "+ i);
