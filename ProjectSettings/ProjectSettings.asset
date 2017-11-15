@@ -148,7 +148,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: InbetweenRealities.RoomAug
+    Android: InbetweenRealities.RoomAug.TangoTests
     Standalone: com.InbetweenRealities.RoomAug.TangoTests
     Tizen: com.projecttango.unityexamples
     iOS: com.projecttango.unityexamples

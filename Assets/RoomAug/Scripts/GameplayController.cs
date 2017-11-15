@@ -30,8 +30,10 @@ public class GameplayController : NetworkBehaviour {
 
         //If we disabled while editing, undo that.  Then make them all appropiately visible for the start
         foreach ( GameplayRoom gr in m_gameplayRooms ) {
-            gr.gameObject.SetActive(true);
-            Debug.LogError("I Just set " + gr.roomName + " enabled: " + gr.enabled);
+            if ( !gr.enabled ) {
+                gr.gameObject.SetActive( true );
+                Debug.Log( "I Just set Room: " + gr.roomName + " enabled: " + gr.enabled );
+            }
 
             //Servers have all scenes enabled and seperate cameras.  Clients only enable the current Phys/GPRooms
             gr.updateAllGameplayObjectsVisibility();

@@ -13,12 +13,14 @@ public class DebugUtil : MonoBehaviour {
 	//Debug something to the screen
 	public void OnButtonShoutClick()
 	{
-		//		string ret = " Current Pose Position.  World: " + Camera.main.transform.position + "   local:" + Camera.main.transform.localPosition;
-		StringBuilder builder = new StringBuilder ();
+        //		string ret = " Current Pose Position.  World: " + Camera.main.transform.position + "   local:" + Camera.main.transform.localPosition;
+#pragma warning disable XS0001 // Find APIs marked as TODO in Mono
+        StringBuilder builder = new StringBuilder ();
+#pragma warning restore XS0001 // Find APIs marked as TODO in Mono
 
-		GameObject[] objs = (GameObject[]) GameObject.FindObjectsOfType(typeof(GameObject));
+        GameObject[] objs = (GameObject[]) Object.FindObjectsOfType(typeof(GameObject));
 		foreach (GameObject g in objs) {
-			builder.AppendLine (g.name + " - " + (g.activeInHierarchy == true ? "Active in Hierachy" : "Disabled in Hierachy") + " - " + (g.activeSelf == true ? "Active" : "Disabled") );
+            builder.AppendLine (g.name );
 
 		}
 
@@ -43,8 +45,10 @@ public class DebugUtil : MonoBehaviour {
 	}
 
 	public void ShoutPhysicalAndGameplayState() {
-		StringBuilder builder = new StringBuilder ();
-		GameplayController gc = FindObjectOfType<GameplayController> ();
+#pragma warning disable XS0001 // Find APIs marked as TODO in Mono
+        StringBuilder builder = new StringBuilder ();
+#pragma warning restore XS0001 // Find APIs marked as TODO in Mono
+        GameplayController gc = FindObjectOfType<GameplayController> ();
 
 		foreach (GameplayRoom gr in gc.m_gameplayRooms) {
 			if (gr.physicalRoom == null) {

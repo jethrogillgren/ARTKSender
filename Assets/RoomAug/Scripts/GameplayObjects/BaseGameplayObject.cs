@@ -31,16 +31,7 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 				
 				m_GameplayState = value;
 				Util.JLog ("Setting " + gameObject.name + " to " + m_GameplayState);
-
-				if (m_GameplayState == GameplayState.Inactive) {
-					gameObject.SetActive (false);
-				} else if (m_GameplayState == GameplayState.Started) {
-					gameObject.SetActive (true);
-				} else if (m_GameplayState == GameplayState.Finished) {
-					gameObject.SetActive (false);
-				} else {
-					Util.JLogErr ("Trying to set " + name + "'s GameplayState to " + value.ToString ());
-				}
+                updateVisibility();
 
 			}
 		}
@@ -80,26 +71,43 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
         }
     }
 
-	//Called to enable or disable this GameplayObject depending on wether it currently exsts in the clients view of the world
+	//Called to enable or disable this GameplayObject depending on wether it currently exsts in the client/servers/editors view of the world.
     public virtual void updateVisibility() {
+        //Debug.Log("_");
         //GameplayState has first priority on setting enabled state.
-        if ( gameplayState != GameplayState.Started )
+
+
+        if ( gameplayState != GameplayState.Started ) {
+            gameObject.SetActive( false );
             return;
-        
+        }
+
         //Servers see evvveeerythiiiing.  If it knows it shouldn't be turned on, the server trusts that.
         //But if we are not Playing (ie we are editing) skip to the next bit
-        if ( !isClient && Application.isPlaying ) {
+        //if ( !isClient && Application.isPlaying ) {
+
+
+        //Server which is running
+        if( Application.platform != RuntimePlatform.Android  &&  Application.isPlaying ) {
+            Debug.Log( name + " is being drawn on server because we are not a client and we are playing" );
             gameObject.SetActive( true );
 			return;
-		}
 
-        //Clients see their current room only.
-        //When editing we do this bit
-		PhysicalRoom pr = GetComponentInParent<PhysicalRoom>();
-        if( pr )
-			gameObject.SetActive (true);
-		else 
-			gameObject.SetActive (false);
+            //Android, or the Unity Editor while editing
+        } else if ( Application.platform == RuntimePlatform.Android  || 
+                   (Application.platform != RuntimePlatform.Android && !Application.isPlaying)  ) {
+            //Debug.Log(name + " might not being drawn because:  " + isClient + " " + Application.isPlaying );
+            //Clients see their current room only.
+            //When editing we do this bit
+            PhysicalRoom pr = GetComponentInParent<PhysicalRoom>();
+            if ( pr )
+                gameObject.SetActive( true );
+            else
+                gameObject.SetActive( false );
+        }
+        //Debug.Log( "-" );
+
+
 	}
 
 //	public abstract void test(); //Must be implemented
