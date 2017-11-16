@@ -77,7 +77,6 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 
 	//Called to enable or disable this GameplayObject depending on wether it currently exsts in the client/servers/editors view of the world.
     public virtual void updateVisibility() {
-        //Debug.Log("_");
         //GameplayState has first priority on setting enabled state.
 
 

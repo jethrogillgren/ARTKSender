@@ -17,6 +17,7 @@ public class RoomAugNetworkController : MonoBehaviour {
 		} else {
 			Debug.LogError ("J# RoomAugNetworkController Unknown Platform - not Initialising/");
 		}
+
 	}
 	
 	void OnDestroy() {

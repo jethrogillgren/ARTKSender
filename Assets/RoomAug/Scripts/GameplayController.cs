@@ -17,6 +17,8 @@ public class GameplayController : NetworkBehaviour {
 	public GameplayRoom fireRoom;
 	public GameplayRoom waterRoom;
 
+    private bool firstUpdate = true;
+
 
 //	public GameplayRoom m_extraGameplayRoom;//TODO - hardcoding in a 2/3 Room Toggle Teleport... add in Mesh n room!
 //	public PhysicalRoom m_currentPhysicalRoom; //TODO initialization?
@@ -28,20 +30,37 @@ public class GameplayController : NetworkBehaviour {
 		collectGameplayRooms ();
 		collectTeleportTriggers ();
 
+
         //If we disabled while editing, undo that.  Then make them all appropiately visible for the start
         foreach ( GameplayRoom gr in m_gameplayRooms ) {
+
             if ( !gr.enabled ) {
                 gr.gameObject.SetActive( true );
                 Debug.Log( "I Just set Room: " + gr.roomName + " enabled: " + gr.enabled );
             }
 
             //Servers have all scenes enabled and seperate cameras.  Clients only enable the current Phys/GPRooms
+            gr.registerAnyParentPhysicalRoom();
             gr.updateAllGameplayObjectsVisibility();
             gr.SetAppropiateLayers();
+
         }
 
 
+
 	}
+
+    public void Update() {
+
+        if ( firstUpdate ) {
+            foreach ( GameplayRoom gr in m_gameplayRooms ) {
+                gr.registerAnyParentPhysicalRoom();
+                gr.updateAllGameplayObjectsVisibility();
+                gr.SetAppropiateLayers();
+            }
+            firstUpdate = false;
+        }
+    }
 
 
 	//Util Teleport functions.  Assume a room is loaded already.

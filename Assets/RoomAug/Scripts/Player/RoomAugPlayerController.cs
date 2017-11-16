@@ -24,32 +24,44 @@ public class RoomAugPlayerController : NetworkBehaviour
 		GetComponentInChildren<TextMesh>().text = name;
 	}
 
-	//This is invoked for NetworkBehaviour objects when they become active on the server.
-	public override void OnStartServer() {
+    //This is invoked for NetworkBehaviour objects when they become active on the server.
+    public override void OnStartServer() {
+        SetTangoHardwareSpecific( false );
+    }
+
+    public void SetTangoHardwareSpecific(bool enable) {
 
 		if (gameObject.GetComponent<Camera> () != null) {
 			Debug.Log ("J# Disabling Camera " + name + " on Server");
-			gameObject.GetComponent<Camera> ().enabled = false;
+            gameObject.GetComponent<Camera> ().enabled = enable;
 		}
 		if (gameObject.GetComponent<Tango.TangoApplication> () != null) {
 			Debug.Log ("J# Disabling TangoApplication " + name + " on Server");
-			gameObject.GetComponent<Tango.TangoUx>().enabled = false;
+            gameObject.GetComponent<Tango.TangoUx>().enabled = enable;
 		}
 		if (gameObject.GetComponent<Tango.TangoUx> () != null) {
 			Debug.Log ("J# Disabling TangoUx " + name + " on Server");
-			gameObject.GetComponent<Tango.TangoUx>().enabled = false;
+            gameObject.GetComponent<Tango.TangoUx>().enabled = enable;
 		}
 		if (gameObject.GetComponent<TangoPoseController> () != null) {
 			Debug.Log ("J# Disabling TangoPoseController " + name + " on Server");
-			gameObject.GetComponent<TangoPoseController>().enabled = false;
+            gameObject.GetComponent<TangoPoseController>().enabled = enable;
 		}
+        if ( gameObject.GetComponent<TangoARPoseController>() != null ) {
+            Debug.Log( "J# Disabling Tango ARPose Controller " + name + " on Server" );
+            gameObject.GetComponent<TangoARPoseController>().enabled = enable;
+        }
 		if (gameObject.GetComponent<TangoApplicationController> () != null) {
 			Debug.Log ("J# Disabling Tango Player ApplicationController " + name + " on Server");
-			gameObject.GetComponent<TangoApplicationController>().enabled = false;
+            gameObject.GetComponent<TangoApplicationController>().enabled = enable;
 		}
         if ( gameObject.GetComponent<TangoDynamicMesh>() != null ) {
             Debug.Log( "J# Disabling Tango DynamicMesh " + name + " on Server" );
-            gameObject.GetComponent<TangoDynamicMesh>().enabled = false;
+            gameObject.GetComponent<TangoDynamicMesh>().enabled = enable;
+        }
+        if ( gameObject.GetComponent<TangoARScreen>() != null ) {
+            Debug.Log( "J# Disabling Tango AR Screen  " + name + " on Server" );
+            gameObject.GetComponent<TangoARScreen>().enabled = enable;
         }
 
 	}
@@ -67,9 +79,12 @@ public class RoomAugPlayerController : NetworkBehaviour
 	//This happens after OnStartClient(), as it is triggered by an ownership message from the server.
 	//This is an appropriate place to activate components or functionality that should only be active
 	//for the local player, such as cameras and input.
-	public void OnStartLocalPlayer() {
-		
-	}
+	//public override void OnStartLocalPlayer() {
+        //If Tango
+        //SetTangoHardwareSpecific(true);  Not needed atm
+
+        //else If Anything else.. eg hololens
+	//}
 
 	[Command]
 	public void CmdWatchEarth() {

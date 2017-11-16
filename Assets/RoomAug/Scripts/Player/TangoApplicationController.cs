@@ -73,52 +73,67 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle {
         }
     }
 
+    public bool LoadADFFromDevice() {
+        AreaDescription[] list = AreaDescription.GetList();
 
+        Util.JLog( " There are " + ( list == null ? 0 : list.Length ) + " Area Descriptions Available: ", true );
+        if( list != null && list.Length != 0 )
+            Util.JLogArrErr( list, x => x.GetMetadata().m_name, true );
 
+        if ( list != null && list.Length != 0 ) {
+
+            // Find our area Description
+            foreach ( AreaDescription areaDescription in list ) {
+                AreaDescription.Metadata metadata = areaDescription.GetMetadata();
+
+                if ( metadata.m_name == m_areaDescriptionName ) {
+                    m_areaDescription = areaDescription;
+
+                    m_tangoApplication.Startup( m_areaDescription );
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     public void OnTangoPermissions( bool permissionsGranted ) {
         if ( permissionsGranted ) {
             state.setPermitted();
-            AreaDescription[] list = AreaDescription.GetList();
 
-            Util.JLog( " There are " + ( list == null ? 0 : list.Length ) + " Area Descriptions Available: " );
+            //Try to load the ADF, but if it fails we try alternatives
+            if ( !LoadADFFromDevice() ) {
 
-            if ( list != null && list.Length != 0 ) {
+                //We should only waste time installing a new ADF the first time we see it in the APK.
+                Util.JLogErr( "No AreaDescription Found matching " + m_areaDescriptionName + " on Device.  Loading in " + System.IO.Path.Combine( Application.streamingAssetsPath, m_areaDescriptionName + ".adf" ) + " from the APK." );
 
-                // Find our area Description.  They are by default enabled on tango.
-                foreach ( AreaDescription areaDescription in list ) {
-                    AreaDescription.Metadata metadata = areaDescription.GetMetadata();
-
-                    if ( metadata.m_name == m_areaDescriptionName ) {
-                        m_areaDescription = areaDescription;
-
-                        m_tangoApplication.Startup( m_areaDescription );
+                if ( AreaDescription.ImportFromFile( System.IO.Path.Combine( Application.streamingAssetsPath, m_areaDescriptionName + ".adf" ) ) ) {
+                    Util.JLog( "Imported new ADF file from the APK! " + m_areaDescriptionName, true );
+                    if ( LoadADFFromDevice() )
                         return;
-                    }
+                    else
+                        Util.JLogErr("Failed to load the APK ADF", true);
+
+                    //No ADF on Device or APK... time to give up and accept horrendous drift?
                 }
 
-                if ( m_areaDescription == null ) {
-                    Util.JLogErr( "No AreaDescription Found matching " + m_areaDescriptionName + "   Starting without one" );
-                    m_tangoApplication.Startup( null );
-                    state.MoveNext( Command.Localise );
-                }
-
-            } else {
-                // No Area Descriptions available.
-                Util.JLogErr( "No area descriptions available.  Starting without one in Drift corrected Motion tracking mode." );
+                Util.JLogErr( "No area descriptions available.  Starting without one in Drift corrected Motion tracking mode.", true );
                 m_tangoApplication.EnableAreaDescriptions = false;
                 m_tangoApplication.EnableMotionTracking = true;
                 m_tangoApplication.EnableDriftCorrection = true;
 
                 m_tangoApplication.Startup( null );
                 state.MoveNext( Command.Localise );
+
             }
         } else {
-            AndroidHelper.ShowAndroidToastMessage( "Motion Tracking and Area Learning Permissions Needed" );
+            Util.JLogErr( "Motion Tracking and Area Learning Permissions Needed", true );
             state.MoveNext( Command.Exit );
             Application.Quit();
         }
     }
+
 
     public void OnTangoServiceConnected() {
         Util.JLog( " Tango Service Connected" );
