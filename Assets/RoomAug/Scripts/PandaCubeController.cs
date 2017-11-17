@@ -53,6 +53,13 @@ public class PandaCubeController : NetworkBehaviour {
         GetCube( marker ).SetMarker(marker);
     }
 
+	//Recieve IMU from Cubes
+	public void RecieveCube() {
+		//TODO
+
+		//TODO sensible bounds checking (did it just teleport across the map in the last ms?)
+	}
+
 
 
     private PandaCubeGameplayObject GetCube( TangoSupport.Marker marker ) {

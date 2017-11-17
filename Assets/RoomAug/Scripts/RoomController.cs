@@ -2,7 +2,8 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class GameplayController : NetworkBehaviour {
+//Room Controller.  Knows all about room 
+public class RoomController : NetworkBehaviour {
 
 	public HashSet<BaseGameplayObject> m_gameplayObjects;
 	public HashSet<PhysicalRoom> m_physicalRooms;
@@ -25,7 +26,7 @@ public class GameplayController : NetworkBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		collectGameplayObjects ();
+		Util.collectGameplayObjects (ref m_gameplayObjects);
 		collectPhysicalRooms ();
 		collectGameplayRooms ();
 		collectTeleportTriggers ();
@@ -178,7 +179,7 @@ public class GameplayController : NetworkBehaviour {
 
 		if (m_gameplayObjects == null || m_gameplayObjects.Count <= 0) {
 			Util.JLog ("Asked to get Gameplay Objects by state, but there are " +  (m_gameplayObjects == null ? "NULL" : m_gameplayObjects.Count.ToString()) + " stored");
-			collectGameplayObjects ();
+			Util.collectGameplayObjects (ref m_gameplayObjects);
 		}
 
 		foreach(BaseGameplayObject g in m_gameplayObjects) {
@@ -227,12 +228,8 @@ public class GameplayController : NetworkBehaviour {
 
 
 	//Collecting Objects
-	public void collectGameplayObjects() {
-		Util.collectHashSetOfComponents<BaseGameplayObject> (ref m_gameplayObjects);
-	}
 	public void collectPhysicalRooms() {
 		Util.collectHashSetOfComponents<PhysicalRoom> (ref m_physicalRooms, true);
-
 	}
 	public void collectGameplayRooms() {
 		Util.collectHashSetOfComponents<GameplayRoom> (ref m_gameplayRooms, true);

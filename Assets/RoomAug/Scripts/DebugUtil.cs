@@ -31,7 +31,7 @@ public class DebugUtil : MonoBehaviour {
 
 	//TEMP assumes 1 physicalroom
 	public void OnSwapRoomButtonClick() {
-		GameplayController gc = FindObjectOfType<GameplayController> ();
+		RoomController gc = FindObjectOfType<RoomController> ();
 
 
 		GameplayRoom newRoom = null;
@@ -48,7 +48,7 @@ public class DebugUtil : MonoBehaviour {
 #pragma warning disable XS0001 // Find APIs marked as TODO in Mono
         StringBuilder builder = new StringBuilder ();
 #pragma warning restore XS0001 // Find APIs marked as TODO in Mono
-        GameplayController gc = FindObjectOfType<GameplayController> ();
+        RoomController gc = FindObjectOfType<RoomController> ();
 
 		foreach (GameplayRoom gr in gc.m_gameplayRooms) {
 			if (gr.physicalRoom == null) {
@@ -107,19 +107,19 @@ public class DebugUtil : MonoBehaviour {
 	}
 
 	public void OnEarthTeleport() {
-		FindObjectOfType<GameplayController> ().LoadEarthRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().LoadEarthRoomInMainRoom ();
 	}
 	public void OnWoodTeleport() {
-		FindObjectOfType<GameplayController> ().LoadWoodRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().LoadWoodRoomInMainRoom ();
 	}
 	public void OnMetalTeleport() {
-		FindObjectOfType<GameplayController> ().LoadMetalRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().LoadMetalRoomInMainRoom ();
 	}
 	public void OnFireTeleport() {
-		FindObjectOfType<GameplayController> ().LoadFireRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().LoadFireRoomInMainRoom ();
 	}
 	public void OnWaterTeleport() {
-		FindObjectOfType<GameplayController> ().LoadWaterRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().LoadWaterRoomInMainRoom ();
 	}
 
 }

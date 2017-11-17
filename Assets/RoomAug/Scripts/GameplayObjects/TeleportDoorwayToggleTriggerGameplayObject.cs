@@ -8,7 +8,7 @@ public class TeleportDoorwayToggleTriggerGameplayObject : BaseGameplayObject {
 	public GameObject m_playerCollider;
 	public bool m_originalSide = true; //True means we are behind the BLue Forward line of the teleport to start, in physical space
 
-	public GameplayController gameplayController;
+	public RoomController roomController;
 	public PhysicalRoom originalRoom;
 	public PhysicalRoom otherRoom; //If null, gameplaycontroller decides what is linked next
 
@@ -43,19 +43,19 @@ public class TeleportDoorwayToggleTriggerGameplayObject : BaseGameplayObject {
 //
 //			if( m_originalSide && angle < 90) {//Forward to Otherside
 //				Util.JLog ("Passing Forward ");
-//				gameplayController.teleportTriggered (this, originalRoom, otherRoom );
+//				roomController.teleportTriggered (this, originalRoom, otherRoom );
 //
 //			} else if ( !m_originalSide && angle > 90 ) {//Forward to OriginalSide
 //				Util.JLog ("Returning Forward ");
-//				gameplayController.teleportTriggered (this,  otherRoom, originalRoom);
+//				roomController.teleportTriggered (this,  otherRoom, originalRoom);
 //
 //			} else if (m_originalSide) {//Backwards to Otherside
 //				Util.JLog ("Passing Backwards!");
-//				gameplayController.teleportTriggered (this, originalRoom, otherRoom, true );
+//				roomController.teleportTriggered (this, originalRoom, otherRoom, true );
 //
 //			} else if (!m_originalSide) {//Backwards to OriginalSide
 //				Util.JLog ("Returning Backwards!");
-//				gameplayController.teleportTriggered (this,  otherRoom, originalRoom, true);
+//				roomController.teleportTriggered (this,  otherRoom, originalRoom, true);
 //
 //			}
 //

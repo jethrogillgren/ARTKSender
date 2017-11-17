@@ -103,7 +103,7 @@ public class RoomAugPlayerController : NetworkBehaviour
     [Command]
     public void CmdSetOccludersVis( bool occluding ) {
 
-        foreach ( OcclusionGameplayObject occluder in FindObjectOfType<GameplayController>().getOcclusionGameplayObjects() ) {
+        foreach ( OcclusionGameplayObject occluder in FindObjectOfType<RoomController>().getOcclusionGameplayObjects() ) {
 
             if ( occluder.gameplayState == BaseGameplayObject.GameplayState.Started ) {
                 Debug.Log( "Server: Setting " + occluder.gameObject.name + " to Occluding: " + occluding );

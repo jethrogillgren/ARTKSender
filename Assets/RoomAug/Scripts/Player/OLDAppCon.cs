@@ -33,7 +33,7 @@ public class OLDAppCon : MonoBehaviour, ITangoLifecycle, ITangoEvent, ITangoPose
 	public TrackOtherObject m_temp;
 
 	private ApplicationStateMachine state;
-	private GameplayController m_gameplayController;
+	private RoomController m_roomController;
 //	private ADFMeshUtil adfMeshUtil;
 	private GameObject m_areaMesh;
 	private GameObject m_meshFromFile;	// The loaded mesh reconstructed from the serialized AreaDescriptionMesh file.
@@ -58,7 +58,7 @@ public class OLDAppCon : MonoBehaviour, ITangoLifecycle, ITangoEvent, ITangoPose
 		m_poseController = FindObjectOfType<TangoARPoseController>();
 		m_tangoApplication = FindObjectOfType<TangoApplication>();
 		m_dynamicMesh = FindObjectOfType<TangoDynamicMesh>();
-		m_gameplayController = FindObjectOfType<GameplayController>();
+		m_roomController = FindObjectOfType<RoomController>();
 
 //		adfMeshUtil = new ADFMeshUtil ();
 
@@ -152,7 +152,7 @@ public class OLDAppCon : MonoBehaviour, ITangoLifecycle, ITangoEvent, ITangoPose
 			tmp.m_depthMaskMat = m_depthMaskMat;
 			tmp.gameplayState = OcclusionGameplayObject.GameplayState.Started;
 			tmp.m_IsDecorationOnly = true;
-			m_gameplayController.addGameplayObject (tmp);
+			m_roomController.addGameplayObject (tmp);
 			tmp.setOcclusion (true);	
 			
 			JLog ("Created the Area Mesh Programatically OK:  " + m_areaMesh.name + "  as an occluder: " + m_areaMesh.GetComponent<OcclusionGameplayObject>().gameplayState );
@@ -462,7 +462,7 @@ public class OLDAppCon : MonoBehaviour, ITangoLifecycle, ITangoEvent, ITangoPose
 	//Called by Canvas Checkbox
 	public void OnMeshViewToggle(bool newVal)
 	{
-		foreach (OcclusionGameplayObject occluder in m_gameplayController.getOcclusionGameplayObjects() ){
+		foreach (OcclusionGameplayObject occluder in m_roomController.getOcclusionGameplayObjects() ){
 			occluder.setOcclusion (!newVal);
 			JLog ("Set GameplayObject " + occluder.gameObject.name + " to occlusion=" + !newVal);
 		}

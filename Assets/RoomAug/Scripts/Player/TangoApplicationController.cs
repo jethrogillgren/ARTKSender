@@ -21,7 +21,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
     [HideInInspector]
     public TangoApplication m_tangoApplication;
     [HideInInspector]
-    public GameplayController m_gameplayController;
+    public RoomController m_gameplayController;
     [HideInInspector]
     public TangoARPoseController m_poseController;
     [HideInInspector]
@@ -55,7 +55,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
         m_markerList = new List<TangoSupport.Marker>();
 
         m_tangoApplication = FindObjectOfType<TangoApplication>();
-        m_gameplayController = FindObjectOfType<GameplayController>();
+        m_gameplayController = FindObjectOfType<RoomController>();
         m_poseController = FindObjectOfType<TangoARPoseController>();
         m_roomAugPlayerController = GetComponent<RoomAugPlayerController>();
 

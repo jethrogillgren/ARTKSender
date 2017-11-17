@@ -6,6 +6,15 @@ using System;
 
 public static class Util  {
 
+	public static BaseGameplayObject[] getGameplayObjects(bool inclDisabled = false) {
+		return (inclDisabled ? Resources.FindObjectsOfTypeAll( typeof( BaseGameplayObject ) ) as BaseGameplayObject[]
+			: UnityEngine.Object.FindObjectsOfType( typeof( BaseGameplayObject ) ) as BaseGameplayObject[]);
+	}
+
+	public static void collectGameplayObjects(ref HashSet<BaseGameplayObject> m_gameplayObjects) {
+		collectHashSetOfComponents<BaseGameplayObject> (ref m_gameplayObjects);
+	}
+
     public static void collectHashSetOfComponents<T>( ref HashSet<T> setToFill, bool inclDisabled = false ) {
         if ( setToFill == null )
             setToFill = new HashSet<T>();

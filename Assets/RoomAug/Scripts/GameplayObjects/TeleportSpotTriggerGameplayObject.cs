@@ -7,14 +7,14 @@ public class TeleportSpotTriggerGameplayObject : BaseGameplayObject {
     public GameplayRoom targetGameplayRoom;
 
     //private GameObject m_playerCollider;
-    private GameplayController gameplayController;
+    private RoomController roomController;
     private PhysicalRoom physicalRoom;
 
 	// Use this for initialization
     public override void Start() {
         base.Start();
 
-        gameplayController = FindObjectOfType<GameplayController>();
+        roomController = FindObjectOfType<RoomController>();
         physicalRoom = GetComponentInParent<PhysicalRoom>();
 
         if( !targetGameplayRoom) {
@@ -34,7 +34,7 @@ public class TeleportSpotTriggerGameplayObject : BaseGameplayObject {
             RoomAugPlayerController player = FindObjectOfType<RoomAugPlayerController>();
             if( collision.name == player.GetComponent<Collider>().name ) {
                 Util.JLog( name + " Triggering teleport for " + collision.name );
-                gameplayController.LoadRoomInMainRoom(targetGameplayRoom);
+                roomController.LoadRoomInMainRoom(targetGameplayRoom);
             }
 
         } else {

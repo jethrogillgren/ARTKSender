@@ -5,16 +5,15 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(GameplayController))] 
-public class GameplayControllerEditor : Editor {
+[CustomEditor(typeof(RoomController))] 
+public class RoomControllerEditor : Editor {
 
-	public override void OnInspectorGUI()
-	{
-		GameplayController gc = (GameplayController)target;
+	public override void OnInspectorGUI() {
+		RoomController gc = (RoomController)target;
 		if (gc == null)
 			return;
 
-		gc.collectGameplayObjects ();
+		Util.collectGameplayObjects (ref gc.m_gameplayObjects);
 		EditorGUILayout.LabelField("Gameplay Objects", gc.m_gameplayObjects == null ? "0" : gc.m_gameplayObjects.Count.ToString() );
 
 		gc.collectPhysicalRooms ();

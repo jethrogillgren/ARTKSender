@@ -34,7 +34,7 @@ public class UIDropdown : NetworkBehaviour {
 
         m_dropdown.onValueChanged.AddListener(delegate {
 			Util.JLogErr("Teleporting Into: " + m_dropdown.options[m_dropdown.value].text + " | Item: " + m_dropdown.value);
-			GameplayController gc = FindObjectOfType<GameplayController> ();
+			RoomController gc = FindObjectOfType<RoomController> ();
 			gc.unActivate(gc.m_physicalRooms.FirstOrDefault());
 			gc.activate( (GameplayRoom) gc.getRoomByName(m_dropdown.options[m_dropdown.value].text), gc.m_physicalRooms.FirstOrDefault() );
         });
