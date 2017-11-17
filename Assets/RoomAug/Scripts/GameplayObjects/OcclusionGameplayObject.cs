@@ -29,6 +29,11 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 //		}
 	}
 
+	public override void SetLayer( string roomName = "" ) {
+		//Do nothing, we don't want to change Occlusion layers
+	}
+		
+
 	//Used to disable occulusion while running.  You can also just set GameplayState to Inactive, which os cheaper and more clear.
 	public void setOcclusion( bool turnOn ) {
 

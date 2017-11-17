@@ -31,7 +31,7 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 				
 				m_GameplayState = value;
 				Util.JLog ("Setting " + gameObject.name + " to " + m_GameplayState);
-                updateVisibility();
+                UpdateVisibility();
 
 			}
 		}
@@ -42,17 +42,19 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 
     //Can be implemented.  (abstract must be).  All implementers must call base.start();
     public virtual void Start() {
-        updateVisibility();
+        UpdateAll();
+    }
+
+	//Update my state, for when rooms change
+    public virtual void UpdateAll() {
+        UpdateVisibility();
         SetLayer();
     }
 
     //If you exist in a GameplayRoom, you have to have that rooms layer otherwise the server don't cull you properly
     //gameobjects are allow to be roomless (global under physicalroom).
     //occlusion gameplayobjects are exempt
-    public void SetLayer( string roomName = "" ) {
-
-        if ( GetType() == typeof(OcclusionGameplayObject) )
-            return;
+    public virtual void SetLayer( string roomName = "" ) {
 
         //If not specified, find our current parent
         if ( roomName == null || roomName.Length == 0 ) {
@@ -68,17 +70,19 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 
     //Includes all non-GameplayObject children
     public void SetLayerRecursively( GameObject obj, int newLayer  ) {
-        obj.layer = newLayer;
+		if (newLayer < 0 || newLayer > 100)
+			return;
+		
+		obj.layer = newLayer;
 
-        foreach ( Transform child in obj.transform ) {
-            SetLayerRecursively( child.gameObject, newLayer );
-        }
+		foreach (Transform child in obj.transform) {
+			SetLayerRecursively (child.gameObject, newLayer);
+		}
     }
 
 	//Called to enable or disable this GameplayObject depending on wether it currently exsts in the client/servers/editors view of the world.
-    public virtual void updateVisibility() {
+    public virtual void UpdateVisibility() {
         //GameplayState has first priority on setting enabled state.
-
 
         if ( gameplayState != GameplayState.Started ) {
             gameObject.SetActive( false );

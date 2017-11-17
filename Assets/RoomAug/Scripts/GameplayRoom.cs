@@ -31,16 +31,27 @@ public class GameplayRoom : NetworkBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		registerAnyParentPhysicalRoom ();
+        UpdateAll();
 	}
 
-	public void registerAnyParentPhysicalRoom() {
+	//Update my state, for when rooms change
+    public virtual void UpdateAll(){
+        RegisterAnyParentPhysicalRoom();
+		UpdateAllAllGameplayObjects ();
+    }
+
+	public void RegisterAnyParentPhysicalRoom() {
 		physicalRoom  = GetComponentInParent<PhysicalRoom> (); //TODO check depth
 	}
 
-	public void updateAllGameplayObjectsVisibility() {
+	public void UpdateAllAllGameplayObjects() {
 		foreach (BaseGameplayObject o in GetComponentsInChildren<BaseGameplayObject> (true)) {
-			o.updateVisibility ();
+			o.UpdateAll ();
+		}
+	}
+	public void UpdateAllGameplayObjectsVisibility() {
+		foreach (BaseGameplayObject o in GetComponentsInChildren<BaseGameplayObject> (true)) {
+			o.UpdateVisibility ();
 		}
 	}
     public void SetAppropiateLayers() {

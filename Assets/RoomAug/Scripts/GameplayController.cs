@@ -40,8 +40,8 @@ public class GameplayController : NetworkBehaviour {
             }
 
             //Servers have all scenes enabled and seperate cameras.  Clients only enable the current Phys/GPRooms
-            gr.registerAnyParentPhysicalRoom();
-            gr.updateAllGameplayObjectsVisibility();
+            gr.RegisterAnyParentPhysicalRoom();
+            gr.UpdateAllGameplayObjectsVisibility();
             gr.SetAppropiateLayers();
 
         }
@@ -54,8 +54,8 @@ public class GameplayController : NetworkBehaviour {
 
         if ( firstUpdate ) {
             foreach ( GameplayRoom gr in m_gameplayRooms ) {
-                gr.registerAnyParentPhysicalRoom();
-                gr.updateAllGameplayObjectsVisibility();
+                gr.RegisterAnyParentPhysicalRoom();
+                gr.UpdateAllGameplayObjectsVisibility();
                 gr.SetAppropiateLayers();
             }
             firstUpdate = false;
@@ -133,8 +133,11 @@ public class GameplayController : NetworkBehaviour {
 			if (gr.physicalRoom)
 				gr.physicalRoom.gameplayRoom = null;
 			gr.transform.SetParent(this.transform, false );
+
 			gr.physicalRoom = null;
-			gr.updateAllGameplayObjectsVisibility ();
+			gr.UpdateAllGameplayObjectsVisibility ();
+
+//			gr.UpdateAll ();
 			return true;
 
 		} else {
@@ -148,13 +151,14 @@ public class GameplayController : NetworkBehaviour {
         
 		if( gr && !gr.roomActive && pr && pr.roomEmpty ) {
 			gr.transform.SetParent(pr.transform);
+			gr.transform.localPosition = new Vector3 (0, 0, 0);//TODO shouldn't be needed?
 			pr.gameplayRoom = gr;
-			gr.updateAllGameplayObjectsVisibility ();
-			gr.transform.localPosition = new Vector3 (0, 0, 0);
+
+			gr.UpdateAllGameplayObjectsVisibility ();
+
+//			gr.UpdateAll();
 
             Handheld.Vibrate();
-
-			Util.JLog ("GR lPos: " + gr.transform.localPosition + "     pr lpos: " + pr.transform.localPosition);
 			return true;
 
 		} else {

@@ -378,7 +378,7 @@ Transform:
   - {fileID: 1368400754}
   - {fileID: 932803174}
   m_Father: {fileID: 454238232}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &71133225
 MonoBehaviour:
@@ -1160,10 +1160,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1a775055f414409a5aaade6806c640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsDecorationOnly: 1
+  m_IsDecorationOnly: 0
   m_GameplayState: 0
-  m_depthMaskMat: {fileID: 2100000, guid: b5a44d77fcbf843b0858cbdf5f1511c4, type: 2}
-  m_visibleMat: {fileID: 2100000, guid: a0a81df3f0960457aad0a8d1338d9dc7, type: 2}
+  m_depthMaskMat: {fileID: 0}
+  m_visibleMat: {fileID: 0}
 --- !u!23 &142986243
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1523,7 +1523,7 @@ MonoBehaviour:
   m_IsDecorationOnly: 1
   m_GameplayState: 1
   m_draggingMaterial: {fileID: 0}
-  m_lineRenderer: {fileID: 1843226773}
+  m_lineRenderer: {fileID: 0}
 --- !u!23 &196084519
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2337,7 +2337,7 @@ Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 1215923034}
+    m_TransformParent: {fileID: 454238232}
     m_Modifications:
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_LocalPosition.x
@@ -2369,7 +2369,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1419345429229976, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Name
@@ -2382,31 +2382,50 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1419345429229976, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 1518546343192640, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 1509570992232914, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 1539759143219450, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 1670347631007430, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 1533722727961790, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 1742848480671178, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 1419345429229976, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: gameplayRoom
+      value: 
+      objectReference: {fileID: 454238233}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: m_rect
+      value: 
+      objectReference: {fileID: 704951865}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: m_IsDecorationOnly
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
@@ -2598,7 +2617,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0dc8daca1734f74b5c225d6b1c0d1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomName: side
+  roomName: 
   m_startGameplayRoom: {fileID: 0}
 --- !u!1 &432979876
 GameObject:
@@ -2651,12 +2670,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50ea94470f2f34b9db2f7337bd7b40d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainRoom: {fileID: 1703549699}
-  earthRoom: {fileID: 72706236}
-  woodRoom: {fileID: 1872272705}
-  metalRoom: {fileID: 1098123595}
-  fireRoom: {fileID: 454238233}
-  waterRoom: {fileID: 1215923035}
+  mainRoom: {fileID: 0}
+  earthRoom: {fileID: 0}
+  woodRoom: {fileID: 0}
+  metalRoom: {fileID: 0}
+  fireRoom: {fileID: 0}
+  waterRoom: {fileID: 0}
 --- !u!114 &432979879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2840,6 +2859,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 388990119}
   - {fileID: 71133224}
   m_Father: {fileID: 432979877}
   m_RootOrder: 4
@@ -3344,10 +3364,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1a775055f414409a5aaade6806c640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsDecorationOnly: 1
+  m_IsDecorationOnly: 0
   m_GameplayState: 0
-  m_depthMaskMat: {fileID: 2100000, guid: b5a44d77fcbf843b0858cbdf5f1511c4, type: 2}
-  m_visibleMat: {fileID: 2100000, guid: a0a81df3f0960457aad0a8d1338d9dc7, type: 2}
+  m_depthMaskMat: {fileID: 0}
+  m_visibleMat: {fileID: 0}
 --- !u!23 &593480756
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3874,6 +3894,11 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 685077461}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!120 &704951865 stripped
+LineRenderer:
+  m_PrefabParentObject: {fileID: 120836636529435948, guid: 3b29a46d677df4a0188bde6936d1fa13,
+    type: 2}
+  m_PrefabInternal: {fileID: 388990118}
 --- !u!1001 &711702953
 Prefab:
   m_ObjectHideFlags: 0
@@ -4260,7 +4285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4416e7ca4f86ea4f9dcc5c5c9af3b5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cloudsMoveSpeed_x: 0.5
+  cloudsMoveSpeed_x: 0
   cloudsMoveSpeed_z: 0
 --- !u!1 &783404871
 GameObject:
@@ -4491,6 +4516,21 @@ Prefab:
       propertyPath: m_Layer
       value: 19
       objectReference: {fileID: 0}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: m_IsDecorationOnly
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: gameplayRoom
+      value: 
+      objectReference: {fileID: 1215923035}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: m_rect
+      value: 
+      objectReference: {fileID: 1460425195}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
   m_IsPrefabParent: 0
@@ -5599,6 +5639,7 @@ Transform:
   - {fileID: 1689413788}
   - {fileID: 1212081335}
   - {fileID: 1279916783}
+  - {fileID: 1845046573}
   m_Father: {fileID: 432979877}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5734,7 +5775,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IsDecorationOnly: 1
   m_GameplayState: 1
-  targetGameplayRoom: {fileID: 1872272705}
+  targetGameplayRoom: {fileID: 0}
 --- !u!114 &1125490153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6182,7 +6223,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1174959433
 Transform:
   m_ObjectHideFlags: 0
@@ -6209,10 +6250,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1a775055f414409a5aaade6806c640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsDecorationOnly: 1
-  m_GameplayState: 1
-  m_depthMaskMat: {fileID: 2100000, guid: b5a44d77fcbf843b0858cbdf5f1511c4, type: 2}
-  m_visibleMat: {fileID: 2100000, guid: a0a81df3f0960457aad0a8d1338d9dc7, type: 2}
+  m_IsDecorationOnly: 0
+  m_GameplayState: 0
+  m_depthMaskMat: {fileID: 0}
+  m_visibleMat: {fileID: 0}
 --- !u!114 &1174959435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6726,8 +6767,6 @@ Transform:
   - {fileID: 1174959433}
   - {fileID: 1992879655}
   - {fileID: 806246088}
-  - {fileID: 388990119}
-  - {fileID: 1845046573}
   m_Father: {fileID: 1703549700}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7489,7 +7528,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IsDecorationOnly: 1
   m_GameplayState: 1
-  m_earth: {fileID: 1212081336}
+  m_earth: {fileID: 0}
   m_radius: 2
   m_orbitSpeed: 10
   m_rotateY: 1
@@ -7628,6 +7667,11 @@ Transform:
   m_PrefabParentObject: {fileID: 4295443145125698, guid: 2f22e4522fa6c7a4c90d5f7bdc6abd54,
     type: 2}
   m_PrefabInternal: {fileID: 1293069322}
+--- !u!120 &1297348582 stripped
+LineRenderer:
+  m_PrefabParentObject: {fileID: 120836636529435948, guid: 3b29a46d677df4a0188bde6936d1fa13,
+    type: 2}
+  m_PrefabInternal: {fileID: 1845046572}
 --- !u!1 &1320275254
 GameObject:
   m_ObjectHideFlags: 0
@@ -8194,6 +8238,11 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1441697372}
   m_Mesh: {fileID: 4300002, guid: e4517c298d091d0499b08981344c5398, type: 3}
+--- !u!120 &1460425195 stripped
+LineRenderer:
+  m_PrefabParentObject: {fileID: 120836636529435948, guid: 3b29a46d677df4a0188bde6936d1fa13,
+    type: 2}
+  m_PrefabInternal: {fileID: 806246087}
 --- !u!1001 &1468702795
 Prefab:
   m_ObjectHideFlags: 0
@@ -8769,10 +8818,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1a775055f414409a5aaade6806c640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsDecorationOnly: 1
+  m_IsDecorationOnly: 0
   m_GameplayState: 0
-  m_depthMaskMat: {fileID: 2100000, guid: b5a44d77fcbf843b0858cbdf5f1511c4, type: 2}
-  m_visibleMat: {fileID: 2100000, guid: a0a81df3f0960457aad0a8d1338d9dc7, type: 2}
+  m_depthMaskMat: {fileID: 0}
+  m_visibleMat: {fileID: 0}
 --- !u!23 &1526712776
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9681,7 +9730,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IsDecorationOnly: 1
   m_GameplayState: 1
-  m_LookTarget: {fileID: 1279916782}
+  m_LookTarget: {fileID: 0}
 --- !u!114 &1689413785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10002,7 +10051,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: main
-  m_startGameplayRoom: {fileID: 72706236}
+  m_startGameplayRoom: {fileID: 0}
 --- !u!4 &1703549700
 Transform:
   m_ObjectHideFlags: 0
@@ -10939,7 +10988,7 @@ Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 1215923034}
+    m_TransformParent: {fileID: 1098123594}
     m_Modifications:
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_LocalPosition.x
@@ -10971,7 +11020,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_RootOrder
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1419345429229976, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Name
@@ -10984,32 +11033,51 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1509570992232914, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 1533722727961790, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 1419345429229976, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 1742848480671178, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 1670347631007430, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 1518546343192640, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 1539759143219450, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_Layer
-      value: 19
+      value: 17
       objectReference: {fileID: 0}
+    - target: {fileID: 1419345429229976, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: m_IsDecorationOnly
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: gameplayRoom
+      value: 
+      objectReference: {fileID: 1098123595}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: m_rect
+      value: 
+      objectReference: {fileID: 1297348582}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
   m_IsPrefabParent: 0
@@ -11874,10 +11942,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1a775055f414409a5aaade6806c640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsDecorationOnly: 1
+  m_IsDecorationOnly: 0
   m_GameplayState: 0
-  m_depthMaskMat: {fileID: 2100000, guid: b5a44d77fcbf843b0858cbdf5f1511c4, type: 2}
-  m_visibleMat: {fileID: 2100000, guid: a0a81df3f0960457aad0a8d1338d9dc7, type: 2}
+  m_depthMaskMat: {fileID: 0}
+  m_visibleMat: {fileID: 0}
 --- !u!23 &1975542420
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -11978,7 +12046,7 @@ MonoBehaviour:
   m_IsDecorationOnly: 1
   m_GameplayState: 1
   m_draggingMaterial: {fileID: 0}
-  m_lineRenderer: {fileID: 1990689735}
+  m_lineRenderer: {fileID: 0}
 --- !u!23 &1978604834
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -12231,6 +12299,21 @@ Prefab:
       propertyPath: m_Layer
       value: 19
       objectReference: {fileID: 0}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: m_IsDecorationOnly
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: gameplayRoom
+      value: 
+      objectReference: {fileID: 1215923035}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: m_rect
+      value: 
+      objectReference: {fileID: 2083527867}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
   m_IsPrefabParent: 0
@@ -12409,8 +12492,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8186cf8a5af960498b7d95249d9a7b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sunRotationSpeed_x: 0.5
-  sunRotationSpeed_y: -0.5
+  sunRotationSpeed_x: 0
+  sunRotationSpeed_y: 0
 --- !u!108 &2013863446
 Light:
   m_ObjectHideFlags: 0
@@ -12662,6 +12745,11 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 55af60d4a6891d74391746fd55bb666c, type: 3}
   m_PrefabInternal: {fileID: 2079285804}
+--- !u!120 &2083527867 stripped
+LineRenderer:
+  m_PrefabParentObject: {fileID: 120836636529435948, guid: 3b29a46d677df4a0188bde6936d1fa13,
+    type: 2}
+  m_PrefabInternal: {fileID: 1992879654}
 --- !u!1 &2088518908
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-
 public class PhysicalRoom : NetworkBehaviour {
 
-	public string roomName;
+	public string roomName = "main";
 
 	public GameplayRoom m_startGameplayRoom;//Only used if no child is present
 
+    //Client scoped
 	private GameplayRoom m_gameplayRoom; //1 to 1 relationship, or empty.  Use accessor below
 	public GameplayRoom gameplayRoom
 	{
