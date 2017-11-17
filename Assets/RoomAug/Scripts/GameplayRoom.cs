@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-public class GameplayRoom : NetworkBehaviour {
+public class GameplayRoom : MonoBehaviour {
 
 	public string roomName;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class PhysicalRoom : NetworkBehaviour {
+public class PhysicalRoom : MonoBehaviour {
 
 	public string roomName = "main";
 
