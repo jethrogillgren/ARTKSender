@@ -1,10 +1,25 @@
 ﻿using UnityEngine;
-using System.Linq;
+using System.Collections.Generic;
 using System.Text;
 using System;
 
 
 public static class Util  {
+
+    public static void collectHashSetOfComponents<T>( ref HashSet<T> setToFill, bool inclDisabled = false ) {
+        if ( setToFill == null )
+            setToFill = new HashSet<T>();
+        else
+            setToFill.Clear();
+
+        T[] prs = inclDisabled ? Resources.FindObjectsOfTypeAll( typeof( T ) ) as T[] : UnityEngine.Object.FindObjectsOfType( typeof( T ) ) as T[];
+
+        foreach ( T pr in prs ) {
+            setToFill.Add( pr );
+        }
+    }
+
+    //LOGGERS
 
     //Strings
 	public static void JLog( string val, bool toast = false) {

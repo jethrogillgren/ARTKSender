@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 using Tango;
 
 //Controlls the Tango lifecycle of a player.  Local to the player object.  All networking happens through RoomAugPlayerController
-public class TangoApplicationController : MonoBehaviour, ITangoLifecycle {
+public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITangoVideoOverlay {
     //ITangoEvent, ITangoPose, ITangoDepth {
 
     public string m_areaDescriptionName = "JethroTestAreaDescription";//For dev when we have multiple potential descriptions.
@@ -23,6 +24,8 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle {
     public GameplayController m_gameplayController;
     [HideInInspector]
     public TangoARPoseController m_poseController;
+    [HideInInspector]
+    public RoomAugPlayerController m_roomAugPlayerController;
 
     [HideInInspector]
     public TangoDynamicMesh m_dynamicMesh;
@@ -31,19 +34,33 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle {
 
 
 
+    //MARKER STUFF
+    /// <summary>
+    /// Length of side of the physical AR Tag marker in meters.
+    /// </summary>
+    private const double MARKER_SIZE = 0.1397;
+
+    /// <summary>
+    /// The list of markers detected in each frame.
+    /// </summary>
+    private List<TangoSupport.Marker> m_markerList;
+
+
 
     // Use this for initialization
     void Start() {
         Util.JLog( " Application Starting Up" );
         state = new ApplicationStateMachine();
 
+        m_markerList = new List<TangoSupport.Marker>();
+
         m_tangoApplication = FindObjectOfType<TangoApplication>();
         m_gameplayController = FindObjectOfType<GameplayController>();
         m_poseController = FindObjectOfType<TangoARPoseController>();
+        m_roomAugPlayerController = GetComponent<RoomAugPlayerController>();
 
         m_dynamicMesh = FindObjectOfType<TangoDynamicMesh>();//Just for debug - remove for prod
                                                              //m_dynamicMeshRenderer = FindObjectOfType<MeshRenderer>();
-
 
         if ( m_tangoApplication != null ) {
             m_tangoApplication.Register( this );
@@ -110,7 +127,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle {
 
                 if ( AreaDescription.ImportFromFile( System.IO.Path.Combine( Application.streamingAssetsPath, m_areaDescriptionName + ".adf" ) ) ) {
                     Util.JLog( "Imported new ADF file from the APK! " + m_areaDescriptionName, true );
-                    if ( LoadADFFromDevice() )
+                    if ( LoadADFFromDevice() ) //TODO this seems to always fail?  had to manually use the TangoExamples manager.
                         return;
                     else
                         Util.JLogErr("Failed to load the APK ADF", true);
@@ -158,6 +175,34 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle {
             //If we have had Permissions granted already, we can reconnect.  Otherwise, the Start() code is still in control so we leave alone.
             if ( state.isPermitted() )
                 m_tangoApplication.Startup( m_areaDescription );
+        }
+    }
+
+    /// <summary>
+    /// Detect one or more markers in the input image.
+    /// </summary>
+    /// <param name="cameraId">
+    /// Returned camera ID.
+    /// </param>
+    /// <param name="imageBuffer">
+    /// Color camera image buffer.
+    /// </param>
+    public void OnTangoImageAvailableEventHandler( TangoEnums.TangoCameraId cameraId,
+        TangoUnityImageData imageBuffer ) {
+
+        TangoCoordinateFramePair pair = new TangoCoordinateFramePair();
+        pair.baseFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_AREA_DESCRIPTION;
+        pair.targetFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_CAMERA_COLOR;
+
+
+        TangoSupport.DetectMarkers( imageBuffer, cameraId,
+            TangoSupport.MarkerType.ARTAG, MARKER_SIZE, m_markerList, pair );
+
+        //For each marker seen by this Client
+        for ( int i = 0; i < m_markerList.Count; ++i ) {
+            TangoSupport.Marker marker = m_markerList[i];
+            m_roomAugPlayerController.CmdSendMarkerUpdate( marker );
+
         }
     }
 
@@ -224,4 +269,6 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle {
             Util.JLogErr( "No Dynamic Mesh loaded to Export!" );
         }
     }
+
+
 }

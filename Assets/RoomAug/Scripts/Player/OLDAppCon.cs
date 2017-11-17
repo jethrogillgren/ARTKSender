@@ -14,7 +14,7 @@ using UnityEngine.UI;
 
 using Tango;
 
-public class ApplicationController : MonoBehaviour, ITangoLifecycle, ITangoEvent, ITangoPose, ITangoDepth
+public class OLDAppCon : MonoBehaviour, ITangoLifecycle, ITangoEvent, ITangoPose, ITangoDepth
 {
 	public string m_areaDescriptionName = "JethroTestAreaDescription";
 	public GameObject m_areaMeshPrefab;

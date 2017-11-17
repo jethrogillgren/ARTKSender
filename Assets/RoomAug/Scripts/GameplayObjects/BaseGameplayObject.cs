@@ -15,7 +15,7 @@ public abstract class BaseGameplayObject : NetworkBehaviour {
 	public enum GameplayState {
 		Inactive, //Not interactible or visible to any user.
 		Started, //Either interactible with the world, or potentially visible to the user, or both.
-		Finished //All interaction is finished.
+		Finished //All interaction is finished.  Will not be re-started.
 	}
 
 	public GameplayState gameplayState 

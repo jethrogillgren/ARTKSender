@@ -224,29 +224,18 @@ public class GameplayController : NetworkBehaviour {
 
 	//Collecting Objects
 	public void collectGameplayObjects() {
-		collectHashSetOfComponents<BaseGameplayObject> (ref m_gameplayObjects);
+		Util.collectHashSetOfComponents<BaseGameplayObject> (ref m_gameplayObjects);
 	}
 	public void collectPhysicalRooms() {
-		collectHashSetOfComponents<PhysicalRoom> (ref m_physicalRooms, true);
+		Util.collectHashSetOfComponents<PhysicalRoom> (ref m_physicalRooms, true);
 
 	}
 	public void collectGameplayRooms() {
-		collectHashSetOfComponents<GameplayRoom> (ref m_gameplayRooms, true);
+		Util.collectHashSetOfComponents<GameplayRoom> (ref m_gameplayRooms, true);
 	}
 	public void collectTeleportTriggers() {
-		collectHashSetOfComponents<TeleportDoorwayToggleTriggerGameplayObject> ( ref m_teleportTriggers);
+		Util.collectHashSetOfComponents<TeleportDoorwayToggleTriggerGameplayObject> ( ref m_teleportTriggers);
 	}
 
-	public void collectHashSetOfComponents<T>( ref HashSet<T> setToFill, bool inclDisabled = false ) {
-		if (setToFill == null)
-			setToFill = new HashSet<T>();
-		else
-			setToFill.Clear ();
 
-        T[] prs = inclDisabled ?  Resources.FindObjectsOfTypeAll( typeof(T) ) as T[] :  FindObjectsOfType( typeof( T ) ) as T[] ;
-
-		foreach (T pr in prs) {
-			setToFill.Add (pr);
-		}
-	}
 }

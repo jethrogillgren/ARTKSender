@@ -464,9 +464,9 @@ namespace Tango
 
             return true;
         }
-#endregion
+        #endregion
 
-#region MARKER_DETECTION_FUNCTIONS
+        #region MARKER_DETECTION_FUNCTIONS
         /// <summary>
         /// Detect one or more markers in the input image.
         /// </summary>
@@ -494,7 +494,8 @@ namespace Tango
             TangoEnums.TangoCameraId cameraId,
             MarkerType markerType,
             double markerSize,
-            List<Marker> markers)
+            List<Marker> markers,
+            TangoCoordinateFramePair pair)
         {
             if (markers == null)
             {
@@ -520,9 +521,10 @@ namespace Tango
 
             // Get Pose.
             TangoPoseData poseData = new TangoPoseData();
-            TangoCoordinateFramePair pair;
-            pair.baseFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_START_OF_SERVICE;
-            pair.targetFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_CAMERA_COLOR;
+            if ( pair.targetFrame == null  ||  pair.baseFrame == null ) {
+                pair.baseFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_START_OF_SERVICE;
+                pair.targetFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_CAMERA_COLOR;
+            }
             PoseProvider.GetPoseAtTime(poseData, buffer.timestamp, pair);
 
             APIMarkerList rawAPIMarkerList = new APIMarkerList();

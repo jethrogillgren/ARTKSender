@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using Tango;
 
 //This class controlls the UNET conecpt of a player - one on the server for each Client Tango connected.
 //It is the only object allowed to talk directly to the server (Commands)
@@ -13,6 +14,12 @@ public class RoomAugPlayerController : NetworkBehaviour
 		this.name = name;
 		updatePlayerText ();
 	}
+
+    private PandaCubeController m_pandaCubeController;
+
+    public void Start() {
+        
+    }
 
 //	public override void update() {
 //
@@ -27,64 +34,64 @@ public class RoomAugPlayerController : NetworkBehaviour
     //This is invoked for NetworkBehaviour objects when they become active on the server.
     public override void OnStartServer() {
         SetTangoHardwareSpecific( false );
+        m_pandaCubeController = FindObjectOfType<PandaCubeController>();
     }
 
     public void SetTangoHardwareSpecific(bool enable) {
 
 		if (gameObject.GetComponent<Camera> () != null) {
-			Debug.Log ("J# Disabling Camera " + name + " on Server");
             gameObject.GetComponent<Camera> ().enabled = enable;
 		}
 		if (gameObject.GetComponent<Tango.TangoApplication> () != null) {
-			Debug.Log ("J# Disabling TangoApplication " + name + " on Server");
             gameObject.GetComponent<Tango.TangoUx>().enabled = enable;
 		}
 		if (gameObject.GetComponent<Tango.TangoUx> () != null) {
-			Debug.Log ("J# Disabling TangoUx " + name + " on Server");
             gameObject.GetComponent<Tango.TangoUx>().enabled = enable;
 		}
 		if (gameObject.GetComponent<TangoPoseController> () != null) {
-			Debug.Log ("J# Disabling TangoPoseController " + name + " on Server");
             gameObject.GetComponent<TangoPoseController>().enabled = enable;
 		}
         if ( gameObject.GetComponent<TangoARPoseController>() != null ) {
-            Debug.Log( "J# Disabling Tango ARPose Controller " + name + " on Server" );
             gameObject.GetComponent<TangoARPoseController>().enabled = enable;
         }
 		if (gameObject.GetComponent<TangoApplicationController> () != null) {
-			Debug.Log ("J# Disabling Tango Player ApplicationController " + name + " on Server");
             gameObject.GetComponent<TangoApplicationController>().enabled = enable;
 		}
         if ( gameObject.GetComponent<TangoDynamicMesh>() != null ) {
-            Debug.Log( "J# Disabling Tango DynamicMesh " + name + " on Server" );
             gameObject.GetComponent<TangoDynamicMesh>().enabled = enable;
         }
         if ( gameObject.GetComponent<TangoARScreen>() != null ) {
-            Debug.Log( "J# Disabling Tango AR Screen  " + name + " on Server" );
             gameObject.GetComponent<TangoARScreen>().enabled = enable;
         }
 
 	}
-		
-//	DisableComponent( typeof(Camera) );  TODO didn't work
-//	private void DisableComponent( System.Type t ) {
-//		if (gameObject.GetComponent(t) != null) {
-//			Debug.Log ("J# Disabling " + t.Name + " on Server");
-//			gameObject.GetComponent(t).enabled = false;
-//
-//		}
-//	}
 
-	//Called when the local player object has been set up.
-	//This happens after OnStartClient(), as it is triggered by an ownership message from the server.
-	//This is an appropriate place to activate components or functionality that should only be active
-	//for the local player, such as cameras and input.
-	//public override void OnStartLocalPlayer() {
-        //If Tango
-        //SetTangoHardwareSpecific(true);  Not needed atm
+    //	DisableComponent( typeof(Camera) );  TODO didn't work
+    //	private void DisableComponent( System.Type t ) {
+    //		if (gameObject.GetComponent(t) != null) {
+    //			Debug.Log ("J# Disabling " + t.Name + " on Server");
+    //			gameObject.GetComponent(t).enabled = false;
+    //
+    //		}
+    //	}
 
-        //else If Anything else.. eg hololens
-	//}
+    //Called when the local player object has been set up.
+    //This happens after OnStartClient(), as it is triggered by an ownership message from the server.
+    //This is an appropriate place to activate components or functionality that should only be active
+    //for the local player, such as cameras and input.
+    //public override void OnStartLocalPlayer() {
+    //If Tango
+    //SetTangoHardwareSpecific(true);  Not needed atm
+
+    //else If Anything else.. eg hololens
+    //}
+
+    [Command]
+    public void CmdSendMarkerUpdate( TangoSupport.Marker marker ) {
+        if( m_pandaCubeController ) {
+            m_pandaCubeController.RecieveMarker(marker);
+        }
+    }
 
 	[Command]
 	public void CmdWatchEarth() {
