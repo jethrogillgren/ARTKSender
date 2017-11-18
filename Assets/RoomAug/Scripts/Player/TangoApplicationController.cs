@@ -21,7 +21,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
     [HideInInspector]
     public TangoApplication m_tangoApplication;
     [HideInInspector]
-    public RoomController m_gameplayController;
+    public RoomController m_roomController;
     [HideInInspector]
     public TangoARPoseController m_poseController;
     [HideInInspector]
@@ -55,7 +55,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
         m_markerList = new List<TangoSupport.Marker>();
 
         m_tangoApplication = FindObjectOfType<TangoApplication>();
-        m_gameplayController = FindObjectOfType<RoomController>();
+        m_roomController = FindObjectOfType<RoomController>();
         m_poseController = FindObjectOfType<TangoARPoseController>();
         m_roomAugPlayerController = GetComponent<RoomAugPlayerController>();
 
@@ -213,7 +213,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
     //Either enable the mesh visibally, or make it occlude only.
     public void DebugSetOccludersVis( bool occluding ) {
 
-        foreach ( OcclusionGameplayObject occluder in m_gameplayController.getOcclusionGameplayObjects() ) {
+        foreach ( OcclusionGameplayObject occluder in m_roomController.getOcclusionGameplayObjects() ) {
 
             if ( occluder.gameplayState == BaseGameplayObject.GameplayState.Started ) {
                 Debug.Log( "Setting " + occluder.gameObject.name + " to Occluding: " + occluding );
