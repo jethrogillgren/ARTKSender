@@ -17,6 +17,8 @@ public class RoomAugPlayerController : NetworkBehaviour
 
     private PandaCubeController m_pandaCubeController;
 
+//  public GameObject clientOnlyPrefab;
+
     public void Start() {
         
     }
@@ -35,6 +37,9 @@ public class RoomAugPlayerController : NetworkBehaviour
     public override void OnStartServer() {
         SetTangoHardwareSpecific( false );
         m_pandaCubeController = FindObjectOfType<PandaCubeController>();
+    }
+    public override void OnStartLocalPlayer() {
+//        Instantiate(clientOnlyPrefab);
     }
 
     public void SetTangoHardwareSpecific(bool enable) {

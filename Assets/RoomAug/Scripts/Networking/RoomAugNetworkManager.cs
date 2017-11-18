@@ -33,11 +33,11 @@ public class RoomAugNetworkManager : NetworkManager {
 	{
 		if (Application.platform == RuntimePlatform.Android) {
 			
-			StartCoroutine( AsyncAddClientSpecificScene (conn) );
+//			StartCoroutine( AsyncAddClientSpecificScene (conn) );
 //
 //			SceneManager.LoadScene("ClientOnline", LoadSceneMode.Additive);
-//			ClientScene.Ready (conn);
-//			ClientScene.AddPlayer (conn, 0);
+			ClientScene.Ready (conn);
+			ClientScene.AddPlayer (conn, 0);
 
 		} else {
 			Util.JLogErr("Tried to load the ClientScene from a Non-Android Device.");
@@ -49,8 +49,8 @@ public class RoomAugNetworkManager : NetworkManager {
 	{
 		if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.OSXEditor) {
 
-			Debug.Log ("J# Loading in ServerOnline specialisations");
-			SceneManager.LoadScene ("ServerOnline", LoadSceneMode.Additive);
+//			Debug.Log ("J# Loading in ServerOnline specialisations");
+//			SceneManager.LoadScene ("ServerOnline", LoadSceneMode.Additive);
 
 		} else {
 			Util.JLogErr("Tried to load the ServerScene from a Non-Server Device.");
