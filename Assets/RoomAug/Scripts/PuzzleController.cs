@@ -62,7 +62,7 @@ public class PuzzleController : NetworkBehaviour
 //        timer.Elapsed += new ElapsedEventHandler(HandleMinuteTimer);
 //        timer.Start();
 
-		InvokeRepeating ( "HandleMinuteTimer", 1, 1 );
+		InvokeRepeating ( "HandleMinuteTimer", 1, 1 );// Seconds
 	}
 
 	public void OnDisable ()
@@ -214,7 +214,6 @@ public class PuzzleController : NetworkBehaviour
 		return shouldHaveTaken - actuallyTook;
 	}
 
-
 	public void GiveHint ()
 	{
 		hintButton.interactable = false;
@@ -253,21 +252,26 @@ public class PuzzleController : NetworkBehaviour
 		cancelInserterPuzzleButton.interactable = false;
 		inserterPuzzleNext = false;
 		cueInserterPuzzleButton.interactable = true;
-
-
 	}
 
 	private void SelectInstantPuzzle ()
 	{
-		return giantBomb;
+		return giantBomb; //TODO
 	}
-//TODO
 
-	////Manual Puzzle Steps.
+
+
+
+
+
+
+	////PUZZLE COMMON
 	public struct Puzzle
 	{
+		
+		
 		public Puzzle ( int number, int importance,
-		                Action activate, Action complete )
+				Action activate, Action complete, Action corePuzzleCallback = null )
 		{
 			Number = number;
 			Importance = importance;
@@ -277,6 +281,8 @@ public class PuzzleController : NetworkBehaviour
 
 			Activate = activate;
 			Complete = complete;
+
+			CorePuzzleCallback = corePuzzleCallback;
 
 			totalCorePuzzleImportance += importance;
 			totalCorePuzzleSteps++;
@@ -291,28 +297,41 @@ public class PuzzleController : NetworkBehaviour
 		public Action Complete;
 		public bool Started;
 		public bool Completed;
+		public Action CorePuzzleCallback;
 	};
+
+
 	//Common actions on Core puzzles.
 	public void OnActivateAnyPuzzle ( Puzzle puzzle )
 	{
 		puzzle.Started = true;
 	}
-//	public void ActivateCorePuzzle ( Puzzle puzzle )
-//	{
-//		ActivateAnyPuzzle();
-//	}
 
 	public void OnCompleteCorePuzzle ( Puzzle puzzle )
 	{
 		puzzle.Completed = true;
 		MoveStepAndPercent ( puzzle.Importance );
 	}
-
 	public void OnCompleteThrowInPuzzle ( Puzzle puzzle )
 	{
 		puzzle.Completed = true;
 		throwInPuzzleButton.interactable = true;
 	}
+	public void OnActivateInserterPuzzle(Puzzle puzzle) {
+		cueInserterPuzzleButton.interactable = false;
+		cancelInserterPuzzleButton.interactable = false;
+	}
+	public void OnCompleteInserterPuzzle(Puzzle puzzle)
+	{
+		puzzle.Completed = true;
+		cueInserterPuzzleButton.interactable = true;
+		cancelInserterPuzzleButton.interactable = false;
+
+		//Move back to where we were in the Core Puzzle Chain
+		puzzle.CorePuzzleCallback ();
+	}
+
+
 
 
 	//// THROW IN PUZZLES
@@ -338,7 +357,25 @@ public class PuzzleController : NetworkBehaviour
 		//Clean-Up 
 	}
 
+
+
+
+
+
 	//// INSERTER PUZZLES
+	public Puzzle inserterPuzzleTest = new Puzzle(0, 0, ActivateInserterPuzzleTest, CompleteInserterPuzzleTest);
+	public void ActivateInserterPuzzleTest() {
+		OnActivateInserterPuzzle ();
+		//Set-up Puzzle Gameobjects
+	}
+	public void CompleteInserterPuzzleTest() {
+		OnCompleteInserterPuzzle ();
+		//Clean Up
+	}
+
+
+
+
 
 
 
@@ -358,8 +395,19 @@ public class PuzzleController : NetworkBehaviour
 		OnCompleteCorePuzzle ( puzzle1 );
 		//Animate & Change any Gameobjects...
 
-		ActivatePuzzle2 ();
-		ActivatePuzzle3 ();
+		if (inserterPuzzleNext)
+		{
+			inserterPuzzleTest.CorePuzzleCallback = ActivatePuzzles ( puzzle2, puzzle3 );
+			inserterPuzzleTest.Activate ();
+		}
+		else
+		{
+			ActivatePuzzles ( puzzle2, puzzle3 );
+		}
+	}
+
+	public void ActivatePuzzles ( Puzzle p1, Puzzle p2 = null, Puzzle puzzle3 = null ) {
+		
 	}
 
 
@@ -421,5 +469,11 @@ public class PuzzleController : NetworkBehaviour
 
 		//Animate & Change any Gameobjects...
 	}
+
+
+
+
+
+
 
 }
