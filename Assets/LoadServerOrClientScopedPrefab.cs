@@ -8,10 +8,6 @@ public class LoadServerOrClientScopedPrefab : NetworkBehaviour
   public GameObject clientOnlyPrefab;
 
 
-    public void Start() {
-        Debug.LogError("############");
-    }
-
   public override void OnStartServer()
   {
       Debug.LogError("SERVER PREFAB LOADING");

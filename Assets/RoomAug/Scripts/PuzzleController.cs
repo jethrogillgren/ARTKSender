@@ -10,240 +10,416 @@ using UnityEngine.Networking;
 //Attaches to the Gamemaster Controls and orchestrates puzzle flow / changes
 public class PuzzleController : NetworkBehaviour
 {
-  public const int startingTime = 60;
-  public int actualTimeRemaining;
-  public int displayTimeRemaining;
-  //minutes.
+	public const float startingTime = 60f;
+	public float actualTimeRemaining;
+	public float displayTimeRemaining;
+	//minutes.
 
-  public int percentComplete = 0;
-  //100 is completed game.
-  public int puzzleStep = 1;
-  //Each puzzle gives a step.  Order completed is partly variable.
+	//Percent to add on to display time ticks at the last section of the game.
+	//eg 1 = twice as slow.  0.5 = half as slow.  0.1 = 10% slower.  2=200% (4 times) slower .
+	float slowdown = 0.0f;
 
-  private List<Puzzle> puzzles;
+	public int corePercentComplete = 0;
+	//Relies on last
+	//100 is completed game.
+	public int corePuzzleStep = 1;
+	//Each core puzzle gives a step.    Order completed is partly variable.
+	private List<Puzzle> corePuzzles;
 
+	private List<Puzzle> dynamicInPuzzles;
 
-  public  static int totalPuzzleSteps = 0;
-  private static int totalPuzzleImportance = 0;
-  //static so we can calculate it while initializing the Puzzle structs
+	public bool inserterPuzzleNext = false;
 
-  public Slider difficultySlider;
-  // 0-4.  0 Is easiest.  4 is every extra puzzle. 1/3 is some extra puzzles. 2 is the default.
-  public int getDifficulty()
-  {
-    return (int)Math.Ceiling(difficultySlider.value);//Locked to whole numbers anyway
-  }
-
-  public Button hintButton;
-  public Text timeText;
+	public    static int totalCorePuzzleSteps = 0;
+	private static int totalCorePuzzleImportance = 0;
+	//static so we can calculate it while initializing the Puzzle structs
 
 
-  public override void OnStartServer()
-  {
-    if (!hasAuthority)
-      return;
+	//// GUI refs
+	public Button throwInPuzzleButton;
+	public Slider difficultySlider;
+	// 0-4.    0 Is easiest.    4 is every extra puzzle. 1/3 is some extra puzzles. 2 is the default.
+	public int getDifficulty ()
+	{
+		return ( int )Math.Ceiling ( difficultySlider.value );//Locked to whole numbers anyway
+	}
+
+	public Button hintButton;
+	public Text timeText;
+	public Button cueInserterPuzzleButton;
+	public Button cancelInserterPuzzleButton;
+
+
+	Timer timer;
+
+	public void Start ()
+	{
+//        if (timer != null)
+//            timer.Dispose();
+//            
+//        timer = new Timer(1000);//Minute TODO
+//        timer.AutoReset = true;
+//        timer.Elapsed += new ElapsedEventHandler(HandleMinuteTimer);
+//        timer.Start();
+
+		InvokeRepeating ( "HandleMinuteTimer", 1, 1 );
+	}
+
+	public void OnDisable ()
+	{
+//        if (timer != null)
+//            timer.Dispose();
+	}
+
+	public override void OnStartServer ()
+	{
+		if (!hasAuthority)
+			return;
+            
+		//Adds a listener to the main slider and invokes a method when the value changes.
+		throwInPuzzleButton = ( Button )GameObject.Find ( "Throw In Puzzle" ).GetComponent<Button>;
+		throwInPuzzleButton.onClick.AddListener ( delegate
+			{
+				ThrowInstantPuzzle ();
+			} );
+		difficultySlider = ( Slider )GameObject.Find ( "Difficulty Slider" ).GetComponent<Slider> ();
+		difficultySlider.onValueChanged.AddListener ( delegate
+			{
+				OnDifficultyChange ();
+			} );
+		timeText = ( Text )GameObject.Find ( "Time Text" ).GetComponent<Text> ();
+		hintButton = ( Button )GameObject.Find ( "Hint Button" ).GetComponent<Button> ();
+		hintButton.onClick.AddListener ( delegate
+			{
+				GiveHint ();
+			} );
+		cueInserterPuzzleButton = ( Button )GameObject.Find ( "Cue Inserter Puzzle Button" ).GetComponent<Button> ();
+		cueInserterPuzzleButton.onClick.AddListener ( delegate
+			{
+				{
+					CueInserterPuzzle ();
+				}
+			} );
+		cancelInserterPuzzleButton = ( Button )GameObject.Find ( "Cancel Inserter Puzzle Button" ).GetComponent<Button> ();
+		cancelInserterPuzzleButton.onClick.AddListener ( delegate
+			{
+				{
+					CancelInserterPuzzle ();
+				}
+			} );
+
+		actualTimeRemaining = startingTime;
+		displayTimeRemaining = actualTimeRemaining;
+
+//      if (totalPuzzleImportance > 100)
+//          Util.JLogErr("TOO MUCH IMPORTANCE in PuzzleController: " + totalPuzzleImportance);
+
+//      puzzles.Add(puzzle1);
+//      puzzles.Add(puzzle2);
+//      puzzles.Add(puzzle3);
+//      puzzles.Add(puzzle4);
+
+		corePuzzles = Util.CreateList ( puzzle1, puzzle2, puzzle3, puzzle4 );
+
+		ActivatePuzzle1 ();
+
+		UpdateTimeText ();
+
+	}
+
+	private void HandleMinuteTimer ()
+	{
+		CalculateSlowdown ();
+		TickTimeRemaining ();
+		UpdateTimeText ();
+	}
+
+	//Should be called regularly during the last segment.
+	//Relies on corePercentComplete to continue being updated  during the last segment.
+	public void CalculateSlowdown ()
+	{
+		//if( !onLastSegment )
+		//return
+
+		float maxSlowdown = 0.5; //Maximum we will let ourselves change the speed of a minute (to stop it being noticeable)
+		//Percent slowdown.  eg 1 = twice as slow.  0.5 = half as slow.  0.1 = 10% slower.  2=200% (4 times) slower .
+
+		int maxDrift = 10; //Maximum extra minutes we will allow players
+		int timeBehind = -GetTimeAhead ();
+
+		//We're doing OK
+		if (GetTimeAhead () >= 0)
+		{
+			slowdown = 1; //TODO - smooth this out over time.  So when players catch up to time at the end
+			//they get a little more slowing and don't just back to real time.
+		}
+		else //We're struggling  eg 7 mins behind     or 3 mins behind
+		{
 			
-    //Adds a listener to the main slider and invokes a method when the value changes.
-    difficultySlider = (Slider)GameObject.Find("Difficulty Slider").GetComponent<Slider>();
-    timeText = (Text)GameObject.Find("Time Text").GetComponent<Text>();
-    hintButton = (Button)GameObject.Find("Hint Button").GetComponent<Button>();
-    hintButton.onClick.AddListener(delegate
-      {
-        GiveHint();
-      });
+			float percentOut = timeBehind / maxDrift; // eg 0.7 == 70%  or 0.3 == 30%
+			slowdown = percentOut * maxSlowdown; //eg 0.35   or  0.15
 
-    actualTimeRemaining = startingTime;
-    displayTimeRemaining = actualTimeRemaining;
+			if (slowdown > maxSlowdown)
+				slowdown = maxSlowdown;
 
-//		if (totalPuzzleImportance > 100)
-//			Util.JLogErr("TOO MUCH IMPORTANCE in PuzzleController: " + totalPuzzleImportance);
+		}
+	}
 
-//		puzzles.Add(puzzle1);
-//		puzzles.Add(puzzle2);
-//		puzzles.Add(puzzle3);
-//		puzzles.Add(puzzle4);
-    puzzles = Util.CreateList(puzzle1, puzzle2, puzzle3, puzzle4);
+	//Called every minute
+	private void TickTimeRemaining ()
+	{
+		actualTimeRemaining--;
 
-    ActivatePuzzle1();
+		//By default keep up with real time
+		if (slowdown == 0)
+		{
+			displayTimeRemaining--;
+		}
+		else if (slowdown > 0)
+		{
+			displayTimeRemaining -= ( 1 - 1 * slowdown );
+		}
+		else
+		{
+			Util.JLogErr ( "NEGATIVE SLOWDOWN " + slowdown );
+			displayTimeRemaining--;
+		}
+		
+	}
 
-    Timer timer = new Timer(60000);//Minute
-    timer.AutoReset = true;
-    timer.Elapsed += new ElapsedEventHandler(HandleMinuteTimer);
-    timer.Start();
+	private void UpdateTimeText ()
+	{
+		timeText.text = "Time: " + actualTimeRemaining + " (" + displayTimeRemaining + ")" + " Puzzles: " + corePuzzleStep + "/" + totalCorePuzzleSteps + " (" + corePercentComplete + "%)    They are " + GetTimeAhead () + "m " + GetTimeAhead () > 0 ? "Ahead" : "Behind";
+	}
 
-    UpdateTimeText();
+	private void MoveStepAndPercent ( int importance )
+	{
+		corePuzzleStep++;
 
-  }
+		//Get absolure importance for the percentage complete metric
+		int importanceStep = 100 / totalCorePuzzleImportance;
+		corePercentComplete += ( importance * importanceStep );
 
-  private void HandleMinuteTimer(object source, System.Timers.ElapsedEventArgs e)
-  {
-    actualTimeRemaining--;
-    SetDisplayTimeRemaining();
-    UpdateTimeText();
-  }
+		UpdateTimeText ();//These changes affect the TimeText
+	}
 
-  public void SetDisplayTimeRemaining()
-  {
-    displayTimeRemaining = actualTimeRemaining - (GetTimeAhead() / 2); //TODO
-  }
+	//Tells us how far ahead of time the team is. minutes.
+	//Will jump when corePercentComplete updates (ie when  puzzles are completed)
+	public int GetTimeAhead ()
+	{
+		//Calculate how long it should have tagen to get here
+		int shouldHaveTaken = ( corePercentComplete / 100 ) * startingTime; //mins
+		int actuallyTook = startingTime - actualTimeRemaining;
 
-  private void UpdateTimeText()
-  {
-    timeText.text = "Time: " + actualTimeRemaining + " (" + displayTimeRemaining + ")" + " Puzzles: " + puzzleStep + "/" + totalPuzzleSteps + " (" + percentComplete + "%)";
-  }
-
-  private void MoveStepAndPercent(int importance)
-  {
-    puzzleStep++;
-
-    //Get absolure importance for the percentage complete metric
-    int importanceStep = 100 / totalPuzzleImportance;
-    percentComplete += (importance * importanceStep);
-
-    UpdateTimeText();//These changes affect the TimeText
-  }
-
-  //Tells us how far ahead of time the team is. minutes.
-  public int GetTimeAhead()
-  {
-    //Calculate how long it should have tagen to get here
-    int shouldHaveTaken = (percentComplete / 100) * 60; //mins
-    int actuallyTook = 60 - actualTimeRemaining;
-
-    return shouldHaveTaken - actuallyTook;
-  }
-
-  public void GiveHint()
-  {
-    hintButton.interactable = false;
-
-    //Trigger Hint
-    Util.JLog("Giving a Hint");
-    //TODO
-
-    hintButton.interactable = true;
-  }
+		return shouldHaveTaken - actuallyTook;
+	}
 
 
+	public void GiveHint ()
+	{
+		hintButton.interactable = false;
 
-  ////Manual Puzzle Steps.
-  public struct Puzzle
-  {
-    public Puzzle(int number, int importance)
-    {
-      Number = number;
-      Importance = importance;
+		//Trigger Hint
+		Util.JLog ( "Giving a Hint" );
+		//TODO
 
-      Started = false;
-      Completed = false;
+		hintButton.interactable = true;
+	}
 
-//			Activate = activate;
-//			Complete = complete;
+	public void OnDifficultyChange ()
+	{
+		if (getDifficulty == 4)
+			CueInserterPuzzle ();
+	}
 
-      totalPuzzleImportance += importance;
-      totalPuzzleSteps++;
-//			puzzles.Add(this);
-    }
+	public void ThrowInstantPuzzle ( Puzzle puzzle = null )
+	{
+		throwInPuzzleButton.interactable = false;
+		if (!puzzle)
+			puzzle = SelectInstantPuzzle ();
 
-    public int Number;
-    public int Importance;
-    //A value other than 1 indicates how much this puzzles completion affects total percentage of game.
-    //		public Action Activate;
-    //		public Action Complete;
-    public bool Started;
-    public bool Completed;
-  };
-  //Common actions on puzzles.
-  public void ActivatePuzzle(Puzzle puzzle)
-  {
-    puzzle.Started = true;
-  }
+		puzzle.Activate ();
+	}
 
-  public void CompletePuzzle(Puzzle puzzle)
-  {
-    puzzle.Completed = true;
-    MoveStepAndPercent(puzzle.Importance);
-  }
+	//
+	public void CueInserterPuzzle ()
+	{
+		cueInserterPuzzleButton.interactable = false;
+		inserterPuzzleNext = true;
+		cancelInserterPuzzleButton.interactable = true;
 
-
-  //Wood Search
-  public Puzzle puzzle1 = new Puzzle(1, 5);
-
-  public void ActivatePuzzle1()
-  {
-    ActivatePuzzle(puzzle1);
-    //Set-up Puzzle Gameobjects
-  }
-
-  public void CompletePuzzle1()
-  {
-    CompletePuzzle(puzzle1);
-    //Animate & Change any Gameobjects...
+	}
+	public void CancelInserterPuzzle() {
+		cancelInserterPuzzleButton.interactable = false;
+		inserterPuzzleNext = false;
+		cueInserterPuzzleButton.interactable = true;
 
 
+	}
 
-    ActivatePuzzle2();
-    ActivatePuzzle3();
-  }
+	private void SelectInstantPuzzle ()
+	{
+		return giantBomb;
+	}
+//TODO
+
+	////Manual Puzzle Steps.
+	public struct Puzzle
+	{
+		public Puzzle ( int number, int importance,
+		                Action activate, Action complete )
+		{
+			Number = number;
+			Importance = importance;
+
+			Started = false;
+			Completed = false;
+
+			Activate = activate;
+			Complete = complete;
+
+			totalCorePuzzleImportance += importance;
+			totalCorePuzzleSteps++;
+//          puzzles.Add(this);
+		}
+
+		public int Number;
+		//Core puzzle number.  0 for dynamic puzzles
+		public int Importance;
+		//A value other than 1 indicates how much this puzzles completion affects total percentage of game.
+		public Action Activate;
+		public Action Complete;
+		public bool Started;
+		public bool Completed;
+	};
+	//Common actions on Core puzzles.
+	public void OnActivateAnyPuzzle ( Puzzle puzzle )
+	{
+		puzzle.Started = true;
+	}
+//	public void ActivateCorePuzzle ( Puzzle puzzle )
+//	{
+//		ActivateAnyPuzzle();
+//	}
+
+	public void OnCompleteCorePuzzle ( Puzzle puzzle )
+	{
+		puzzle.Completed = true;
+		MoveStepAndPercent ( puzzle.Importance );
+	}
+
+	public void OnCompleteThrowInPuzzle ( Puzzle puzzle )
+	{
+		puzzle.Completed = true;
+		throwInPuzzleButton.interactable = true;
+	}
 
 
-  //Wood Puzzle XXX
-  public Puzzle puzzle2 = new Puzzle(2, 1);
+	//// THROW IN PUZZLES
+	public Puzzle giantBomb = new Puzzle ( 0, 0, ActivatePuzzleGiantBomb, CompletePuzzleGiantBomb );
 
-  public void ActivatePuzzle2()
-  {
-    ActivatePuzzle(puzzle2);
-    //Set-up Puzzle Gameobjects
-  }
+	public void ActivatePuzzleGiantBomb ( int numberOfBombs = 1 )
+	{
+//		if (numberOfUnlockedRooms == 1)
+//			return; //Don't be cruel.
 
-  public void CompletePuzzle2()
-  {
-    CompletePuzzle(puzzle2);
+		OnActivateAnyPuzzle ();
+//		
+//		if (numberOfBombs >= numberOfUnlockedRooms)
+//			numberOfBombs = numberOfUnlockedRooms - 1;
+		Util.JLog ( "Throwing in " + numberOfBombs + " Bomb" + numberOfBombs > 1 ? "s" : "" + "!" );
 
-    //Animate & Change any Gameobjects...
+		//TODO Do the actual work.
+	}
 
-    if (puzzle3.Completed)
-    {
-      ActivatePuzzle4();
-    }
-  }
+	public void CompletePuzzleGiantBomb ()
+	{
+		OnCompleteThrowInPuzzle ();
+		//Clean-Up 
+	}
 
-
-  //Wood Puzzle YYY
-  public Puzzle puzzle3 = new Puzzle(3, 1);
-
-  public void ActivatePuzzle3()
-  {
-    ActivatePuzzle(puzzle3);
-    //Set-up Puzzle Gameobjects
-  }
-
-  public void CompletePuzzle3()
-  {
-    CompletePuzzle(puzzle3);
-
-    //Animate & Change any Gameobjects...
-
-    if (puzzle2.Completed)
-    {
-      ActivatePuzzle4();
-    }
-  }
+	//// INSERTER PUZZLES
 
 
-  public Puzzle puzzle4 = new Puzzle(3, 3);
 
-  public void ActivatePuzzle4()
-  {
-    ActivatePuzzle(puzzle4);
-    //Set-up Puzzle Gameobjects
-  }
+	//// CORE PUZZLES
 
-  public void CompletePuzzle4()
-  {
-    CompletePuzzle(puzzle1);
+	//Wood Search
+	public Puzzle puzzle1 = new Puzzle ( 1, 5, ActivatePuzzle1, CompletePuzzle1 );
 
-    //Animate & Change any Gameobjects...
-  }
+	public void ActivatePuzzle1 ()
+	{
+		OnActivateAnyPuzzle ( puzzle1 );
+		//Set-up Puzzle Gameobjects
+	}
+
+	public void CompletePuzzle1 ()
+	{
+		OnCompleteCorePuzzle ( puzzle1 );
+		//Animate & Change any Gameobjects...
+
+		ActivatePuzzle2 ();
+		ActivatePuzzle3 ();
+	}
+
+
+	//Wood Puzzle XXX
+	public Puzzle puzzle2 = new Puzzle ( 2, 1, ActivatePuzzle2, CompletePuzzle2 );
+
+	public void ActivatePuzzle2 ()
+	{
+		OnActivateAnyPuzzle ( puzzle2 );
+		//Set-up Puzzle Gameobjects
+	}
+
+	public void CompletePuzzle2 ()
+	{
+		OnCompleteCorePuzzle ( puzzle2 );
+
+		//Animate & Change any Gameobjects...
+
+		if (puzzle3.Completed)
+		{
+			ActivatePuzzle4 ();
+		}
+	}
+
+
+	//Wood Puzzle YYY
+	public Puzzle puzzle3 = new Puzzle ( 3, 1, ActivatePuzzle3, CompletePuzzle3 );
+
+	public void ActivatePuzzle3 ()
+	{
+		OnActivateAnyPuzzle ( puzzle3 );
+		//Set-up Puzzle Gameobjects
+	}
+
+	public void CompletePuzzle3 ()
+	{
+		OnCompleteCorePuzzle ( puzzle3 );
+
+		//Animate & Change any Gameobjects...
+
+		if (puzzle2.Completed)
+		{
+			ActivatePuzzle4 ();
+		}
+	}
+
+
+	public Puzzle puzzle4 = new Puzzle ( 3, 3, ActivatePuzzle4, CompletePuzzle4 );
+
+	public void ActivatePuzzle4 ()
+	{
+		OnActivateAnyPuzzle ( puzzle4 );
+		//Set-up Puzzle Gameobjects
+	}
+
+	public void CompletePuzzle4 ()
+	{
+		OnCompleteCorePuzzle ( puzzle1 );
+
+		//Animate & Change any Gameobjects...
+	}
 
 }
