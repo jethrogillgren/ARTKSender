@@ -190,7 +190,7 @@ public class PuzzleController : NetworkBehaviour
 			return;
 		
 		Util.JLog ( "Debug Doing puzzle: " + currentPuzzles[0].Name );
-		currentPuzzles[0].Complete ();
+		currentPuzzles[currentPuzzles.Count-1].Complete ();
 	}
 
 	private void HandleMinuteTimer ()
