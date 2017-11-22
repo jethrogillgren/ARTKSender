@@ -2,14 +2,16 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
-//Room Controller.  Knows all about room
+//Room Controller.  Knows all about Physical and Gameplay rooms.
+//That includes transfer between them (Teleports)
+//Provides itineries of all rooms.
 public class RoomController : NetworkBehaviour
 {
 
 	public HashSet<BaseGameplayObject> m_gameplayObjects;
 	public HashSet<PhysicalRoom> m_physicalRooms;
 	public HashSet<GameplayRoom> m_gameplayRooms;
-	public HashSet<TeleportDoorwayToggleTriggerGameplayObject> m_teleportTriggers;
+	public HashSet<BaseTeleportGameplayObject> m_teleportTriggers;
 
 	public PhysicalRoom mainRoom;
 
@@ -105,25 +107,26 @@ public class RoomController : NetworkBehaviour
 
 
 
-
-	//	public void teleportTriggered (TeleportDoorwayToggleTriggerGameplayObject t, PhysicalRoom oldRoom, PhysicalRoom newRoom, bool backwards = false) {
-	//		if(backwards) {
-	//			//Do nothing otherwise the jump would be watched by the player...
-	//
-	//		} else {
-	//			//Travelling fowards
-	//			GameplayRoom oldGameplayRoom = oldRoom.gameplayRoom;
-	//
-	//			Util.JLog ("Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
-	//			AndroidHelper.ShowAndroidToastMessage ("TELEPORT:  Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
-	//
-	//			replace (oldGameplayRoom, m_extraGameplayRoom, oldRoom);
-	////			unActivate (oldRoom.gameplayRoom);
-	////			activate (new GameplayRoom(), oldRoom);
-	//			m_extraGameplayRoom = oldGameplayRoom;
-	//			m_currentPhysicalRoom = newRoom;
-	//		}
-	//	}
+	//Used for the Three Room Door Teleporter
+	public void doorSwitchTeleportTriggered (ThreeRoomDoorTeleportGameplayObject t, PhysicalRoom oldRoom, PhysicalRoom newRoom, bool backwards = false) {
+		//TODO needs updating to know about which GameplayRooms are involved
+		//		if(backwards) {
+//			//Do nothing otherwise the jump would be watched by the player...
+//
+//		} else {
+//			//Travelling fowards
+//			GameplayRoom oldGameplayRoom = oldRoom.gameplayRoom;
+//
+//			Util.JLog ("Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
+//			AndroidHelper.ShowAndroidToastMessage ("TELEPORT:  Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
+//
+//			replace (oldGameplayRoom, m_extraGameplayRoom, oldRoom);
+////			unActivate (oldRoom.gameplayRoom);
+////			activate (new GameplayRoom(), oldRoom);
+//			m_extraGameplayRoom = oldGameplayRoom;
+//			m_currentPhysicalRoom = newRoom;
+//		}
+	}
 
 	public bool replace(GameplayRoom oldGr, GameplayRoom newGr, PhysicalRoom pr)
 	{
@@ -280,7 +283,7 @@ public class RoomController : NetworkBehaviour
 
 	public void collectTeleportTriggers()
 	{
-		Util.collectHashSetOfComponents<TeleportDoorwayToggleTriggerGameplayObject>(ref m_teleportTriggers);
+		Util.collectHashSetOfComponents<BaseTeleportGameplayObject>(ref m_teleportTriggers);
 	}
 
 

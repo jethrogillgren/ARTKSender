@@ -13,8 +13,8 @@
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.GoogleAudioSpatializer.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.HoloLens.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.SpatialTracking.dll
-/Users/jethro/git/TangoTests/Temp/bin/Debug/GETween.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/GUIAnimatorFREE.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/GETween.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.Analytics.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.Purchasing.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.Cecil.dll

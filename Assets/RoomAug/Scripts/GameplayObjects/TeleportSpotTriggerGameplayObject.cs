@@ -2,24 +2,11 @@
 using System;
 
 //Not tied to any room - it sits directly under the physical room.
-public class TeleportSpotTriggerGameplayObject : BaseGameplayObject {
-
-    public GameplayRoom targetGameplayRoom;
-
-    //private GameObject m_playerCollider;
-    private RoomController roomController;
-    private PhysicalRoom physicalRoom;
+public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
 
 	// Use this for initialization
     public override void Start() {
         base.Start();
-
-        roomController = FindObjectOfType<RoomController>();
-        physicalRoom = GetComponentInParent<PhysicalRoom>();
-
-        if( !targetGameplayRoom) {
-            throw new Exception(name + " MUST SPECIFY TARGET TELEPORT");
-        }
 	}
 	
 	// Update is called once per frame
@@ -28,17 +15,42 @@ public class TeleportSpotTriggerGameplayObject : BaseGameplayObject {
 	}
 
     //Client
-    void OnTriggerEnter( Collider collision ) {
+    public override void OnTriggerEnter( Collider collision ) {
         
-        if( isClient ) {
-            RoomAugPlayerController player = FindObjectOfType<RoomAugPlayerController>();
-            if( collision.name == player.GetComponent<Collider>().name ) {
-                Util.JLog( name + " Triggering teleport for " + collision.name );
-                roomController.LoadRoomInMainRoom(targetGameplayRoom);
-            }
+		//Client handles player teleports as it affects their own object mainly.
+		//Server can still track it OK.
+		if (isClient && teleportOpen)
+		{
+			RoomAugPlayerController player = FindObjectOfType<RoomAugPlayerController> ();
 
-        } else {
-            Util.JLogErr("Server ignoring collission for " + name + " and " + collision.name );
-        }
+			//Player Teleporting
+			if (collision.name == player.GetComponent<Collider> ().name)
+			{
+				Util.JLog ( name + " Triggering teleport for " + collision.name );
+				Trigger ();
+			}
+
+
+		//Servers handle the Cube teleporting as that is gobally scoped
+		}
+		else if ( !isClient && teleportOpen )
+		{
+			//Check if it was actually a cube
+			PandaCubeGameplayObject cube = collision.GetComponentInParent<PandaCubeGameplayObject>();
+			if( cube ) {
+				//TODO Animate Portal
+				cube.TeleportTo (targetGameplayRoom);
+			}
+		}
     }
+
+	public override void AnimateOpening() {
+		//TODO
+	}
+
+	public override void Trigger() {
+		//TODO animate portal
+		roomController.LoadRoomInMainRoom(targetGameplayRoom);
+	}
+
 }

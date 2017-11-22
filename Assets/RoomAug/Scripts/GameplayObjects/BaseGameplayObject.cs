@@ -14,6 +14,7 @@ public abstract class BaseGameplayObject : NetworkBehaviour
 	public bool m_IsDecorationOnly = true;
 	//True means there is no interactions - it is just for show or graphics.  False means the user will interact with it as part of a clue.
 
+	//Objects global state.  Visible means visible in any room, not jsut the current ones players are visiting.  See UpdateVisibility()
 	public enum GameplayState
 	{
 		Inactive,
@@ -97,10 +98,10 @@ public abstract class BaseGameplayObject : NetworkBehaviour
 		//GameplayState has first priority on setting enabled state.
 
 		if (gameplayState != GameplayState.Started)
-			{
-				gameObject.SetActive(false);
-				return;
-			}
+		{
+			gameObject.SetActive(false);
+			return;
+		}
 
 		//Servers see evvveeerythiiiing.  If it knows it shouldn't be turned on, the server trusts that.
 		//But if we are not Playing (ie we are editing) skip to the next bit
