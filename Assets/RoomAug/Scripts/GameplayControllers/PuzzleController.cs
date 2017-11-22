@@ -19,7 +19,7 @@ public class PuzzleController : NetworkBehaviour
 	//eg 1 = twice as slow.  0.5 = half as slow.  0.1 = 10% slower.  1= stopped.
 	public float slowdown = 0.0f;
 	public bool allowSlowdownTime = false;
-//set to true when we are in the last section of gameplay and want to fudge the finish countdown.
+	//set to true when we are in the last section of gameplay and want to fudge the finish countdown.
 
 
 	//Each core puzzle gives a step.    Order completed is partly variable.

@@ -39,7 +39,7 @@ public class RoomAugPlayerController : NetworkBehaviour
         m_pandaCubeController = FindObjectOfType<PandaCubeController>();
     }
     public override void OnStartLocalPlayer() {
-//        Instantiate(clientOnlyPrefab);
+		Instantiate(new AudioListener());
     }
 
     public void SetTangoHardwareSpecific(bool enable) {

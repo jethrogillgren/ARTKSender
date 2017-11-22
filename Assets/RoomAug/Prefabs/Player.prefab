@@ -554,8 +554,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: 'Player #'
-  clientOnlyPrefab: {fileID: 1177672798211034, guid: 4b73884e63e2a4516a8dee87754ee2d1,
-    type: 2}
 --- !u!114 &114074645071279848
 MonoBehaviour:
   m_ObjectHideFlags: 1
