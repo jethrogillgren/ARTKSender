@@ -16,30 +16,37 @@ public class PuzzleController : NetworkBehaviour
 	//minutes.
 
 	//Percent to add on to display time ticks at the last section of the game.
-	//eg 1 = twice as slow.  0.5 = half as slow.  0.1 = 10% slower.  2=200% (4 times) slower .
-	float slowdown = 0.0f;
+	//eg 1 = twice as slow.  0.5 = half as slow.  0.1 = 10% slower.  1= stopped.
+	public float slowdown = 0.0f;
+	public bool allowSlowdownTime = false;//set to true when we are in the last section of gameplay and want to fudge the finish countdown.
 
-	public int corePercentComplete = 0;
-	//Relies on last
-	//100 is completed game.
-	public int corePuzzleStep = 1;
+
 	//Each core puzzle gives a step.    Order completed is partly variable.
-	private List<Puzzle> corePuzzles;
 
-	private List<Puzzle> dynamicInPuzzles;
+	public float corePercentComplete = 0;	//100 is completed game.
+	public int corePuzzleStep = 0;	//Each core puzzle gives a step.    Order completed is partly variable
+
+
+	//These lists are manually populated in Start().
+	private List<Puzzle> allPuzzles;
+	private List<Puzzle> corePuzzles;
+	private List<Puzzle> inserterPuzzles;
+	private List<Puzzle> throwInPuzzles;
+	public List<Puzzle> currentPuzzles; //TODO plural?
 
 	public bool inserterPuzzleNext = false;
 
-	public    static int totalCorePuzzleSteps = 0;
-	private static int totalCorePuzzleImportance = 0;
-	//static so we can calculate it while initializing the Puzzle structs
+	public  int totalCorePuzzleSteps = 0;
+	private float totalCorePuzzleImportance = 0;
 
+	private float totalScore = 0; //The current score.  Uses importance and time remaining
+	private float totalPuzzleImportance = 0;//The max score possible
 
 	//// GUI refs
 	public Button throwInPuzzleButton;
 	public Slider difficultySlider;
 	// 0-4.    0 Is easiest.    4 is every extra puzzle. 1/3 is some extra puzzles. 2 is the default.
-	public int getDifficulty ()
+	public int GetDifficulty ()
 	{
 		return ( int )Math.Ceiling ( difficultySlider.value );//Locked to whole numbers anyway
 	}
@@ -49,8 +56,19 @@ public class PuzzleController : NetworkBehaviour
 	public Button cueInserterPuzzleButton;
 	public Button cancelInserterPuzzleButton;
 
+	public Button debugDoPuzzleButton;
+
 
 	Timer timer;
+
+
+	public Puzzle giantBombPuzzle;
+	public Puzzle inserterTestPuzzle;
+	public Puzzle puzzle1;
+	public Puzzle puzzle2;
+	public Puzzle puzzle3;
+	public Puzzle puzzle4;
+
 
 	public void Start ()
 	{
@@ -62,7 +80,8 @@ public class PuzzleController : NetworkBehaviour
 //        timer.Elapsed += new ElapsedEventHandler(HandleMinuteTimer);
 //        timer.Start();
 
-		InvokeRepeating ( "HandleMinuteTimer", 1, 1 );// Seconds
+
+
 	}
 
 	public void OnDisable ()
@@ -77,7 +96,7 @@ public class PuzzleController : NetworkBehaviour
 			return;
             
 		//Adds a listener to the main slider and invokes a method when the value changes.
-		throwInPuzzleButton = ( Button )GameObject.Find ( "Throw In Puzzle" ).GetComponent<Button>;
+		throwInPuzzleButton = ( Button )GameObject.Find ( "Throw In Puzzle" ).GetComponent<Button>();
 		throwInPuzzleButton.onClick.AddListener ( delegate
 			{
 				ThrowInstantPuzzle ();
@@ -107,6 +126,13 @@ public class PuzzleController : NetworkBehaviour
 					CancelInserterPuzzle ();
 				}
 			} );
+		debugDoPuzzleButton = (Button) GameObject.Find("Debug Do Puzzle").GetComponent<Button> ();
+		debugDoPuzzleButton.onClick.AddListener ( delegate
+			{
+				{
+					DebugDoPuzzle ();
+				}
+			} );
 
 		actualTimeRemaining = startingTime;
 		displayTimeRemaining = actualTimeRemaining;
@@ -119,12 +145,52 @@ public class PuzzleController : NetworkBehaviour
 //      puzzles.Add(puzzle3);
 //      puzzles.Add(puzzle4);
 
+		giantBombPuzzle = new Puzzle ("GiantBomb", 0, 0, ActivatePuzzleGiantBomb, CompletePuzzleGiantBomb );
+		inserterTestPuzzle = new Puzzle("InserterTest", 0, 0, ActivateInserterPuzzleTest, CompleteInserterPuzzleTest);
+		puzzle1 = new Puzzle ("Core1", 1, 5, ActivatePuzzle1, CompletePuzzle1 );
+		puzzle2 = new Puzzle ("Core2", 2, 1, ActivatePuzzle2, CompletePuzzle2 );
+		puzzle3 = new Puzzle ("Core3", 3, 1, ActivatePuzzle3, CompletePuzzle3 );
+		puzzle4 = new Puzzle ("COre4", 3, 3, ActivatePuzzle4, CompletePuzzle4 );
+
 		corePuzzles = Util.CreateList ( puzzle1, puzzle2, puzzle3, puzzle4 );
+		inserterPuzzles = Util.CreateList (inserterTestPuzzle);
+		throwInPuzzles = Util.CreateList (giantBombPuzzle);
+
+		allPuzzles = new List<Puzzle> (corePuzzles);
+		currentPuzzles = new List<Puzzle> ();
+
+		foreach(Puzzle p in corePuzzles) {
+			totalCorePuzzleImportance += p.Importance;
+			totalCorePuzzleSteps++;
+			allPuzzles.Add ( p );
+		}
+		foreach ( Puzzle p in inserterPuzzles )
+		{
+			allPuzzles.Add ( p );
+		}
+		foreach ( Puzzle p in throwInPuzzles )
+		{
+			allPuzzles.Add ( p );
+		}
+		foreach ( Puzzle p in allPuzzles )
+			totalPuzzleImportance += p.Importance;
+		
 
 		ActivatePuzzle1 ();
 
 		UpdateTimeText ();
 
+		InvokeRepeating ( "HandleMinuteTimer", 1, 1 );// Seconds
+
+	}
+
+	//Debug, used for testing the puzzle code before client testing was doable.
+	private void DebugDoPuzzle() {
+		if (currentPuzzles.Count < 1)
+			return;
+		
+		Util.JLog ( "Debug Doing puzzle: " + currentPuzzles[0].Name );
+		currentPuzzles[0].Complete ();
 	}
 
 	private void HandleMinuteTimer ()
@@ -138,19 +204,16 @@ public class PuzzleController : NetworkBehaviour
 	//Relies on corePercentComplete to continue being updated  during the last segment.
 	public void CalculateSlowdown ()
 	{
-		//if( !onLastSegment )
-		//return
 
-		float maxSlowdown = 0.5; //Maximum we will let ourselves change the speed of a minute (to stop it being noticeable)
-		//Percent slowdown.  eg 1 = twice as slow.  0.5 = half as slow.  0.1 = 10% slower.  2=200% (4 times) slower .
+		float maxSlowdown = 0.5f; //see slowdown.  Maximum we will let ourselves change the speed of a minute (to stop it being noticeable)
 
 		int maxDrift = 10; //Maximum extra minutes we will allow players
-		int timeBehind = -GetTimeAhead ();
+		float timeBehind = -GetTimeAhead ();
 
 		//We're doing OK
-		if (GetTimeAhead () >= 0)
+		if (!allowSlowdownTime || GetTimeAhead () >= 0)
 		{
-			slowdown = 1; //TODO - smooth this out over time.  So when players catch up to time at the end
+			slowdown = 0f; //TODO - smooth this out over time.  So when players catch up to time at the end
 			//they get a little more slowing and don't just back to real time.
 		}
 		else //We're struggling  eg 7 mins behind     or 3 mins behind
@@ -189,27 +252,39 @@ public class PuzzleController : NetworkBehaviour
 
 	private void UpdateTimeText ()
 	{
-		timeText.text = "Time: " + actualTimeRemaining + " (" + displayTimeRemaining + ")" + " Puzzles: " + corePuzzleStep + "/" + totalCorePuzzleSteps + " (" + corePercentComplete + "%)    They are " + GetTimeAhead () + "m " + GetTimeAhead () > 0 ? "Ahead" : "Behind";
+		string tmp = "Time: " + actualTimeRemaining + " (" + displayTimeRemaining + ") " + "   They are " + Math.Abs ( GetTimeAhead () ) + "m " + ( GetTimeAhead () > 0 ? "Ahead" : "Behind" ) + " \n"
+				+ "Puzzles: " + corePuzzleStep + "/" + totalCorePuzzleSteps + " (" + corePercentComplete + "%) \n"
+				+ "Current: ";
+		foreach ( Puzzle p in currentPuzzles )
+			tmp += p.Name + "  ";
+
+		timeText.text = tmp;
 	}
 
-	private void MoveStepAndPercent ( int importance )
+	private void MoveStepAndPercent ( float importance )
 	{
-		corePuzzleStep++;
+		//Don't move step if we are finishing
+		if(corePuzzleStep < totalCorePuzzleSteps)
+			corePuzzleStep++;
 
 		//Get absolure importance for the percentage complete metric
-		int importanceStep = 100 / totalCorePuzzleImportance;
+		float importanceStep = 100 / totalCorePuzzleImportance;
 		corePercentComplete += ( importance * importanceStep );
+
+		//Extra check
+		if (corePercentComplete > 100)
+			corePercentComplete = 100;
 
 		UpdateTimeText ();//These changes affect the TimeText
 	}
 
 	//Tells us how far ahead of time the team is. minutes.
 	//Will jump when corePercentComplete updates (ie when  puzzles are completed)
-	public int GetTimeAhead ()
+	public float GetTimeAhead ()
 	{
 		//Calculate how long it should have tagen to get here
-		int shouldHaveTaken = ( corePercentComplete / 100 ) * startingTime; //mins
-		int actuallyTook = startingTime - actualTimeRemaining;
+		float shouldHaveTaken = ( corePercentComplete / 100f ) * startingTime; //mins it should have taken
+		float actuallyTook = startingTime - actualTimeRemaining;
 
 		return shouldHaveTaken - actuallyTook;
 	}
@@ -227,16 +302,18 @@ public class PuzzleController : NetworkBehaviour
 
 	public void OnDifficultyChange ()
 	{
-		if (getDifficulty == 4)
+		if (GetDifficulty() == 4)
 			CueInserterPuzzle ();
 	}
 
-	public void ThrowInstantPuzzle ( Puzzle puzzle = null )
+	public void ThrowInstantPuzzle ( )
+	{
+		Puzzle selected = SelectInstantPuzzle ();
+		ThrowInstantPuzzle ( ref selected );
+	}
+	public void ThrowInstantPuzzle ( ref Puzzle puzzle )
 	{
 		throwInPuzzleButton.interactable = false;
-		if (!puzzle)
-			puzzle = SelectInstantPuzzle ();
-
 		puzzle.Activate ();
 	}
 
@@ -254,9 +331,9 @@ public class PuzzleController : NetworkBehaviour
 		cueInserterPuzzleButton.interactable = true;
 	}
 
-	private void SelectInstantPuzzle ()
+	private Puzzle SelectInstantPuzzle ()
 	{
-		return giantBomb; //TODO
+		return giantBombPuzzle; //TODO
 	}
 
 
@@ -266,13 +343,14 @@ public class PuzzleController : NetworkBehaviour
 
 
 	////PUZZLE COMMON
+	//This object defines each puzzle (core, inserter and throw-in).  Each puzzle self-contains it's own different difficulty versions.
+	//New instances must be manually added to the List<Puzzle> objects
 	public struct Puzzle
 	{
-		
-		
-		public Puzzle ( int number, int importance,
+		public Puzzle ( string name, int number, int importance,
 				Action activate, Action complete, Action corePuzzleCallback = null )
 		{
+			Name = name;
 			Number = number;
 			Importance = importance;
 
@@ -284,11 +362,10 @@ public class PuzzleController : NetworkBehaviour
 
 			CorePuzzleCallback = corePuzzleCallback;
 
-			totalCorePuzzleImportance += importance;
-			totalCorePuzzleSteps++;
 //          puzzles.Add(this);
 		}
 
+		public String Name;
 		public int Number;
 		//Core puzzle number.  0 for dynamic puzzles
 		public int Importance;
@@ -302,28 +379,49 @@ public class PuzzleController : NetworkBehaviour
 
 
 	//Common actions on Core puzzles.
-	public void OnActivateAnyPuzzle ( Puzzle puzzle )
+	public void OnActivateAnyPuzzle ( ref Puzzle puzzle )
 	{
 		puzzle.Started = true;
+		currentPuzzles.Add(puzzle);
 	}
-
-	public void OnCompleteCorePuzzle ( Puzzle puzzle )
-	{
-		puzzle.Completed = true;
-		MoveStepAndPercent ( puzzle.Importance );
-	}
-	public void OnCompleteThrowInPuzzle ( Puzzle puzzle )
-	{
-		puzzle.Completed = true;
-		throwInPuzzleButton.interactable = true;
-	}
-	public void OnActivateInserterPuzzle(Puzzle puzzle) {
+	public void OnActivateInserterPuzzle(ref Puzzle puzzle) {
 		cueInserterPuzzleButton.interactable = false;
 		cancelInserterPuzzleButton.interactable = false;
+		OnActivateAnyPuzzle (ref  puzzle );
 	}
-	public void OnCompleteInserterPuzzle(Puzzle puzzle)
+
+
+	public void OnCompleteAnyPuzzle( ref Puzzle puzzle)
 	{
 		puzzle.Completed = true;
+
+		//		currentPuzzles.Remove (  puzzle ); TODO this needed replacing with the below???
+		foreach( Puzzle p in currentPuzzles ) {
+			if(p.Name == puzzle.Name)
+			{
+				currentPuzzles.Remove ( p );
+				break;
+			}
+		}
+
+		totalScore += puzzle.Importance;
+
+		UpdateTimeText ();
+	}
+	public void OnCompleteCorePuzzle ( ref Puzzle puzzle )
+	{
+		MoveStepAndPercent ( puzzle.Importance );
+		OnCompleteAnyPuzzle (ref puzzle);
+	}
+	public void OnCompleteThrowInPuzzle ( ref Puzzle puzzle )
+	{
+		OnCompleteAnyPuzzle (ref puzzle);
+		throwInPuzzleButton.interactable = true;
+	}
+
+	public void OnCompleteInserterPuzzle(ref Puzzle puzzle)
+	{
+		OnCompleteAnyPuzzle (ref puzzle);
 		cueInserterPuzzleButton.interactable = true;
 		cancelInserterPuzzleButton.interactable = false;
 
@@ -335,25 +433,26 @@ public class PuzzleController : NetworkBehaviour
 
 
 	//// THROW IN PUZZLES
-	public Puzzle giantBomb = new Puzzle ( 0, 0, ActivatePuzzleGiantBomb, CompletePuzzleGiantBomb );
 
-	public void ActivatePuzzleGiantBomb ( int numberOfBombs = 1 )
+	public void ActivatePuzzleGiantBomb ( ) { ActivatePuzzleGiantBomb (1);} //TODO shouldn't be needed but the Action delegate needs sortinh with parameters
+
+	public void ActivatePuzzleGiantBomb ( int numberOfBombs)
 	{
 //		if (numberOfUnlockedRooms == 1)
 //			return; //Don't be cruel.
 
-		OnActivateAnyPuzzle ();
+		OnActivateAnyPuzzle (ref giantBombPuzzle);
 //		
 //		if (numberOfBombs >= numberOfUnlockedRooms)
 //			numberOfBombs = numberOfUnlockedRooms - 1;
-		Util.JLog ( "Throwing in " + numberOfBombs + " Bomb" + numberOfBombs > 1 ? "s" : "" + "!" );
+		Util.JLog ( "Throwing in " + numberOfBombs + " Bomb" + (numberOfBombs>1 ? "s" : "") + "!" );
 
 		//TODO Do the actual work.
 	}
 
 	public void CompletePuzzleGiantBomb ()
 	{
-		OnCompleteThrowInPuzzle ();
+		OnCompleteThrowInPuzzle (ref giantBombPuzzle);
 		//Clean-Up 
 	}
 
@@ -363,13 +462,12 @@ public class PuzzleController : NetworkBehaviour
 
 
 	//// INSERTER PUZZLES
-	public Puzzle inserterPuzzleTest = new Puzzle(0, 0, ActivateInserterPuzzleTest, CompleteInserterPuzzleTest);
 	public void ActivateInserterPuzzleTest() {
-		OnActivateInserterPuzzle ();
+		OnActivateInserterPuzzle (ref inserterTestPuzzle);
 		//Set-up Puzzle Gameobjects
 	}
 	public void CompleteInserterPuzzleTest() {
-		OnCompleteInserterPuzzle ();
+		OnCompleteInserterPuzzle (ref inserterTestPuzzle);
 		//Clean Up
 	}
 
@@ -382,98 +480,127 @@ public class PuzzleController : NetworkBehaviour
 	//// CORE PUZZLES
 
 	//Wood Search
-	public Puzzle puzzle1 = new Puzzle ( 1, 5, ActivatePuzzle1, CompletePuzzle1 );
 
 	public void ActivatePuzzle1 ()
 	{
-		OnActivateAnyPuzzle ( puzzle1 );
+		OnActivateAnyPuzzle ( ref puzzle1 );
 		//Set-up Puzzle Gameobjects
+
+		if(GetDifficulty() >3) {
+			//Do the hard version
+		}
 	}
 
 	public void CompletePuzzle1 ()
 	{
-		OnCompleteCorePuzzle ( puzzle1 );
+		OnCompleteCorePuzzle ( ref puzzle1 );
 		//Animate & Change any Gameobjects...
 
 		if (inserterPuzzleNext)
 		{
-			inserterPuzzleTest.CorePuzzleCallback = ActivatePuzzles ( puzzle2, puzzle3 );
-			inserterPuzzleTest.Activate ();
+			inserterTestPuzzle.CorePuzzleCallback = ActivatePuzzles2And3;
+			inserterTestPuzzle.Activate ();
 		}
 		else
 		{
-			ActivatePuzzles ( puzzle2, puzzle3 );
+			ActivatePuzzles ( ref puzzle2, ref puzzle3 );
 		}
 	}
 
-	public void ActivatePuzzles ( Puzzle p1, Puzzle p2 = null, Puzzle puzzle3 = null ) {
-		
+	//TODO these are not working as Action delegates - I need to work out how to pass parameters (Activate and Complete callbacks)
+	public void ActivatePuzzles ( ref Puzzle p1, ref Puzzle p2 ) {
+		p1.Activate ();
+		p2.Activate();
+	}
+	public void ActivatePuzzles ( ref Puzzle p1, ref Puzzle p2, ref Puzzle p3 ) {
+		p1.Activate ();
+		p2.Activate ();
+		p3.Activate();
+	}
+	public void ActivatePuzzles2And3() {
+		ActivatePuzzles ( ref puzzle2, ref puzzle3 );
 	}
 
 
 	//Wood Puzzle XXX
-	public Puzzle puzzle2 = new Puzzle ( 2, 1, ActivatePuzzle2, CompletePuzzle2 );
 
 	public void ActivatePuzzle2 ()
 	{
-		OnActivateAnyPuzzle ( puzzle2 );
+		OnActivateAnyPuzzle ( ref puzzle2 );
 		//Set-up Puzzle Gameobjects
 	}
 
 	public void CompletePuzzle2 ()
 	{
-		OnCompleteCorePuzzle ( puzzle2 );
+		OnCompleteCorePuzzle ( ref puzzle2 );
 
 		//Animate & Change any Gameobjects...
 
 		if (puzzle3.Completed)
 		{
+			Debug.Log ("Puzzle 3 also done, so moving to 4");
+
 			ActivatePuzzle4 ();
+		} else {
+			Debug.Log ("Waiting for Puzzle 3 to complete before moving to 4");
+
 		}
 	}
 
 
 	//Wood Puzzle YYY
-	public Puzzle puzzle3 = new Puzzle ( 3, 1, ActivatePuzzle3, CompletePuzzle3 );
 
 	public void ActivatePuzzle3 ()
 	{
-		OnActivateAnyPuzzle ( puzzle3 );
+		OnActivateAnyPuzzle ( ref puzzle3 );
 		//Set-up Puzzle Gameobjects
 	}
 
 	public void CompletePuzzle3 ()
 	{
-		OnCompleteCorePuzzle ( puzzle3 );
+		OnCompleteCorePuzzle ( ref puzzle3 );
 
 		//Animate & Change any Gameobjects...
 
 		if (puzzle2.Completed)
 		{
+			Debug.Log ("Puzzle 2 also done, so moving to 4");
+
 			ActivatePuzzle4 ();
+		} else {
+			Debug.Log ("Waiting for Puzzle 2 to complete before moving to 4");
 		}
 	}
 
 
-	public Puzzle puzzle4 = new Puzzle ( 3, 3, ActivatePuzzle4, CompletePuzzle4 );
 
 	public void ActivatePuzzle4 ()
 	{
-		OnActivateAnyPuzzle ( puzzle4 );
+		OnActivateAnyPuzzle ( ref puzzle4 );
 		//Set-up Puzzle Gameobjects
+		allowSlowdownTime = true;
 	}
 
 	public void CompletePuzzle4 ()
 	{
-		OnCompleteCorePuzzle ( puzzle1 );
+		OnCompleteCorePuzzle ( ref puzzle4 );
 
 		//Animate & Change any Gameobjects...
+		WinGame ();
 	}
 
 
 
 
 
+	private void WinGame() {
+		if(IsInvoking("HandleMinuteTimer"))
+			CancelInvoke ( "HandleMinuteTimer" );
 
+		if (actualTimeRemaining > 0)
+			totalScore += actualTimeRemaining;
+
+		Debug.LogError ("WINNER with " + totalScore + " points");
+	}
 
 }

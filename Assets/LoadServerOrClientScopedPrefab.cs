@@ -4,22 +4,26 @@ using UnityEngine;
 
 public class LoadServerOrClientScopedPrefab : NetworkBehaviour
 {
-  public GameObject serverOnlyPrefab;
-  public GameObject clientOnlyPrefab;
+	public GameObject serverOnlyPrefab;
+	public GameObject clientOnlyPrefab;
 
 
-  public override void OnStartServer()
-  {
-      Debug.LogError("SERVER PREFAB LOADING");
+	public override void OnStartServer ()
+	{
 
-      if(serverOnlyPrefab)
-        Instantiate(serverOnlyPrefab);
-  }
-      
-  public override void OnStartClient()
-    {
-    Debug.LogError("CLIENT PREFAB LOADING");
-      if(clientOnlyPrefab)
-        Instantiate(clientOnlyPrefab);
-    }
+		if (serverOnlyPrefab && GameObject.Find ( "ServerOnlyPrefab" ) == null)
+			Instantiate ( serverOnlyPrefab );
+
+		if ( GameObject.Find ( "ClientOnlyPrefab" ) )
+			Destroy ( GameObject.Find ( "ClientOnlyPrefab"  ) );
+	}
+
+	public override void OnStartClient ()
+	{
+		if (clientOnlyPrefab && GameObject.Find ( "ClientOnlyPrefab" ) == null)
+			Instantiate ( clientOnlyPrefab );
+
+		if ( GameObject.Find ( "ServerOnlyPrefab" ) )
+			Destroy ( GameObject.Find ( "ServerOnlyPrefab"  ) );
+	}
 }
