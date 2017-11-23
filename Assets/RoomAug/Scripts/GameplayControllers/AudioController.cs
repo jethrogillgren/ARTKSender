@@ -22,15 +22,26 @@ public class AudioController : NetworkBehaviour {
 	//3D Room SOUND
 	public AudioGameplayObject woodAmbience;
 
-	public override void OnStartServer ()
-	{
 
+	//For syncronised time   syncServerTime
+	private RoomAugNetworkManager networkManager;
+
+
+
+	public void Start ()
+	{
+		networkManager = GameObject.FindObjectOfType<RoomAugNetworkManager> ();
 	}
 
+
+	//Called to move to the next section of a Rooms music track
+	public void ProgressRoomMusic() {
+		
+	}
 
 
 	//Alt to just calling it ourselves
 	public void TriggerClip(AudioGameplayObject source) {
 		source.PlayEverywhere ();
-	} 
+	}
 }

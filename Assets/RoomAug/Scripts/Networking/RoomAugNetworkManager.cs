@@ -2,60 +2,14 @@
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-
 using UnityEngine;
 
 //This is a specialised NetworkManager.  NetworkManager wraps the actual Link connection between Server and Client.
 public class RoomAugNetworkManager : NetworkManager {
 
-
-	//Start loading the scene and flag ClientScene.ready once done
-	IEnumerator AsyncAddClientSpecificScene(NetworkConnection conn)
-	{
-		Util.JLog ("Loading in ClientOnline specialisations");
-
-		// The Application loads the Scene in the background at the same time as the current Scene.
-		//This is particularly good for creating loading screens. You could also load the scene by build //number.
-		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("ClientOnline", LoadSceneMode.Additive);
-
-		//Wait until the last operation fully loads to return anything
-		while (!asyncLoad.isDone)
-		{
-			yield return null;
-		}
-
-		ClientScene.Ready (conn);
-		ClientScene.AddPlayer (conn, 0);
-	}
-
-	//Add in Client Unique Scene assets for clients only.
-	public override void OnClientSceneChanged(NetworkConnection conn)
-	{
-		if (Application.platform == RuntimePlatform.Android) {
-			
-//			StartCoroutine( AsyncAddClientSpecificScene (conn) );
-//
-//			SceneManager.LoadScene("ClientOnline", LoadSceneMode.Additive);
-			ClientScene.Ready (conn);
-			ClientScene.AddPlayer (conn, 0);
-
-		} else {
-			Util.JLogErr("Tried to load the ClientScene from a Non-Android Device.");
-		}
-	}
-
-	//Add in Server Unique Scene assets for servers only.
-	public override void OnServerSceneChanged(string sceneName)
-	{
-		if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.OSXEditor) {
-
-//			Debug.Log ("J# Loading in ServerOnline specialisations");
-//			SceneManager.LoadScene ("ServerOnline", LoadSceneMode.Additive);
-
-		} else {
-			Util.JLogErr("Tried to load the ServerScene from a Non-Server Device.");
-		}
-	}
+	bool _isSyncTimeWithServer = false;
+	public static double syncServerTime;
+	public static double latencyMs = 0;
 
 	//Control adding new Players on client connection
 	public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
@@ -69,4 +23,83 @@ public class RoomAugNetworkManager : NetworkManager {
 
 	}
 
+
+
+	void Update()
+	{
+		if (_isSyncTimeWithServer)
+		{
+			syncServerTime += Time.deltaTime;
+		}
+	}
+
+
+
+
+
+	public override void OnStartServer ()
+	{
+		base.OnStartServer();
+		// we're the Server, dont need to sync with anyone :)
+		_isSyncTimeWithServer = true;
+		syncServerTime = Network.time;
+	}
+
+	/// <summary>
+	/// On server, be called when a client connected to Server
+	/// </summary>
+	public override void OnServerConnect (NetworkConnection conn)
+	{
+		base.OnServerConnect(conn);
+		Debug.Log("---- Server send syncTime to client : " + conn.connectionId);
+
+		var syncTimeMessage = new SyncTimeMessage();
+		syncTimeMessage.timeStamp = Network.time;
+		NetworkServer.SendToClient(conn.connectionId, CustomMsgType.SyncTime, syncTimeMessage);
+	}
+
+
+//	//Add in Client Unique Scene assets for clients only.
+//	public override void OnClientSceneChanged(NetworkConnection conn)
+//	{
+//		if (Application.platform == RuntimePlatform.Android) {
+//
+//			ClientScene.Ready (conn);
+//			ClientScene.AddPlayer (conn, 0);
+//
+//		} else {
+//			Util.JLogErr("Tried to load the ClientScene from a Non-Android Device.");
+//		}
+//	}
+
+	public override void OnStartClient (NetworkClient client)
+	{
+		base.OnStartClient(client);
+		client.RegisterHandler(CustomMsgType.SyncTime, OnReceiveSyncTime);
+		latencyMs = client.GetRTT ();
+	}
+
+
+	void OnReceiveSyncTime(NetworkMessage msg)
+	{
+		var castMsg = msg.ReadMessage<SyncTimeMessage>();
+		_isSyncTimeWithServer = true;
+		syncServerTime = castMsg.timeStamp + latencyMs;
+		Debug.Log("--------Client receive : " + syncServerTime);
+	}
+
+
+
+
+
+	public class CustomMsgType
+	{
+		public const short SyncTime = MsgType.Highest + 1;
+	}
+
+
+	public class SyncTimeMessage : MessageBase
+	{
+		public double timeStamp;
+	}
 }

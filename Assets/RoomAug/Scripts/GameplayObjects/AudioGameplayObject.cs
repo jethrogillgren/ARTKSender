@@ -45,6 +45,10 @@ public class AudioGameplayObject : BaseGameplayObject {
 	}
 
 	//Network Control
+
+	/// <summary>
+	/// Cross Network Play (Sounds know where they are enabled)
+	/// </summary>
 	public void PlayEverywhere() {
 		Play ();
 		if (isClient)
