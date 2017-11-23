@@ -15,6 +15,7 @@ public class AudioGameplayObject : BaseGameplayObject {
 	public bool playOnSpawn = false;
 
 	private AudioSource audioSource;
+	private RoomAugPlayerController playerController;
 
 	// Use this for initialization for both 
 	public override void Start()
@@ -49,11 +50,9 @@ public class AudioGameplayObject : BaseGameplayObject {
 	/// <summary>
 	/// Cross Network Play (Sounds know where they are enabled)
 	/// </summary>
-	public void PlayEverywhere() {
+	public void PlayClientsToo() {
 		Play ();
-		if (isClient)
-			CmdPlay ();
-		else
+		if (!isClient)
 			RpcPlay();
 	}
 	[ClientRpc]
@@ -61,9 +60,21 @@ public class AudioGameplayObject : BaseGameplayObject {
 	{
 		Play ();
 	}
-	[Command]
-	public void CmdPlay()
+//	[Command]
+//	public void CmdPlay()
+//	{
+//		Play ();
+//	}
+//
+
+	//We override the default Hiding/Showing as we may exist outside of any Rooms.
+	public override void UpdateVisibility()
 	{
-		Play ();
+		//If we are in a gamelpay room, do the default Visibility check
+		if ( GetComponentInParent<GameplayRoom>() != null)
+			base.UpdateVisibility ();
+		else //Otherwise just go by gameplayState
+			gameObject.SetActive( (gameplayState==GameplayState.Started) );
 	}
+
 }

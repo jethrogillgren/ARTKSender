@@ -17,6 +17,8 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
     //Client
     public override void OnTriggerEnter( Collider collision ) {
         
+		Util.JLog ( name + " TriggerEnter: " + collision.name );
+
 		//Client handles player teleports as it affects their own object mainly.
 		//Server can still track it OK.
 		if (isClient && teleportOpen)
@@ -28,6 +30,8 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
 			{
 				Util.JLog ( name + " Triggering teleport for " + collision.name );
 				Trigger ();
+			} else {
+				Util.JLog ( name + " Skipping Teleport as " + collision.name + " != " + player.GetComponent<Collider> ().name );
 			}
 
 

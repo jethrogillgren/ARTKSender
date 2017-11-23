@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEditor.Audio;
+using UnityEngine.Audio;
 
 
 public class AudioController : NetworkBehaviour {
@@ -31,6 +31,8 @@ public class AudioController : NetworkBehaviour {
 	public void Start ()
 	{
 		networkManager = GameObject.FindObjectOfType<RoomAugNetworkManager> ();
+
+//		InvokeRepeating ( "DebugSFX", 5, 5 );// Seconds
 	}
 
 
@@ -40,8 +42,13 @@ public class AudioController : NetworkBehaviour {
 	}
 
 
+//	public void DebugSFX() {
+//		Debug.LogWarning ("DebugSFX Called");
+//		testSFX.Play();
+//	}
+
 	//Alt to just calling it ourselves
 	public void TriggerClip(AudioGameplayObject source) {
-		source.PlayEverywhere ();
+		source.PlayClientsToo ();
 	}
 }

@@ -114,19 +114,19 @@ public abstract class BaseGameplayObject : NetworkBehaviour
 				gameObject.SetActive(true);
 				return;
 
-				//Android, or the Unity Editor while editing
-			} else if (Application.platform == RuntimePlatform.Android ||
-		                 (Application.platform != RuntimePlatform.Android && !Application.isPlaying))
-			{
-				//Debug.Log(name + " might not being drawn because:  " + isClient + " " + Application.isPlaying );
-				//Clients see their current room only.
-				//When editing we do this bit
-				PhysicalRoom pr = GetComponentInParent<PhysicalRoom>();
-				if (pr)
-					gameObject.SetActive(true);
-				else
-					gameObject.SetActive(false);
-			}
+			//Android, or the Unity Editor while editing
+		} else if (Application.platform == RuntimePlatform.Android ||
+	                 (Application.platform != RuntimePlatform.Android && !Application.isPlaying))
+		{
+			//Debug.Log(name + " might not being drawn because:  " + isClient + " " + Application.isPlaying );
+			//Clients see their current room only.
+			//When editing we do this bit
+			PhysicalRoom pr = GetComponentInParent<PhysicalRoom>();
+			if (pr)
+				gameObject.SetActive(true);
+			else
+				gameObject.SetActive(false);
+		}
 		//Debug.Log( "-" );
 
 
