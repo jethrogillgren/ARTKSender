@@ -15,11 +15,14 @@ public class GameplayRoomEditor : Editor {
 		if (gr == null)
 			return;
 
-		gr.roomName = EditorGUILayout.TextField("Room Name", gr.roomName);
+//		gr.roomName = EditorGUILayout.TextField("Room Name", gr.roomName);
 
 		gr.RegisterAnyParentPhysicalRoom ();
 		gr.UpdateAllGameplayObjectsVisibility ();
         gr.SetAppropiateLayers();
 		EditorGUILayout.LabelField("Active", gr.roomActive ? "yes" : "no");
+
+		DrawDefaultInspector();
+
 	}
 }

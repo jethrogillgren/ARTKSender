@@ -6,6 +6,44 @@ using System;
 
 public static class Util
 {
+	//Used by gameplayRooms, and PandaCubes.
+	public enum ElementalType {
+		None,
+		Wood,
+		Fire,
+		Earth,
+		Metal,
+		Water
+	}
+
+	public static Color GetColor( ElementalType elementalType ) {
+		switch (elementalType)
+		{
+			case ElementalType.None:
+				return Color.white;
+				break;
+			case ElementalType.Wood:
+				return Color.green;
+				break;
+			case ElementalType.Fire:
+				return Color.red;
+				break;
+			case ElementalType.Earth:
+				return Color.yellow;
+				break;
+			case ElementalType.Metal:
+				return Color.grey;
+				break;
+			case ElementalType.Water:
+				return Color.blue;
+				break;
+			default:
+				Debug.LogError ( "Invalid CubeType" );
+				return Color.black;
+		}
+	}
+
+
     public static List<T> CreateList<T> ( params T [] values )
     {
         return new List<T> ( values );

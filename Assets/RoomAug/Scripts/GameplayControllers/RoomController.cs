@@ -166,7 +166,7 @@ public class RoomController : NetworkBehaviour
 				gr.transform.SetParent(this.transform, false);
 
 				gr.physicalRoom = null;
-				gr.UpdateAllGameplayObjectsVisibility();
+				gr.UpdateAll();
 
 //			gr.UpdateAll ();
 				return true;
@@ -188,7 +188,7 @@ public class RoomController : NetworkBehaviour
 				gr.transform.localPosition = new Vector3(0, 0, 0);//TODO shouldn't be needed?
 				pr.gameplayRoom = gr;
 
-				gr.UpdateAllGameplayObjectsVisibility();
+				gr.UpdateAll();
 
 //			gr.UpdateAll();
 

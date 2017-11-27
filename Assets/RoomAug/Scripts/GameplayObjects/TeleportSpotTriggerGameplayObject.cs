@@ -40,9 +40,10 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
 		else if ( !isClient && teleportOpen )
 		{
 			//Check if it was actually a cube
-			PandaCubeGameplayObject cube = collision.GetComponentInParent<PandaCubeGameplayObject>();
+			PandaCubeGameplayObject cube = collision.GetComponent<PandaCubeGameplayObject>();
 			if( cube ) {
 				//TODO Animate Portal
+				Util.JLog ( "Teleporting Cube " + cube.name + " to " + targetGameplayRoom.roomName );
 				cube.TeleportTo (targetGameplayRoom);
 			}
 		}

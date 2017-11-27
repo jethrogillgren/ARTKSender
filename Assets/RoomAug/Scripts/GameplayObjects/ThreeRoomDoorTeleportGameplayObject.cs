@@ -10,7 +10,6 @@ public class ThreeRoomDoorTeleportGameplayObject : BaseTeleportGameplayObject
 	public bool m_originalSide = true;
 	//True means we are behind the BLue Forward line of the teleport to start, in physical space
 
-	public RoomController roomController;
 	public PhysicalRoom originalRoom;
 	public PhysicalRoom otherRoom;
 	//If null, gameplaycontroller decides what is linked next

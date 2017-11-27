@@ -453,6 +453,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: earth
+  roomType: 3
 --- !u!4 &72706237
 Transform:
   m_ObjectHideFlags: 0
@@ -2577,7 +2578,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.23
       objectReference: {fileID: 0}
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_LocalPosition.y
@@ -2662,6 +2663,11 @@ Prefab:
         type: 2}
       propertyPath: m_IsDecorationOnly
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: cubeType
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
@@ -2853,7 +2859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0dc8daca1734f74b5c225d6b1c0d1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomName: 
+  roomName: side
   m_startGameplayRoom: {fileID: 0}
 --- !u!1 &432979876
 GameObject:
@@ -2958,21 +2964,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc9d73c9711fc41cc897eb45e9e0c950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actualTimeRemaining: 60
-  displayTimeRemaining: 0
-  slowdown: 0
-  allowSlowdownTime: 0
-  corePercentComplete: 0
-  corePuzzleStep: 0
-  inserterPuzzleNext: 0
-  totalCorePuzzleSteps: 0
-  throwInPuzzleButton: {fileID: 0}
-  difficultySlider: {fileID: 0}
-  hintButton: {fileID: 0}
-  timeText: {fileID: 0}
-  cueInserterPuzzleButton: {fileID: 0}
-  cancelInserterPuzzleButton: {fileID: 0}
-  debugDoPuzzleButton: {fileID: 0}
 --- !u!1001 &433332466
 Prefab:
   m_ObjectHideFlags: 0
@@ -3141,6 +3132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: fire
+  roomType: 2
 --- !u!1 &460465362
 GameObject:
   m_ObjectHideFlags: 0
@@ -4818,7 +4810,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.25
       objectReference: {fileID: 0}
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_LocalPosition.y
@@ -4900,6 +4892,11 @@ Prefab:
       propertyPath: m_rect
       value: 
       objectReference: {fileID: 1460425195}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: cubeType
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
   m_IsPrefabParent: 0
@@ -5062,7 +5059,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &840047492
 Transform:
   m_ObjectHideFlags: 0
@@ -5141,7 +5138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsDecorationOnly: 1
-  m_GameplayState: 0
+  m_GameplayState: 1
 --- !u!114 &840047497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6475,6 +6472,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: metal
+  roomType: 4
 --- !u!1001 &1100538917
 Prefab:
   m_ObjectHideFlags: 0
@@ -6753,7 +6751,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad223efa3a67f47d6af946fa74ebe495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsDecorationOnly: 1
+  m_IsDecorationOnly: 0
   m_GameplayState: 1
   targetGameplayRoom: {fileID: 1872272705}
   teleportOpen: 1
@@ -7763,6 +7761,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: water
+  roomType: 5
 --- !u!1 &1228106065
 GameObject:
   m_ObjectHideFlags: 0
@@ -8509,7 +8508,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IsDecorationOnly: 1
   m_GameplayState: 1
-  m_earth: {fileID: 0}
+  m_earth: {fileID: 1212081336}
   m_radius: 2
   m_orbitSpeed: 10
   m_rotateY: 1
@@ -12278,7 +12277,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.36
       objectReference: {fileID: 0}
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_LocalRotation.x
@@ -12356,6 +12355,16 @@ Prefab:
       propertyPath: m_rect
       value: 
       objectReference: {fileID: 1297348582}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: cubeType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 23603092157733888, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 45ccc8bd2274d479494615228b28112d, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
   m_IsPrefabParent: 0
@@ -12690,6 +12699,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomName: wood
+  roomType: 1
 --- !u!1001 &1875411898
 Prefab:
   m_ObjectHideFlags: 0
@@ -13519,7 +13529,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.24
       objectReference: {fileID: 0}
     - target: {fileID: 4642622614032346, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
       propertyPath: m_LocalRotation.x
@@ -13593,6 +13603,11 @@ Prefab:
       propertyPath: m_rect
       value: 
       objectReference: {fileID: 2083527867}
+    - target: {fileID: 114397429976455352, guid: 3b29a46d677df4a0188bde6936d1fa13,
+        type: 2}
+      propertyPath: cubeType
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3b29a46d677df4a0188bde6936d1fa13, type: 2}
   m_IsPrefabParent: 0

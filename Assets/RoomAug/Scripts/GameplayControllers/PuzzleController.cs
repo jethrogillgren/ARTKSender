@@ -11,22 +11,22 @@ using UnityEngine.Networking;
 public class PuzzleController : NetworkBehaviour
 {
 	public const float startingTime = 60f;
-	public float actualTimeRemaining;
-	public float displayTimeRemaining;
+	private float actualTimeRemaining;
+	private float displayTimeRemaining;
 	//minutes.
 
 	//Percent to add on to display time ticks at the last section of the game.
 	//eg 1 = twice as slow.  0.5 = half as slow.  0.1 = 10% slower.  1= stopped.
-	public float slowdown = 0.0f;
-	public bool allowSlowdownTime = false;
+	private float slowdown = 0.0f;
+	private bool allowSlowdownTime = false;
 	//set to true when we are in the last section of gameplay and want to fudge the finish countdown.
 
 
 	//Each core puzzle gives a step.    Order completed is partly variable.
 
-	public float corePercentComplete = 0;
+	private float corePercentComplete = 0;
 	//100 is completed game.
-	public int corePuzzleStep = 0;
+	private int corePuzzleStep = 0;
 	//Each core puzzle gives a step.    Order completed is partly variable
 
 
@@ -38,9 +38,9 @@ public class PuzzleController : NetworkBehaviour
 	public List<Puzzle> currentPuzzles;
 	//TODO plural?
 
-	public bool inserterPuzzleNext = false;
+	private bool inserterPuzzleNext = false;
 
-	public  int totalCorePuzzleSteps = 0;
+	private  int totalCorePuzzleSteps = 0;
 	private float totalCorePuzzleImportance = 0;
 
 	private float totalScore = 0;
@@ -49,27 +49,27 @@ public class PuzzleController : NetworkBehaviour
 //The max score possible
 
 	//// GUI refs
-	public Button throwInPuzzleButton;
-	public Slider difficultySlider;
+	private Button throwInPuzzleButton;
+	private Slider difficultySlider;
 	// 0-4.    0 Is easiest.    4 is every extra puzzle. 1/3 is some extra puzzles. 2 is the default.
 	public int GetDifficulty ()
 	{
 		return ( int )Math.Ceiling ( difficultySlider.value );//Locked to whole numbers anyway
 	}
 
-	public Button hintButton;
-	public Text timeText;
-	public Button cueInserterPuzzleButton;
-	public Button cancelInserterPuzzleButton;
+	private Button hintButton;
+	private Text timeText;
+	private Button cueInserterPuzzleButton;
+	private Button cancelInserterPuzzleButton;
 
-	public Button debugDoPuzzleButton;
+	private Button debugDoPuzzleButton;
 
-	public Puzzle giantBombPuzzle;
-	public Puzzle inserterTestPuzzle;
-	public Puzzle puzzle1;
-	public Puzzle puzzle2;
-	public Puzzle puzzle3;
-	public Puzzle puzzle4;
+	private Puzzle giantBombPuzzle;
+	private Puzzle inserterTestPuzzle;
+	private Puzzle puzzle1;
+	private Puzzle puzzle2;
+	private Puzzle puzzle3;
+	private Puzzle puzzle4;
 
 
 

@@ -479,7 +479,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 1000
+  m_Time: 10
   m_Parameters:
     serializedVersion: 2
     widthMultiplier: 1
@@ -536,7 +536,7 @@ TrailRenderer:
     textureMode: 0
     generateLightingData: 0
   m_MinVertexDistance: 0.01
-  m_Autodestruct: 0
+  m_Autodestruct: 1
 --- !u!102 &102910719009107438
 TextMesh:
   serializedVersion: 3

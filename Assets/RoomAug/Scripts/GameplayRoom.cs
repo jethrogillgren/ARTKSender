@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 public class GameplayRoom : MonoBehaviour {
 
 	public string roomName;
+	public Util.ElementalType roomType;
 
 	private PhysicalRoom m_physicalRoom; //1 to 1 relationship, or empty.  relationship controlled by parent
 	public PhysicalRoom physicalRoom

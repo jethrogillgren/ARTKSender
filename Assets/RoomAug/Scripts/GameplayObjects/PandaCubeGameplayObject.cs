@@ -10,16 +10,19 @@ using Tango;
 public class PandaCubeGameplayObject : BaseGameplayObject
 {
 
-	public string cubeContentName;
-	//1, 2, .. 16
+	public string cubeContentName; //1, 2, .. 16
 
 	[HideInInspector]
-	[SyncVar ( hook = "OnGameplayRoomSync" )]
 	public GameplayRoom gameplayRoom;
 
 	public LineRenderer m_rect;
 
+	public Material defaultMaterial;
+	public Material wireframeMaterial;
+
 	public bool isTrackingGood = true;
+
+	public Util.ElementalType cubeType;
 
 	//A cube is always active in only one room.  It will appear translucent in others and not interact.
 	//public GameplayRoom room;
@@ -37,29 +40,13 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	{
 		DrawFull ();
 	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-		//
-	}
 
-	public void OnGameplayRoomSync ( GameplayRoom gr )
-	{
-		Util.JLog ( "SYNCVAR OnGameplayRoomSync: " + gr );
-		gameplayRoom = gr;
-		UpdateAll ();
-	}
-
-	//Server and Client
-	public override void UpdateAll ()
-	{
-		base.UpdateAll ();
-
-		Util.JLog ( name + " is Updating All" );
-
-		UpdateVisibility ();
-	}
+//	//Update my state, for when rooms change
+//	public override void UpdateAll()
+//	{
+//		UpdateVisibility();
+//		SetLayer();
+//	}
 
 	//Cubes are special, they are always active across rooms/clients.
 	//This overrides the usual UpdateVisibility() which does client roomBased enabling
@@ -80,27 +67,60 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			
 	}
 
+	//Use to draw the cube properly, locally
 	public void DrawFull ()
 	{
-		foreach (MeshRenderer m in gameObject.GetComponentsInChildren<MeshRenderer>())
-		{
-			m.material.color = Color.white;
-		}
-	}
+		Debug.Log (name + " Rendering Full " + cubeType );
+		SetMaterialAndColor ( defaultMaterial, Util.GetColor ( cubeType ) );
+//		switch (cubeType)
+//		{
+//			case Util.ElementalType.None:
+//				SetMaterialAndColor (defaultMaterial, Color.white);
+//				break;
+//			case Util.ElementalType.Wood:
+//				SetMaterialAndColor (defaultMaterial, Color.green);
+//				break;
+//			case Util.ElementalType.Fire:
+//				SetMaterialAndColor (defaultMaterial, Color.red);
+//				break;
+//			case Util.ElementalType.Earth:
+//				SetMaterialAndColor (defaultMaterial, Color.yellow);
+//				break;
+//			case Util.ElementalType.Metal:
+//				SetMaterialAndColor (defaultMaterial, Color.grey);
+//				break;
+//			case Util.ElementalType.Water:
+//				SetMaterialAndColor (defaultMaterial, Color.cyan);
+//				break;
+//			default:
+//				Debug.LogError ("Invalid CubeType");
+//				break;
+//		}
 
+	}
+	//Use to draw the cube when it is not in the same gameplay room as you, locally
 	public void DrawAsWireframe ()
 	{
-		foreach (MeshRenderer m in gameObject.GetComponentsInChildren<MeshRenderer>())
+		Debug.Log (name + " Rendering Wireframe " + cubeType );
+		SetMaterialAndColor ( wireframeMaterial, Util.GetColor ( cubeType ) );
+	}
+
+	private void SetMaterialAndColor(Material m, Color c) {
+		foreach (MeshRenderer mr in gameObject.GetComponentsInChildren<MeshRenderer>())
 		{
-			m.material.color = Color.Lerp(Color.white, Color.clear, 0.5f);
+			mr.material = m;
+			mr.material.color = c;
 		}
 	}
+		
+
 
 
 	//Register any new Gameplayroom we are in, and return it.
+	//Client and Server both call this
 	public GameplayRoom FindGameplayRoom ()
 	{
-        
+		//Servers set it and SYNCVAR gives it to the clients
 		gameplayRoom = GetComponentInParent<GameplayRoom> ();
 		if (!gameplayRoom)
 			Util.JLogErr ( name + " : " + cubeContentName + " has escaped outside of any Gameplayroom!  Not supported." );
@@ -110,21 +130,40 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 
 	//SERVER calls this.
-	//TODO this looks wrong... how do clients get updated?
 	public void TeleportTo ( GameplayRoom dest )
 	{
-		if (!isClient && dest)
-		{
-			transform.SetParent ( dest.transform, true );
-			FindGameplayRoom ();
-			UpdateAll ();//This will change visibility
-			Util.JLog ( name + " teleported into " + gameplayRoom.roomName );
-		}
+		if (isClient)
+			Util.JLogErr (name + ": CLIENT INITIATED TELEPORT");
+
+		SetNewParent ( dest.transform );
+
+		//Do the same for all clients
+		RpcTeleportTo (dest.name);
 	}
 
-	//Server
+	[ClientRpc]
+	public void RpcTeleportTo( string name )
+	{
+		GameObject dest = GameObject.Find ( name );//TODO - inefficient
+		SetNewParent (dest.transform);
+	}
+
+	private void SetNewParent ( Transform newParent ) {
+		transform.SetParent ( newParent, true );
+		FindGameplayRoom ();
+
+		UpdateAll ();//This will change visibility (which includes mesh/solid, and the color)
+	}
+
+	//Server only
 	public void SetMarker ( TangoSupport.Marker marker )
 	{
+		if (isClient)
+		{
+			Debug.LogError ("Client recieved a Marker update");
+			return;
+		}
+
 		m_rect.SetPosition ( 0, marker.m_corner3DP0 );
 		m_rect.SetPosition ( 1, marker.m_corner3DP1 );
 		m_rect.SetPosition ( 2, marker.m_corner3DP2 );
@@ -140,6 +179,10 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//Server
 	public void RecieveIMU ( Vector3 imuReadings )
 	{
-		//Set the cubes position
+		if (isClient)
+		{
+			Debug.LogError ("Client recieved a IMU update");
+			return;
+		}
 	}
 }
