@@ -54,7 +54,10 @@ using UnityEngine;
 [ExecuteInEditMode]                     // Run in the editor so we can keep the scale at 1
 public class ARTrackedCamera : ARCamera
 {
+	#pragma warning disable 0108
 	private const string LogTag = "ARTrackedCamera: ";
+	#pragma warning restore 0108
+
 
 	public float secondsToRemainVisible = 0.0f;		// How long to remain visible after tracking is lost (to reduce flicker)
 

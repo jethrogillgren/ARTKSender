@@ -361,7 +361,7 @@ public class TangoPointCloud : MonoBehaviour, ITangoPointCloud
     public bool EstimateDepthOnScreen(Camera cam, Vector2 pos, out Vector3 colorCameraPoint)
     {
         // Set up parameters
-        Matrix4x4 colorCameraTUnityWorld = TangoSupport.COLOR_CAMERA_T_UNITY_CAMERA * cam.transform.worldToLocalMatrix;
+//        Matrix4x4 colorCameraTUnityWorld = TangoSupport.COLOR_CAMERA_T_UNITY_CAMERA * cam.transform.worldToLocalMatrix;
         Vector2 normalizedPos = cam.ScreenToViewportPoint(pos);
 
         // If the camera has a TangoARScreen attached, it is not displaying the entire color camera image.  Correct

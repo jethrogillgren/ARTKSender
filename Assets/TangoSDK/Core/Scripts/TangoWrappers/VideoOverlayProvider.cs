@@ -286,7 +286,7 @@ namespace Tango
             TangoCameraIntrinsics intrinsics = new TangoCameraIntrinsics();
             GetIntrinsics(TangoEnums.TangoCameraId.TANGO_CAMERA_COLOR, intrinsics);
 
-            float intrinsicsRatio = (float)intrinsics.width / (float)intrinsics.height;
+//            float intrinsicsRatio = (float)intrinsics.width / (float)intrinsics.height;
             Tango.OrientationManager.Rotation rotation = TangoSupport.RotateFromAToB(
                 AndroidHelper.GetDisplayRotation(), 
                 AndroidHelper.GetColorCameraRotation());

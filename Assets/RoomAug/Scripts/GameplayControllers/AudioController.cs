@@ -24,13 +24,13 @@ public class AudioController : NetworkBehaviour {
 
 
 	//For syncronised time   syncServerTime
-	private RoomAugNetworkManager networkManager;
+//	private RoomAugNetworkManager networkManager;
 
 
 
 	public void Start ()
 	{
-		networkManager = GameObject.FindObjectOfType<RoomAugNetworkManager> ();
+//		networkManager = GameObject.FindObjectOfType<RoomAugNetworkManager> ();
 
 //		InvokeRepeating ( "DebugSFX", 5, 5 );// Seconds
 	}

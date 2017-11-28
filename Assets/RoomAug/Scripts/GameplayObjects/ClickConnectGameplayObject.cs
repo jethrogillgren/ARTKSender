@@ -16,7 +16,7 @@ public class ClickConnectGameplayObject : BaseGameplayObject {
 	private Material m_startMaterial;
 	private MeshRenderer m_renderer;
 	private ConnectState m_state = ConnectState.inactive;
-	private ClickConnectGameplayObject m_connectedObject;
+	public ClickConnectGameplayObject m_connectedObject;
 
 
 	// Use this for initialization

@@ -28,9 +28,13 @@ public partial class AndroidHelper
     #pragma warning disable 414
     private static AndroidJavaObject m_tangoUxHelper = null;
     #pragma warning restore 414
+
+	#pragma warning disable 0649
     private static System.IntPtr m_tangoUxHelper_class;
     private static System.IntPtr m_tangoUxHelper_obj;
     private static System.IntPtr m_tangoUxHelper_processPoseDataStatus;
+	#pragma warning restore 0649
+
     [System.ThreadStatic] private static jvalue[] val;
     [System.ThreadStatic] private static int jniAttached; 
     

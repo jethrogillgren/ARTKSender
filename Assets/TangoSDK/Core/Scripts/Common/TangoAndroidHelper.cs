@@ -396,8 +396,12 @@ public partial class AndroidHelper
     /// </summary>
     private class TangoServiceLifecycleListener : AndroidJavaProxy
     {
+
+		#pragma warning disable 0649
         public OnTangoServiceConnected m_onTangoServiceConnected;
         public OnTangoServiceDisconnected m_onTangoServiceDisconnected;
+		#pragma warning restore 0649
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AndroidHelper+TangoServiceLifecycleListener"/> class.

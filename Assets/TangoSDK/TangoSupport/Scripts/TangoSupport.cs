@@ -521,10 +521,10 @@ namespace Tango
 
             // Get Pose.
             TangoPoseData poseData = new TangoPoseData();
-            if ( pair.targetFrame == null  ||  pair.baseFrame == null ) {
-                pair.baseFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_START_OF_SERVICE;
-                pair.targetFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_CAMERA_COLOR;
-            }
+//			if ( pair.Equals( null ) ) {
+//                pair.baseFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_START_OF_SERVICE;
+//                pair.targetFrame = TangoEnums.TangoCoordinateFrameType.TANGO_COORDINATE_FRAME_CAMERA_COLOR;
+//            }
             PoseProvider.GetPoseAtTime(poseData, buffer.timestamp, pair);
 
             APIMarkerList rawAPIMarkerList = new APIMarkerList();

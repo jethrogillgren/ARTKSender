@@ -6,7 +6,7 @@ using UnityEngine;
 public class UphillTunnelWGO : WGO {
 
     //State transitions finished (consistant throughput etc..) instead of filling up etc...
-    private bool equalibrium = true;
+    public bool equalibrium = true;
 
     private bool overflowing = false;
 
