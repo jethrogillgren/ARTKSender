@@ -49,7 +49,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
 
     // Use this for initialization
     void Start() {
-        Util.JLog( " Application Starting Up" );
+        Debug.Log( " Application Starting Up" );
         state = new ApplicationStateMachine();
 
         m_markerList = new List<TangoSupport.Marker>();
@@ -93,9 +93,9 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
     public bool LoadADFFromDevice() {
         AreaDescription[] list = AreaDescription.GetList();
 
-        Util.JLog( " There are " + ( list == null ? 0 : list.Length ) + " Area Descriptions Available: ", true );
-        if( list != null && list.Length != 0 )
-            Util.JLogArrErr( list, x => x.GetMetadata().m_name, true );
+//        Debug.Log( " There are " + ( list == null ? 0 : list.Length ) + " Area Descriptions Available: " );
+//        if( list != null && list.Length != 0 )
+//            Util.JLogArrErr( list, x => x.GetMetadata().m_name, true );
 
         if ( list != null && list.Length != 0 ) {
 
@@ -123,19 +123,19 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
             if ( !LoadADFFromDevice() ) {
 
                 //We should only waste time installing a new ADF the first time we see it in the APK.
-                Util.JLogErr( "No AreaDescription Found matching " + m_areaDescriptionName + " on Device.  Loading in " + System.IO.Path.Combine( Application.streamingAssetsPath, m_areaDescriptionName + ".adf" ) + " from the APK." );
+                Debug.LogError( "No AreaDescription Found matching " + m_areaDescriptionName + " on Device.  Loading in " + System.IO.Path.Combine( Application.streamingAssetsPath, m_areaDescriptionName + ".adf" ) + " from the APK." );
 
                 if ( AreaDescription.ImportFromFile( System.IO.Path.Combine( Application.streamingAssetsPath, m_areaDescriptionName + ".adf" ) ) ) {
-                    Util.JLog( "Imported new ADF file from the APK! " + m_areaDescriptionName, true );
+                    Debug.Log( "Imported new ADF file from the APK! " + m_areaDescriptionName);
                     if ( LoadADFFromDevice() ) //TODO this seems to always fail?  had to manually use the TangoExamples manager.
                         return;
                     else
-                        Util.JLogErr("Failed to load the APK ADF", true);
+						Util.JLogErr("Failed to load the APK ADF", true);
 
                     //No ADF on Device or APK... time to give up and accept horrendous drift?
                 }
 
-                Util.JLogErr( "No area descriptions available.  Starting without one in Drift corrected Motion tracking mode.", true );
+				Util.JLogErr ( "No area descriptions available.  Starting without one in Drift corrected Motion tracking mode.", true );
                 m_tangoApplication.EnableAreaDescriptions = false;
                 m_tangoApplication.EnableMotionTracking = true;
                 m_tangoApplication.EnableDriftCorrection = true;
@@ -145,7 +145,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
 
             }
         } else {
-            Util.JLogErr( "Motion Tracking and Area Learning Permissions Needed", true );
+			Util.JLogErr ( "Motion Tracking and Area Learning Permissions Needed", true );
             state.MoveNext( Command.Exit );
             Application.Quit();
         }
@@ -153,13 +153,13 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
 
 
     public void OnTangoServiceConnected() {
-        Util.JLog( " Tango Service Connected" );
+        Debug.Log( " Tango Service Connected" );
         state.MoveNext( Command.Connect );
 
     }
 
     public void OnTangoServiceDisconnected() {
-        Util.JLog( " Tango Service Disconnected" );
+        Debug.Log( " Tango Service Disconnected" );
         state.MoveNext( Command.Disconnect );
         //TODO Lifecycle reconnect
     }
@@ -222,7 +222,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
                 Debug.Log( "Ignoring Occlusion toggle " + occluding + " as " + occluder.name + " is " + occluder.gameplayState );
             }
         }
-        //          Util.JLog("Setting Occluder: " + occluder.gameObject.name + " to " + occludingOnly);
+        //          Debug.Log("Setting Occluder: " + occluder.gameObject.name + " to " + occludingOnly);
         //          if (occludingOnly) {//Make it invisible but occluding
         //              RoomAugPlayerController p = GetComponent<RoomAugPlayerController>();
         //              //occluder.setOcclusion( true );
@@ -245,7 +245,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
 
     //Called by Canvas Checkbox to start mapping a new space, while Localised
     public void DebugEnable3DR( bool active ) {
-        Util.JLog( " Setting 3D Reconstruction mode to " + active );
+        Debug.Log( " Setting 3D Reconstruction mode to " + active );
 
         m_dynamicMesh.Clear();
         m_dynamicMesh.enabled = active;
@@ -257,16 +257,16 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
     //Save current Mesh to file
     public void DebugExport3DRMesh() {
 
-        Util.JLog( "Exporting 3DR Mesh" );
+        Debug.Log( "Exporting 3DR Mesh" );
 
         m_dynamicMesh = FindObjectOfType<TangoDynamicMesh>();
 
         string filepath = "/sdcard/3DRMesh_" + m_areaDescriptionName + ".obj";
         if ( m_dynamicMesh != null ) {
             m_dynamicMesh.ExportMeshToObj( filepath );
-            Util.JLog( "Exported mesh to " + filepath );
+			Util.JLog( "Exported mesh to " + filepath, true );
         } else {
-            Util.JLogErr( "No Dynamic Mesh loaded to Export!" );
+			Util.JLog ( "No Dynamic Mesh loaded to Export!", true );
         }
     }
 

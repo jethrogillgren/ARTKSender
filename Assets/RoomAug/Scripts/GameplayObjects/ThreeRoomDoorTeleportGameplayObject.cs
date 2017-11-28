@@ -43,13 +43,13 @@ public class ThreeRoomDoorTeleportGameplayObject : BaseTeleportGameplayObject
 			{
 
 
-				Util.JLog ( gameObject.name + " has been triggered by " + collision.name );
+				Debug.Log ( gameObject.name + " has been triggered by " + collision.name );
 
-				Util.JLog ( "Collission Forward: " + collision.transform.forward );
-				Util.JLog ( "Teleport Forward  : " + gameObject.transform.forward );
+				Debug.Log ( "Collission Forward: " + collision.transform.forward );
+				Debug.Log ( "Teleport Forward  : " + gameObject.transform.forward );
 
 				float angle = Vector3.Angle ( collision.transform.forward, gameObject.transform.forward );
-				Util.JLog ( "Angle: " + angle + "  We are on the " + ( m_originalSide ? "original" : "other" ) + "side" );
+				Debug.Log ( "Angle: " + angle + "  We are on the " + ( m_originalSide ? "original" : "other" ) + "side" );
 
 				if (m_originalSide && angle < 90) //Forward to Otherside
 				{
@@ -63,13 +63,13 @@ public class ThreeRoomDoorTeleportGameplayObject : BaseTeleportGameplayObject
 				}
 				else if (m_originalSide) //Backwards to Otherside
 				{
-					Util.JLog ( "Passing Backwards!" );
+					Debug.Log ( "Passing Backwards!" );
 					roomController.doorSwitchTeleportTriggered ( this, originalRoom, otherRoom, true );
 
 				}
 				else if (!m_originalSide) //Backwards to OriginalSide
 				{
-					Util.JLog ( "Returning Backwards!" );
+					Debug.Log ( "Returning Backwards!" );
 					roomController.doorSwitchTeleportTriggered ( this, otherRoom, originalRoom, true );
 
 				}
@@ -89,13 +89,13 @@ public class ThreeRoomDoorTeleportGameplayObject : BaseTeleportGameplayObject
 	{
 		if (m_originalSide)
 		{//Assume Forward to Otherside
-			Util.JLog ( "Passing Forward " );
+			Debug.Log ( "Passing Forward " );
 			roomController.doorSwitchTeleportTriggered ( this, originalRoom, otherRoom );
 
 		}
 		else if (!m_originalSide)
 		{//Assume Forward to OriginalSide
-			Util.JLog ( "Returning Forward " );
+			Debug.Log ( "Returning Forward " );
 			roomController.doorSwitchTeleportTriggered ( this, otherRoom, originalRoom );
 
 		}

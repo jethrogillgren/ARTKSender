@@ -15,7 +15,7 @@ public class ShoutMyLocation : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if( c % m_step == 0 )
-			Util.JLog( gameObject.name + "'s pos: " + transform.position.ToString());
+			Debug.Log( gameObject.name + "'s pos: " + transform.position.ToString());
 		++c;
 	}
 }

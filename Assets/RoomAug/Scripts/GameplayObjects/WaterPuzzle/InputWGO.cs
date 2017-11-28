@@ -12,7 +12,7 @@ public class InputWGO : WGO {
     //Start/Stop creating water
     public override bool Act()
     {
-        Util.JLog( "Input Act" );
+        Debug.Log( "Input Act" );
         if (acting)
         {
             DebugSetColour( Color.white );

@@ -39,14 +39,14 @@ public class SlidingCubeGameplayObject : BaseGameplayObject {
 		if ( gameplayState == GameplayState.Started ) {
 
 			if (sliding) {
-				Util.JLog ("Sliding");
+				Debug.Log ("Sliding");
 				//Do the move
 				float step = speed * Time.deltaTime;
 				transform.position = Vector3.MoveTowards(transform.position, floor.transform.position, step);
 
 				//Check if we arrived
 				if (transform.position == floor.transform.position) {
-					Util.JLog ("We have arrived... continuing?");
+					Debug.Log ("We have arrived... continuing?");
 					//Carry on travelling?
 					applyPush (currentForce);
 				}
@@ -62,7 +62,7 @@ public class SlidingCubeGameplayObject : BaseGameplayObject {
 					if (t.phase == TouchPhase.Began) {
 						//And it was on a pushable cube face
 						Face f = GetHitFace (t);
-						Util.JLog ("Touch on face: " + f);
+						Debug.Log ("Touch on face: " + f);
 
 						if (f != Face.None)
 							applyPush (f);
@@ -88,7 +88,7 @@ public class SlidingCubeGameplayObject : BaseGameplayObject {
 
 	//Check if the push will result in a slide
 	public bool applyPush(Face f) {
-		Util.JLog ( "Pushing cube " + name + " On floor " + floor.name + " From Face: " + f );
+		Debug.Log ( "Pushing cube " + name + " On floor " + floor.name + " From Face: " + f );
 
 		SlidingFloorGameplayObject next = null;
 		if (f == Face.South)
@@ -103,7 +103,7 @@ public class SlidingCubeGameplayObject : BaseGameplayObject {
 
 		if (next == null || next.blocked) {
 			currentForce = Face.None;
-			Util.JLog ("Can't Push.  " + (next == null ? "No floors in that direction" : "Floor is blocked") );
+			Debug.Log ("Can't Push.  " + (next == null ? "No floors in that direction" : "Floor is blocked") );
 			return false;
 		} else {
 			applySlide (f, next);
@@ -115,7 +115,7 @@ public class SlidingCubeGameplayObject : BaseGameplayObject {
 	//When we decide we will slide, we count as instantly owning the next cube.  Others can take our square now.
 	//This assumes that the next has been validated already
 	private void applySlide(Face f, SlidingFloorGameplayObject next) {
-		Util.JLog ("Applying slide from " + f + " to " + next.name);
+		Debug.Log ("Applying slide from " + f + " to " + next.name);
 		next.cube = this;
 		floor.cube = null;
 

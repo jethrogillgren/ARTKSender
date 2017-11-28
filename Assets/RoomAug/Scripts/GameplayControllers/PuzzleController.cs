@@ -128,7 +128,7 @@ public class PuzzleController : NetworkBehaviour
 		displayTimeRemaining = actualTimeRemaining;
 
 //      if (totalPuzzleImportance > 100)
-//          Util.JLogErr("TOO MUCH IMPORTANCE in PuzzleController: " + totalPuzzleImportance);
+//          Debug.LogError("TOO MUCH IMPORTANCE in PuzzleController: " + totalPuzzleImportance);
 
 //      puzzles.Add(puzzle1);
 //      puzzles.Add(puzzle2);
@@ -181,7 +181,7 @@ public class PuzzleController : NetworkBehaviour
 		if (currentPuzzles.Count < 1)
 			return;
 		
-		Util.JLog ( "Debug Doing puzzle: " + currentPuzzles [ 0 ].Name );
+		Debug.Log ( "Debug Doing puzzle: " + currentPuzzles [ 0 ].Name );
 		currentPuzzles [ currentPuzzles.Count - 1 ].Complete ();
 	}
 
@@ -236,7 +236,7 @@ public class PuzzleController : NetworkBehaviour
 		}
 		else
 		{
-			Util.JLogErr ( "NEGATIVE SLOWDOWN " + slowdown );
+			Debug.LogError ( "NEGATIVE SLOWDOWN " + slowdown );
 			displayTimeRemaining--;
 		}
 		
@@ -286,7 +286,7 @@ public class PuzzleController : NetworkBehaviour
 		hintButton.interactable = false;
 
 		//Trigger Hint
-		Util.JLog ( "Giving a Hint" );
+		Debug.Log ( "Giving a Hint" );
 		//TODO
 
 		hintButton.interactable = true;
@@ -449,7 +449,7 @@ public class PuzzleController : NetworkBehaviour
 //		
 //		if (numberOfBombs >= numberOfUnlockedRooms)
 //			numberOfBombs = numberOfUnlockedRooms - 1;
-		Util.JLog ( "Throwing in " + numberOfBombs + " Bomb" + ( numberOfBombs > 1 ? "s" : "" ) + "!" );
+		Debug.Log ( "Throwing in " + numberOfBombs + " Bomb" + ( numberOfBombs > 1 ? "s" : "" ) + "!" );
 
 		//TODO Do the actual work.
 	}

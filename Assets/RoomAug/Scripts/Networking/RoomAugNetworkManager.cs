@@ -74,7 +74,7 @@ public class RoomAugNetworkManager : NetworkManager {
 ////			ClientScene.AddPlayer (conn, 0);
 ////
 ////		} else {
-////			Util.JLogErr("Tried to load the ClientScene from a Non-Android Device.");
+////			Debug.LogError("Tried to load the ClientScene from a Non-Android Device.");
 ////		}
 ////	}
 //

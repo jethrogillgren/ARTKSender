@@ -123,7 +123,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		//Servers set it and SYNCVAR gives it to the clients
 		gameplayRoom = GetComponentInParent<GameplayRoom> ();
 		if (!gameplayRoom)
-			Util.JLogErr ( name + " : " + cubeContentName + " has escaped outside of any Gameplayroom!  Not supported." );
+			Debug.LogError ( name + " : " + cubeContentName + " has escaped outside of any Gameplayroom!  Not supported." );
 
 		return gameplayRoom;
 	}
@@ -133,7 +133,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	public void TeleportTo ( GameplayRoom dest )
 	{
 		if (isClient)
-			Util.JLogErr (name + ": CLIENT INITIATED TELEPORT");
+			Debug.LogError (name + ": CLIENT INITIATED TELEPORT");
 
 		SetNewParent ( dest.transform );
 

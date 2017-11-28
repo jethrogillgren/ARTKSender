@@ -117,7 +117,7 @@ public class RoomController : NetworkBehaviour
 //			//Travelling fowards
 //			GameplayRoom oldGameplayRoom = oldRoom.gameplayRoom;
 //
-//			Util.JLog ("Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
+//			Debug.Log ("Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
 //			AndroidHelper.ShowAndroidToastMessage ("TELEPORT:  Replacing " + oldGameplayRoom + " with " + m_extraGameplayRoom.roomName + " (In " + oldRoom.roomName + ")" );
 //
 //			replace (oldGameplayRoom, m_extraGameplayRoom, oldRoom);
@@ -136,7 +136,7 @@ public class RoomController : NetworkBehaviour
 
 			} else
 			{
-				Util.JLogErr("Cannot replace " + oldGr.roomName + " with " + newGr.roomName + "  in " + pr.roomName);
+				Debug.LogError("Cannot replace " + oldGr.roomName + " with " + newGr.roomName + "  in " + pr.roomName);
 				return false;
 			}
 	}
@@ -150,7 +150,7 @@ public class RoomController : NetworkBehaviour
 
 			} else
 			{
-				Util.JLogErr("Unable to Unactivate any GameplayRooms from: " + pr);
+				Debug.LogError("Unable to Unactivate any GameplayRooms from: " + pr);
 				return false;
 			}
 	}
@@ -173,7 +173,7 @@ public class RoomController : NetworkBehaviour
 
 			} else
 			{
-				Util.JLogErr("Unable to Unactivate a GameplayRoom: " + gr);
+				Debug.LogError("Unable to Unactivate a GameplayRoom: " + gr);
 				return false;
 			}
 	}
@@ -197,7 +197,7 @@ public class RoomController : NetworkBehaviour
 
 			} else
 			{
-				Util.JLogErr("Unable to Activate a GameplayRoom " + gr + " into PhysicalRoom: " + pr);
+				Debug.LogError("Unable to Activate a GameplayRoom " + gr + " into PhysicalRoom: " + pr);
 				return false;
 			}
 	}
@@ -214,7 +214,7 @@ public class RoomController : NetworkBehaviour
 
 		if (m_gameplayObjects == null || m_gameplayObjects.Count <= 0)
 			{
-				Util.JLog("Asked to get Gameplay Objects by state, but there are " + (m_gameplayObjects == null ? "NULL" : m_gameplayObjects.Count.ToString()) + " stored");
+				Debug.Log("Asked to get Gameplay Objects by state, but there are " + (m_gameplayObjects == null ? "NULL" : m_gameplayObjects.Count.ToString()) + " stored");
 				Util.collectGameplayObjects(ref m_gameplayObjects);
 			}
 
@@ -225,7 +225,7 @@ public class RoomController : NetworkBehaviour
 						ret.Add(g);
 					}
 			}
-		Util.JLog("Returning the " + ret.Count + "/" + m_gameplayObjects.Count + " Gameplay Objects that are " + state);
+		Debug.Log("Returning the " + ret.Count + "/" + m_gameplayObjects.Count + " Gameplay Objects that are " + state);
 		return ret;
 	}
 
@@ -238,10 +238,10 @@ public class RoomController : NetworkBehaviour
 					ret.Add(g as OcclusionGameplayObject);
 			}
 
-		Util.JLog("Returning the " + ret.Count + "/" + m_gameplayObjects.Count + " Gameplay Objects that are Occluders (active or Inactive)");
+		Debug.Log("Returning the " + ret.Count + "/" + m_gameplayObjects.Count + " Gameplay Objects that are Occluders (active or Inactive)");
 
 //		foreach (OcclusionGameplayObject g in m_gameplayObjects)
-//			Util.JLog ("TEST:  " + g.name + " " + g.GetType() + " " + g.ToString() );
+//			Debug.Log ("TEST:  " + g.name + " " + g.GetType() + " " + g.ToString() );
 
 
 		return ret;
@@ -252,7 +252,7 @@ public class RoomController : NetworkBehaviour
 	{
 		if (m_gameplayObjects.Add(o))
 			{
-				Util.JLog("Added new Gameplay Object: " + o.name + " as a  " + o.GetType());
+				Debug.Log("Added new Gameplay Object: " + o.name + " as a  " + o.GetType());
 				return true;
 			}
 		return false;

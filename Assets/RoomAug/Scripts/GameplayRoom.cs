@@ -67,7 +67,7 @@ public class GameplayRoom : MonoBehaviour {
 
 //	public void setAllGameplayObjects(BaseGameplayObject.GameplayState state, bool includeInactive) {
 //		BaseGameplayObject[] objs = GetComponentsInChildren<BaseGameplayObject> (includeInactive);
-//		Util.JLog ("Setting all " + objs.Length + " Gamepbjects in room: " + roomName + " to " + state );
+//		Debug.Log ("Setting all " + objs.Length + " Gamepbjects in room: " + roomName + " to " + state );
 //
 //		foreach (BaseGameplayObject o in objs) {
 //			o.gameplayState = state;

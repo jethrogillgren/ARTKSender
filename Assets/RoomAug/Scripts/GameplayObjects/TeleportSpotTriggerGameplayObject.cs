@@ -17,7 +17,7 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
     //Client
     public override void OnTriggerEnter( Collider collision ) {
         
-		Util.JLog ( name + " TriggerEnter: " + collision.name );
+		Debug.Log ( name + " TriggerEnter: " + collision.name );
 
 		//Client handles player teleports as it affects their own object mainly.
 		//Server can still track it OK.
@@ -28,10 +28,10 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
 			//Player Teleporting
 			if (collision.name == player.GetComponent<Collider> ().name)
 			{
-				Util.JLog ( name + " Triggering teleport for " + collision.name );
+				Debug.Log ( name + " Triggering teleport for " + collision.name );
 				Trigger ();
 			} else {
-				Util.JLog ( name + " Skipping Teleport as " + collision.name + " != " + player.GetComponent<Collider> ().name );
+				Debug.Log ( name + " Skipping Teleport as " + collision.name + " != " + player.GetComponent<Collider> ().name );
 			}
 
 
@@ -43,7 +43,7 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
 			PandaCubeGameplayObject cube = collision.GetComponent<PandaCubeGameplayObject>();
 			if( cube ) {
 				//TODO Animate Portal
-				Util.JLog ( "Teleporting Cube " + cube.name + " to " + targetGameplayRoom.roomName );
+				Debug.Log ( "Teleporting Cube " + cube.name + " to " + targetGameplayRoom.roomName );
 				cube.TeleportTo (targetGameplayRoom);
 			}
 		}

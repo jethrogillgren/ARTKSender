@@ -18,7 +18,7 @@ public class SlidingFloorGameplayObject : BaseGameplayObject {
 	public bool blocked {
 		get {
 			if( name == "stop" || gameObject.name == "stop" )
-				Util.JLog ("STOPPER.   cube:" + cube + "   blockingObject:" + blockingObject + "     ret: " + (cube != null  || blockingObject != null) );
+				Debug.Log ("STOPPER.   cube:" + cube + "   blockingObject:" + blockingObject + "     ret: " + (cube != null  || blockingObject != null) );
 			return (cube != null  || blockingObject != null);
 		}
 	}
@@ -44,11 +44,11 @@ public class SlidingFloorGameplayObject : BaseGameplayObject {
 		Vector3 eastOne = transform.localPosition + new Vector3(posStep, 0, 0);
 
 		foreach( SlidingFloorGameplayObject f in getAllSlidingFloors () ) {
-			Util.JLog ( "Floor " + name + " (" + transform.localPosition + ") is checking " + f.name + " (" + f.transform.localPosition + ")." );
-			Util.JLog ( "North one is " + (northOne) );
-			Util.JLog ( "South one is " + (southOne) );
-			Util.JLog ( "East one is " + (eastOne) );
-			Util.JLog ( "West one is " + (westOne) );
+			Debug.Log ( "Floor " + name + " (" + transform.localPosition + ") is checking " + f.name + " (" + f.transform.localPosition + ")." );
+			Debug.Log ( "North one is " + (northOne) );
+			Debug.Log ( "South one is " + (southOne) );
+			Debug.Log ( "East one is " + (eastOne) );
+			Debug.Log ( "West one is " + (westOne) );
 
 			if (f.transform.localPosition == ( northOne))
 				north = f;

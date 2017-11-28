@@ -34,7 +34,7 @@ public class PandaCubeController : NetworkBehaviour {
         //m_PandaCubes = new Dictionary<String, PandaCubeGameplayObject>();
 
         if ( !cube1 || !cube2 || !cube3 || !cube4 )
-            Util.JLogErr( name + ": DID NOT FIND ALL CUBE GAMEOBJECTS" );
+            Debug.LogError( name + ": DID NOT FIND ALL CUBE GAMEOBJECTS" );
 
 	}
 	

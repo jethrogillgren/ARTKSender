@@ -35,7 +35,7 @@ public abstract class BaseGameplayObject : NetworkBehaviour
 				{
 				
 					m_GameplayState = value;
-					Util.JLog("Setting " + gameObject.name + " to " + m_GameplayState);
+					Debug.Log("Setting " + gameObject.name + " to " + m_GameplayState);
 					UpdateVisibility();
 
 				}

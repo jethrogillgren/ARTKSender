@@ -18,7 +18,7 @@ public class PerfectGateWGO : WGO {
 
     //Toggle switched state.  Pass to outputs
     public override bool Act() {
-        Util.JLog( "PerfectGate Act" );
+        Debug.Log( "PerfectGate Act" );
         if ( acting ) {
             
             //Opening Gate.  If there is water pressure, pass it on

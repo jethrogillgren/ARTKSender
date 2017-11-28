@@ -118,7 +118,7 @@ public class RoomAugPlayerController : NetworkBehaviour
             }
 
         }
-        //          Util.JLog("Setting Occluder: " + occluder.gameObject.name + " to " + occludingOnly);
+        //          Debug.Log("Setting Occluder: " + occluder.gameObject.name + " to " + occludingOnly);
         //          if (occludingOnly) {//Make it invisible but occluding
         //              RoomAugPlayerController p = GetComponent<RoomAugPlayerController>();
         //              //occluder.setOcclusion( true );

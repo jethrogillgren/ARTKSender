@@ -61,7 +61,7 @@ public class RoomAugNetworkVisibilityChecker : NetworkBehaviour
 //		foreach ( NetworkConnection nc in NetworkServer.connections ) {
 //			//Assuming each nc has a single player
 //			foreach( PlayerController pc in nc.playerControllers ) {
-//				Util.JLog("NC: " + nc.address + " Pc: " + pc.gameObject.name );
+//				Debug.Log("NC: " + nc.address + " Pc: " + pc.gameObject.name );
 //			}
 //
 //		}

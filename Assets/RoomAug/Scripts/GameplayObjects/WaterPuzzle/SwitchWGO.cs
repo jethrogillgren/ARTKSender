@@ -26,7 +26,7 @@ public class SwitchWGO : WGO {
     public override bool Act() {
         if ( acting ) {
             //Turning switch off
-            Util.JLog("Switch off");
+            Debug.Log("Switch off");
             DebugSetColour(Color.white);
             foreach ( WGO go in outputs ) {
                 go.Act();
@@ -34,7 +34,7 @@ public class SwitchWGO : WGO {
 
         } else {
             //Turning Switch on
-            Util.JLog( "Switch on" );
+            Debug.Log( "Switch on" );
             DebugSetColour( Color.black );
             foreach ( WGO go in outputs ) {
                 go.Act();

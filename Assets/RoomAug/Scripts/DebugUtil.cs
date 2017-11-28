@@ -61,7 +61,7 @@ public class DebugUtil : MonoBehaviour {
 			}
 		}
 			
-		Util.JLog( builder.ToString() );
+		Debug.Log( builder.ToString() );
 		AndroidHelper.ShowAndroidToastMessage ( builder.ToString() );
 	}
 
@@ -98,11 +98,11 @@ public class DebugUtil : MonoBehaviour {
 	}
 
 	public void OnTeleportDropdownChange(string i) {
-		Util.JLog ("DROPDOWN "+ i);
+		Debug.Log ("DROPDOWN "+ i);
 	}
 
 	public void OnButton2Click() {
-		Util.JLog("J# Button 3 - Locally disabling Monkey");
+		Debug.Log("J# Button 3 - Locally disabling Monkey");
 		GameObject.Find ("TestMonkey").SetActive (false);//local only?
 	}
 

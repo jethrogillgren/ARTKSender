@@ -77,15 +77,15 @@ public static class Util
     //LOGGERS
 
     //Strings
-    public static void JLog ( string val, bool toast = false )
+    public static void JLog ( string val, bool toast )
     {
-        Debug.Log ( "J# " + val );
+		Debug.Log ( "J# " + val);
         if (toast)
             AndroidHelper.ShowAndroidToastMessage ( val );
 
     }
 
-    public static void JLogErr ( string val, bool toast = false )
+    public static void JLogErr ( string val, bool toast )
     {
         Debug.LogError ( "J# " + val );
         if (toast)
@@ -93,7 +93,7 @@ public static class Util
     }
 
     //Ints
-    public static void JLog ( int val, bool toast = false )
+    public static void JLog ( int val, bool toast )
     {
         Debug.Log ( "J# " + val );
         if (toast)
@@ -101,7 +101,7 @@ public static class Util
 
     }
 
-    public static void JLogErr ( int val, bool toast = false )
+    public static void JLogErr ( int val, bool toast )
     {
         Debug.LogError ( "J# " + val );
         if (toast)
