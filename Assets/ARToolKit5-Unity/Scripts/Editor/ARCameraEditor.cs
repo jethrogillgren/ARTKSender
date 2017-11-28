@@ -42,7 +42,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(ARCamera))] 
+[CustomEditor(typeof(ARCamera), true)] 
 public class ARCameraEditor : Editor 
 {
 	private static TextAsset[] OpticalParamsAssets;

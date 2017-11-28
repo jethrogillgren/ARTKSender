@@ -42,7 +42,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(ARController))]
+[CustomEditor(typeof(ARController), true)]
 public class ARControllerEditor : Editor
 {
 

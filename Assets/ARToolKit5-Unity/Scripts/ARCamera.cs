@@ -57,7 +57,7 @@ using UnityEngine;
 [ExecuteInEditMode]                     // Run in the editor so we can keep the scale at 1
 public class ARCamera : MonoBehaviour
 {
-	private const string LogTag = "ARCamera: ";
+	protected string LogTag = "ARCamera: ";
 	
 	public enum ViewEye
 	{
@@ -111,7 +111,7 @@ public class ARCamera : MonoBehaviour
 	private Matrix4x4 opticalViewMatrix; // This transform expresses the position and orientation of the physical camera in eye coordinates.
 	
 
-	public bool SetupCamera(float nearClipPlane, float farClipPlane, Matrix4x4 projectionMatrix, ref bool opticalOut)
+	public virtual bool SetupCamera(float nearClipPlane, float farClipPlane, Matrix4x4 projectionMatrix, ref bool opticalOut)
 	{
 		Camera c = this.gameObject.GetComponent<Camera>();
 		
@@ -123,7 +123,7 @@ public class ARCamera : MonoBehaviour
 		// isn't using the custom projection matrix.
 		c.nearClipPlane = nearClipPlane;
 		c.farClipPlane = farClipPlane;
-		
+
 		if (Optical) {
 			float fovy ;
 			float aspect;

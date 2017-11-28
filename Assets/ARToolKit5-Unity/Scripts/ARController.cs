@@ -78,7 +78,7 @@ public class ARController : MonoBehaviour
     public static Action<String> logCallback { get; set; }
     private static List<String> logMessages = new List<String>();
     private const int MaximumLogMessages = 1000;
-    private const string LogTag = "ARController: ";
+    protected string LogTag = "ARController: ";
 
 	// Application preferences.
 	public bool UseNativeGLTexturingIfAvailable = true;
@@ -162,7 +162,7 @@ public class ARController : MonoBehaviour
 	// Background camera(s).
 	//
 
-	private Camera clearCamera = null;
+	protected Camera clearCamera = null;
 	private GameObject _videoBackgroundCameraGO0 = null; // The GameObject which holds the Camera object for the mono / stereo left-eye video background.
 	private Camera _videoBackgroundCamera0 = null; // The Camera component attached to _videoBackgroundCameraGO0. Easier to keep this reference than calling _videoBackgroundCameraGO0.GetComponent<Camera>() each time.
 	private GameObject _videoBackgroundCameraGO1 = null; // The GameObject which holds the Camera object(s) for the stereo right-eye video background.
@@ -328,7 +328,7 @@ public class ARController : MonoBehaviour
         }
 	}
 
-	void OnEnable()
+	public virtual void OnEnable()
 	{
 		//Log(LogTag + "ARController.OnEnable()");
 
@@ -1205,7 +1205,7 @@ public class ARController : MonoBehaviour
 
     }
 
-	private bool CreateClearCamera()
+	public virtual bool CreateClearCamera()
     {
         // Attach the clear camera to this GameObject, so that we can respond to 
         // camera events in addition to clearing the display.
@@ -1426,7 +1426,7 @@ public class ARController : MonoBehaviour
 	}
 
 	// References globals ContentMode, ContentAlign, ContentRotate90, Screen.width, Screen.height.
-	private Rect getViewport(int contentWidth, int contentHeight, bool stereo, ARCamera.ViewEye viewEye)
+	public virtual Rect getViewport(int contentWidth, int contentHeight, bool stereo, ARCamera.ViewEye viewEye)
 	{
 		int backingWidth = Screen.width;
 		int backingHeight = Screen.height;
@@ -1615,7 +1615,7 @@ public class ARController : MonoBehaviour
                 3, 2, 0
             };
 
-        m.Optimize();
+        ;
 		return m;
     }
 

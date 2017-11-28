@@ -6,6 +6,11 @@ using System;
 
 public static class Util
 {
+	public static readonly float ARToolkitViewportRectX = 0.5f * Screen.width;
+	public static readonly float ARToolkitViewportRectY = 0.0f * Screen.height;
+	public static readonly float ARToolkitViewportRectW = 0.25f* Screen.width;
+	public static readonly float ARToolkitViewportRectH = 0.25f* Screen.height;
+
 	//Used by gameplayRooms, and PandaCubes.
 	public enum ElementalType {
 		None,
