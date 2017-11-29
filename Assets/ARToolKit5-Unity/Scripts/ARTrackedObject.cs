@@ -160,8 +160,6 @@ public class ARTrackedObject : MonoBehaviour
 						transform.position = ARUtilityFunctions.PositionFromMatrix(pose);
 						transform.rotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
 
-						Debug.LogWarning ("Broadcast to: " + eventReceiver);
-
 						if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerTracked", marker, SendMessageOptions.DontRequireReceiver);
 
 					} else {

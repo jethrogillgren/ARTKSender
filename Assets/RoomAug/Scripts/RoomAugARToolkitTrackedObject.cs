@@ -21,9 +21,9 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 			eventReceiver = GameObject.Find ( eventReceiverLookupName );
 
 		if (eventReceiver)
-			Debug.LogError (name + " found Event Reciever: " + eventReceiver.name );
+			Debug.Log (name + " found Event Reciever: " + eventReceiver.name );
 		else
-			Debug.LogError ( name + " unable to Find Event Reciever by name: " + eventReceiverLookupName );
+			Debug.Log ( name + " unable to Find Event Reciever by name: " + eventReceiverLookupName );
 		
 	}
 		

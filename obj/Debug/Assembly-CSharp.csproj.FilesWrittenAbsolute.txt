@@ -20,3 +20,5 @@
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Mono.Cecil.Mdb.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/GUIAnimatorFREE.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/GETween.dll
