@@ -95,14 +95,14 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//Use to draw the cube properly, locally
 	public void DrawFull ()
 	{
-		Debug.Log ( name + " Rendering Full " + cubeType );
+//		Debug.Log ( name + " Rendering Full " + cubeType );
 		SetMaterialAndColor ( defaultMaterial, Util.GetColor ( cubeType ) );
 
 	}
 	//Use to draw the cube when it is not in the same gameplay room as you, locally
 	public void DrawAsWireframe ()
 	{
-		Debug.Log ( name + " Rendering Wireframe " + cubeType );
+//		Debug.Log ( name + " Rendering Wireframe " + cubeType );
 		SetMaterialAndColor ( wireframeMaterial, Util.GetColor ( cubeType ) );
 	}
 
@@ -197,11 +197,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			return;
 		}
 
-		m_rect.SetPosition ( 0, marker.m_corner3DP0 );
-		m_rect.SetPosition ( 1, marker.m_corner3DP1 );
-		m_rect.SetPosition ( 2, marker.m_corner3DP2 );
-		m_rect.SetPosition ( 3, marker.m_corner3DP3 );
-		m_rect.SetPosition ( 4, marker.m_corner3DP0 );
+
 
 		// Apply the pose of the marker to the prefab.
 		// This also applies implicitly to the axis and cube objects.
@@ -210,13 +206,47 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 		transformTimestamps [ tangoOffset ] = Time.time;
 
+
+		m_corner3DP0 =  marker.m_corner3DP0 ;
+		m_corner3DP1 =  marker.m_corner3DP1 ;
+		m_corner3DP2 =  marker.m_corner3DP2 ;
+		m_corner3DP3 =  marker.m_corner3DP3 ;
+
 //		Debug.LogError ( "Tango Says " + transformPositions [ tangoOffset ] );
 	}
 
+	private Vector3 m_corner3DP0;
+	private Vector3 m_corner3DP1;
+	private Vector3 m_corner3DP2;
+	private Vector3 m_corner3DP3;
+
+
+	//Draw a Blue rect for Tango, and a green Rect for both.
+	//Rect is at Tangos last seen point
+	private void DrawRect() {
+
+		if (isTangoTrackingGood)
+			m_rect.startColor = m_rect.endColor = Color.blue;
+		else if (isTangoTrackingGood && isARToolkitTrackingGood)
+			m_rect.startColor = m_rect.endColor = Color.green;
+		else
+			return;
+
+		m_rect.SetPosition ( 0, m_corner3DP0 );
+		m_rect.SetPosition ( 1, m_corner3DP1 );
+		m_rect.SetPosition ( 2, m_corner3DP2 );
+		m_rect.SetPosition ( 3, m_corner3DP3 );
+		m_rect.SetPosition ( 4, m_corner3DP0 );
+	}
+
+	bool isTangoTrackingGood = false;
+	bool isARToolkitTrackingGood = false;
 	//Apply transformation after regular update so we have all readings in
 	public void LateUpdate ()
 	{
 		isTrackingGood = false;
+		isTangoTrackingGood = false;
+		isARToolkitTrackingGood = false;
 		
 		//Global variable which holds the amount of rotations which 
 		//need to be averaged.
@@ -237,6 +267,9 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 //				Debug.LogError ("Set  : " + transformTimestamps[i] + " " + transformPositions[i] );
 
 				isTrackingGood = true;
+				if( i < tangoOffset ) isARToolkitTrackingGood = true;
+				if( i >= tangoOffset ) isTangoTrackingGood = true;
+
 				addAmount++; //Amount of separate values so far
 
 				//Rotation
@@ -253,6 +286,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		{
 			transform.position = culminativePosition / ( float )addAmount;
 			transform.rotation = result;
+			DrawRect ();
 		}
 	}
 
