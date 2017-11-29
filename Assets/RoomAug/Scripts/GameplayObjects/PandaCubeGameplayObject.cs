@@ -132,6 +132,8 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	}
 
 	//Server only
+	//The ARMarker object is tracking realtive to the ARToolkit (Room) camera
+	//
 	public void OnMarkerTracked ( ARMarker marker )
 	{
 		if (isClient)

@@ -42,7 +42,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class ARTrackedObject : MonoBehaviour
 {
-	private const string LogTag = "ARTrackedObject: ";
+	protected string LogTag = "ARTrackedObject: ";
 
 	private AROrigin _origin = null;
 	private ARMarker _marker = null;
@@ -101,7 +101,7 @@ public class ARTrackedObject : MonoBehaviour
 		return _origin;
 	}
 
-	void Start()
+	protected virtual void Start()
 	{
 		//ARController.Log(LogTag + "Start()");
 
