@@ -79,8 +79,8 @@ public class ARController : MonoBehaviour
     // Logging.
 	//
     public static Action<String> logCallback { get; set; }
-    private static List<String> logMessages = new List<String>();
-    private const int MaximumLogMessages = 1000;
+    protected static List<String> logMessages = new List<String>();
+    protected const int MaximumLogMessages = 1000;
     protected string LogTag = "ARController: ";
 
 	// Application preferences.
@@ -93,13 +93,13 @@ public class ARController : MonoBehaviour
 	// State.
 	//
 
-	private string _version = "";
-	private bool _running = false;
-	private bool _runOnUnpause = false;
-	private bool _sceneConfiguredForVideo = false;
-	private bool _sceneConfiguredForVideoWaitingMessageLogged = false;
-	private bool _useNativeGLTexturing = false;
-	private bool _useColor32 = true;
+	protected string _version = "";
+	protected bool _running = false;
+	protected bool _runOnUnpause = false;
+	protected bool _sceneConfiguredForVideo = false;
+	protected bool _sceneConfiguredForVideoWaitingMessageLogged = false;
+	protected bool _useNativeGLTexturing = false;
+	protected bool _useColor32 = true;
 
 	//
 	// Video source 0.
@@ -116,18 +116,18 @@ public class ARController : MonoBehaviour
 	public int BackgroundLayer0 = 8;
 
 	// Config. out.
-	private int _videoWidth0 = 0;
-	private int _videoHeight0 = 0;
-	private int _videoPixelSize0 = 0;
-	private string _videoPixelFormatString0 = "";
-	private Matrix4x4 _videoProjectionMatrix0;
+	protected int _videoWidth0 = 0;
+	protected int _videoHeight0 = 0;
+	protected int _videoPixelSize0 = 0;
+	protected string _videoPixelFormatString0 = "";
+	protected Matrix4x4 _videoProjectionMatrix0;
 
 	// Unity objects.
-	private GameObject _videoBackgroundMeshGO0 = null; // The GameObject which holds the MeshFilter and MeshRenderer for the background video, and also the Camera object(s) used to render them. 
-	private Color[] _videoColorArray0 = null; // An array used to fetch pixels from the native side, only if not using native GL texturing.
-	private Color32[] _videoColor32Array0 = null; // An array used to fetch pixels from the native side, only if not using native GL texturing.
-	private Texture2D _videoTexture0 = null;  // Texture object with the video image.
-	private Material _videoMaterial0 = null;  // Material which uses our "VideoPlaneNoLight" shader, and paints itself with _videoTexture0.
+	protected GameObject _videoBackgroundMeshGO0 = null; // The GameObject which holds the MeshFilter and MeshRenderer for the background video, and also the Camera object(s) used to render them. 
+	protected Color[] _videoColorArray0 = null; // An array used to fetch pixels from the native side, only if not using native GL texturing.
+	protected Color32[] _videoColor32Array0 = null; // An array used to fetch pixels from the native side, only if not using native GL texturing.
+	protected Texture2D _videoTexture0 = null;  // Texture object with the video image.
+	protected Material _videoMaterial0 = null;  // Material which uses our "VideoPlaneNoLight" shader, and paints itself with _videoTexture0.
 
 	// Stereo config.
 	public bool VideoIsStereo = false;
@@ -148,28 +148,28 @@ public class ARController : MonoBehaviour
 	public int BackgroundLayer1 = 9;
 
 	// Config. out.
-	private int _videoWidth1 = 0;
-	private int _videoHeight1 = 0;
-	private int _videoPixelSize1 = 0;
-	private string _videoPixelFormatString1 = "";
-	private Matrix4x4 _videoProjectionMatrix1;
+	protected int _videoWidth1 = 0;
+	protected int _videoHeight1 = 0;
+	protected int _videoPixelSize1 = 0;
+	protected string _videoPixelFormatString1 = "";
+	protected Matrix4x4 _videoProjectionMatrix1;
 
 	// Unity objects.
-	private GameObject _videoBackgroundMeshGO1 = null; // The GameObject which holds the MeshFilter and MeshRenderer for the background video, and also the Camera object(s) used to render them. 
-	private Color[] _videoColorArray1 = null; // An array used to fetch pixels from the native side, only if not using native GL texturing.
-	private Color32[] _videoColor32Array1 = null; // An array used to fetch pixels from the native side, only if not using native GL texturing.
-	private Texture2D _videoTexture1 = null;  // Texture object with the video image.
-	private Material _videoMaterial1 = null;  // Material which uses our "VideoPlaneNoLight" shader, and paints itself with _videoTexture0.
+	protected GameObject _videoBackgroundMeshGO1 = null; // The GameObject which holds the MeshFilter and MeshRenderer for the background video, and also the Camera object(s) used to render them. 
+	protected Color[] _videoColorArray1 = null; // An array used to fetch pixels from the native side, only if not using native GL texturing.
+	protected Color32[] _videoColor32Array1 = null; // An array used to fetch pixels from the native side, only if not using native GL texturing.
+	protected Texture2D _videoTexture1 = null;  // Texture object with the video image.
+	protected Material _videoMaterial1 = null;  // Material which uses our "VideoPlaneNoLight" shader, and paints itself with _videoTexture0.
 
 	//
 	// Background camera(s).
 	//
 
 	protected Camera clearCamera = null;
-	private GameObject _videoBackgroundCameraGO0 = null; // The GameObject which holds the Camera object for the mono / stereo left-eye video background.
-	private Camera _videoBackgroundCamera0 = null; // The Camera component attached to _videoBackgroundCameraGO0. Easier to keep this reference than calling _videoBackgroundCameraGO0.GetComponent<Camera>() each time.
-	private GameObject _videoBackgroundCameraGO1 = null; // The GameObject which holds the Camera object(s) for the stereo right-eye video background.
-	private Camera _videoBackgroundCamera1 = null; // The Camera component attached to _videoBackgroundCameraGO1. Easier to keep this reference than calling _videoBackgroundCameraGO1.GetComponent<Camera>() eaach time.
+	protected GameObject _videoBackgroundCameraGO0 = null; // The GameObject which holds the Camera object for the mono / stereo left-eye video background.
+	protected Camera _videoBackgroundCamera0 = null; // The Camera component attached to _videoBackgroundCameraGO0. Easier to keep this reference than calling _videoBackgroundCameraGO0.GetComponent<Camera>() each time.
+	protected GameObject _videoBackgroundCameraGO1 = null; // The GameObject which holds the Camera object(s) for the stereo right-eye video background.
+	protected Camera _videoBackgroundCamera1 = null; // The Camera component attached to _videoBackgroundCameraGO1. Easier to keep this reference than calling _videoBackgroundCameraGO1.GetComponent<Camera>() eaach time.
 
 	//
 	// Other
@@ -183,10 +183,10 @@ public class ARController : MonoBehaviour
 	public bool ContentFlipV = false;
 	public ContentAlign ContentAlign = ContentAlign.Center;
 
-	//private int _frameStatsCount = 0;
-	//private float _frameStatsTimeUpdateTexture = 0.0f;
-	//private float _frameStatsTimeSetPixels = 0.0f;
-	//private float _frameStatsTimeApply = 0.0f;
+	//protected int _frameStatsCount = 0;
+	//protected float _frameStatsTimeUpdateTexture = 0.0f;
+	//protected float _frameStatsTimeSetPixels = 0.0f;
+	//protected float _frameStatsTimeApply = 0.0f;
 
     public readonly static Dictionary<ContentMode, string> ContentModeNames = new Dictionary<ContentMode, string>
     {
@@ -197,10 +197,10 @@ public class ARController : MonoBehaviour
 	};
 
     // Frames per second calculations
-    private int frameCounter = 0;
-    private float timeCounter = 0.0f;
-    private float lastFramerate = 0.0f;
-    private float refreshTime = 0.5f;
+    protected int frameCounter = 0;
+    protected float timeCounter = 0.0f;
+    protected float lastFramerate = 0.0f;
+    protected float refreshTime = 0.5f;
 
 
     public enum ARToolKitThresholdMode
@@ -283,33 +283,33 @@ public class ARController : MonoBehaviour
 		AR_LOG_LEVEL_REL_INFO
 	}
 
-	// Private fields with accessors.
+	// protected fields with accessors.
 	[SerializeField]
-	private ContentMode currentContentMode = ContentMode.Fit;
+	protected ContentMode currentContentMode = ContentMode.Fit;
 	[SerializeField]
-    private ARToolKitThresholdMode currentThresholdMode = ARToolKitThresholdMode.Manual;
+    protected ARToolKitThresholdMode currentThresholdMode = ARToolKitThresholdMode.Manual;
 	[SerializeField]
-    private int currentThreshold = 100;
+    protected int currentThreshold = 100;
 	[SerializeField]
-    private ARToolKitLabelingMode currentLabelingMode = ARToolKitLabelingMode.BlackRegion;
+    protected ARToolKitLabelingMode currentLabelingMode = ARToolKitLabelingMode.BlackRegion;
 	[SerializeField]
-	private int currentTemplateSize = 16;
+	protected int currentTemplateSize = 16;
 	[SerializeField]
-	private int currentTemplateCountMax = 25;
+	protected int currentTemplateCountMax = 25;
 	[SerializeField]
-	private float currentBorderSize = 0.25f;
+	protected float currentBorderSize = 0.25f;
 	[SerializeField]
-	private ARToolKitPatternDetectionMode currentPatternDetectionMode = ARToolKitPatternDetectionMode.AR_TEMPLATE_MATCHING_COLOR;
+	protected ARToolKitPatternDetectionMode currentPatternDetectionMode = ARToolKitPatternDetectionMode.AR_TEMPLATE_MATCHING_COLOR;
 	[SerializeField]
-	private ARToolKitMatrixCodeType currentMatrixCodeType = ARToolKitMatrixCodeType.AR_MATRIX_CODE_3x3;
+	protected ARToolKitMatrixCodeType currentMatrixCodeType = ARToolKitMatrixCodeType.AR_MATRIX_CODE_3x3;
 	[SerializeField]
-	private ARToolKitImageProcMode currentImageProcMode = ARToolKitImageProcMode.AR_IMAGE_PROC_FRAME_IMAGE;
+	protected ARToolKitImageProcMode currentImageProcMode = ARToolKitImageProcMode.AR_IMAGE_PROC_FRAME_IMAGE;
 	[SerializeField]
-	private bool currentUseVideoBackground = true;
+	protected bool currentUseVideoBackground = true;
 	[SerializeField]
-	private bool currentNFTMultiMode = false;
+	protected bool currentNFTMultiMode = false;
 	[SerializeField]
-	private AR_LOG_LEVEL currentLogLevel = AR_LOG_LEVEL.AR_LOG_LEVEL_INFO;
+	protected AR_LOG_LEVEL currentLogLevel = AR_LOG_LEVEL.AR_LOG_LEVEL_INFO;
 
 	//
 	// MonoBehavior methods.
@@ -481,7 +481,7 @@ public class ARController : MonoBehaviour
 	// User-callable AR methods.
 	//
 	
-	public bool StartAR()
+	public virtual bool StartAR()
 	{
 		// Catch attempts to inadvertently call StartAR() twice.
         if (_running) {
@@ -620,7 +620,7 @@ public class ARController : MonoBehaviour
 		return true;
 	}
 	
-	bool UpdateAR()
+	protected virtual bool UpdateAR()
 	{
         if (!_running) {
             return false;
@@ -1077,7 +1077,7 @@ public class ARController : MonoBehaviour
 	// Internal methods.
 	//
 	
-	private void UpdateTexture()
+	protected void UpdateTexture()
     {
         // Only update the texture when running
         if (!_running) return;
@@ -1231,7 +1231,7 @@ public class ARController : MonoBehaviour
 	
 	// Creates a GameObject in layer 'layer' which renders a mesh displaying the video stream.
 	// Places references to the Color array (as required), the texture and the material into the out parameters.
-	private GameObject CreateVideoBackgroundMesh(int index, int w, int h, int layer, out Color[] vbca, out Color32[] vbc32a, out Texture2D vbt, out Material vbm)
+	protected GameObject CreateVideoBackgroundMesh(int index, int w, int h, int layer, out Color[] vbca, out Color32[] vbc32a, out Texture2D vbt, out Material vbm)
 	{
 		// Check parameters.
 		if (w <= 0 || h <= 0) {
@@ -1316,7 +1316,7 @@ public class ARController : MonoBehaviour
 	}
 
 	// Creates a GameObject holding a camera with name 'name', which will render layer 'layer'.
-	private GameObject CreateVideoBackgroundCamera(String name, int layer, out Camera vbc)
+	protected GameObject CreateVideoBackgroundCamera(String name, int layer, out Camera vbc)
 	{
 		// Create new GameObject to hold camera.
 		GameObject vbcgo = new GameObject(name);
@@ -1359,7 +1359,7 @@ public class ARController : MonoBehaviour
 		return vbcgo;
 	}
 	
-	private void DestroyVideoBackground()
+	protected void DestroyVideoBackground()
 	{
 		bool ed = Application.isEditor;
 
@@ -1413,7 +1413,7 @@ public class ARController : MonoBehaviour
 		Resources.UnloadUnusedAssets();
 	}
 
-	private bool DestroyClearCamera()
+	protected bool DestroyClearCamera()
 	{
 		//bool ed = Application.isEditor;
 		if (clearCamera != null) {
@@ -1484,7 +1484,7 @@ public class ARController : MonoBehaviour
 		return new Rect(left, bottom, w, h);
 	}
 
-	private void CycleContentMode()
+	protected void CycleContentMode()
 	{
 		switch (ContentMode) {
 		case ContentMode.Fit:
@@ -1504,7 +1504,7 @@ public class ARController : MonoBehaviour
 	}
 
 	// Iterate through all ARCamera objects, asking each to set its viewing frustum and any viewing pose.
-	private bool ConfigureForegroundCameras()
+	protected bool ConfigureForegroundCameras()
 	{
 		// Note if  any of the ARCamera objects are in optical mode so we can adjust UseVideoBackground.
 		bool optical = false;
@@ -1535,7 +1535,7 @@ public class ARController : MonoBehaviour
 		return true;
 	}
 	
-	private bool ConfigureViewports()
+	protected bool ConfigureViewports()
 	{
 		bool haveStereoARCamera = false;
 
@@ -1579,7 +1579,7 @@ public class ARController : MonoBehaviour
 		return true;
 	}
 
-    private Mesh newVideoMesh(bool flipX, bool flipY, float textureScaleU, float textureScaleV)
+    protected Mesh newVideoMesh(bool flipX, bool flipY, float textureScaleU, float textureScaleV)
     {
         Mesh m = new Mesh();
         m.Clear();
@@ -1635,7 +1635,7 @@ public class ARController : MonoBehaviour
         else Debug.Log(msg);
     }
 
-    private void CalculateFPS()
+    protected void CalculateFPS()
     {
         if (timeCounter < refreshTime) {
             timeCounter += Time.deltaTime;
@@ -1652,10 +1652,10 @@ public class ARController : MonoBehaviour
     // GUI Methods
     // ------------------------------------------------------------------------------------
 
-    private GUIStyle[] style = new GUIStyle[3];
-    private bool guiSetup = false;
+    protected GUIStyle[] style = new GUIStyle[3];
+    protected bool guiSetup = false;
 
-    private void SetupGUI()
+    protected void SetupGUI()
     {
 
         style[0] = new GUIStyle(GUI.skin.label);
@@ -1670,13 +1670,13 @@ public class ARController : MonoBehaviour
         guiSetup = true;
     }
 	
-	private bool showGUIErrorDialog = false;
-	private string showGUIErrorDialogContent = "";
-	private Rect showGUIErrorDialogWinRect = new Rect(0.0f, 0.0f, 320.0f, 240.0f);
+	protected bool showGUIErrorDialog = false;
+	protected string showGUIErrorDialogContent = "";
+	protected Rect showGUIErrorDialogWinRect = new Rect(0.0f, 0.0f, 320.0f, 240.0f);
 
-	private bool showGUIDebug = false;
-    private bool showGUIDebugInfo = true;
-    private bool showGUIDebugLogConsole = false;
+	protected bool showGUIDebug = false;
+    protected bool showGUIDebugInfo = true;
+    protected bool showGUIDebugLogConsole = false;
 	
     void OnGUI()
     {
@@ -1726,7 +1726,7 @@ public class ARController : MonoBehaviour
     }
 	
 	
-	private void DrawErrorDialog(int winID)
+	protected void DrawErrorDialog(int winID)
 	{
 		GUILayout.BeginVertical();
 		GUILayout.Label(showGUIErrorDialogContent);
@@ -1735,9 +1735,9 @@ public class ARController : MonoBehaviour
 		GUILayout.EndVertical();
 	}
 	
-//	private bool toggle = false;
+//	protected bool toggle = false;
 
-    private void DrawInfoGUI()
+    protected void DrawInfoGUI()
     {
         // Basic ARToolKit information
         GUI.Label(new Rect(10, 10, 500, 25), "ARToolKit " + Version);
@@ -1767,7 +1767,7 @@ public class ARController : MonoBehaviour
 
     public Vector2 scrollPosition = Vector2.zero;
 
-    private void DrawLogConsole()
+    protected void DrawLogConsole()
     {
         Rect consoleRect = new Rect(0, 0, Screen.width, 200);
 
@@ -1782,7 +1782,7 @@ public class ARController : MonoBehaviour
     }
 
 
-    private void DrawLogEntries(Rect container, bool reverse)
+    protected void DrawLogEntries(Rect container, bool reverse)
     {
         //int numItems = logMessages.Count;
 
