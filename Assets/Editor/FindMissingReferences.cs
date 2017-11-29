@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.Linq;
 
+/*
 [InitializeOnLoad]
 public static class LatestScenes
 {
@@ -112,3 +113,4 @@ public static class FindMissingReferences {
 		return go.transform.parent == null ? go.name : FullObjectPath(go.transform.parent.gameObject) + "/" + go.name;
 	}
 }
+*/

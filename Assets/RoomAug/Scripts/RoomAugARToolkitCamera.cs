@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoomAugARCamera : ARCamera {
+public class RoomAugARToolkitCamera : ARCamera {
 
 	// Use this for initialization
 	void Start () {
@@ -21,5 +21,12 @@ public class RoomAugARCamera : ARCamera {
 
 		return bb;
 	}
+
+	protected override void ApplyTracking()
+	{
+		base.ApplyTracking ();
+		Debug.LogWarning (name + ":  pos " + arPosition + "  rot " + arRotation);
+	}
+
 
 }

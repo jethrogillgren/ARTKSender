@@ -72,30 +72,6 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	{
 		Debug.Log (name + " Rendering Full " + cubeType );
 		SetMaterialAndColor ( defaultMaterial, Util.GetColor ( cubeType ) );
-//		switch (cubeType)
-//		{
-//			case Util.ElementalType.None:
-//				SetMaterialAndColor (defaultMaterial, Color.white);
-//				break;
-//			case Util.ElementalType.Wood:
-//				SetMaterialAndColor (defaultMaterial, Color.green);
-//				break;
-//			case Util.ElementalType.Fire:
-//				SetMaterialAndColor (defaultMaterial, Color.red);
-//				break;
-//			case Util.ElementalType.Earth:
-//				SetMaterialAndColor (defaultMaterial, Color.yellow);
-//				break;
-//			case Util.ElementalType.Metal:
-//				SetMaterialAndColor (defaultMaterial, Color.grey);
-//				break;
-//			case Util.ElementalType.Water:
-//				SetMaterialAndColor (defaultMaterial, Color.cyan);
-//				break;
-//			default:
-//				Debug.LogError ("Invalid CubeType");
-//				break;
-//		}
 
 	}
 	//Use to draw the cube when it is not in the same gameplay room as you, locally
@@ -156,11 +132,27 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	}
 
 	//Server only
+	public void OnMarkerTracked ( ARMarker marker )
+	{
+		if (isClient)
+		{
+			Debug.LogError ("Client recieved an ARToolkit Marker update");
+			return;
+		}
+
+		transform.position = ARUtilityFunctions.PositionFromMatrix(marker.TransformationMatrix);
+		transform.rotation = ARUtilityFunctions.QuaternionFromMatrix(marker.TransformationMatrix);
+
+		Debug.Log ("ARToolkit Marker:  Matrix   " + marker.TransformationMatrix);
+		Debug.Log ("ARToolkit Marker:  position " + marker.TransformationMatrix);
+	}
+
+	//Server only
 	public void SetMarker ( TangoSupport.Marker marker )
 	{
 		if (isClient)
 		{
-			Debug.LogError ("Client recieved a Marker update");
+			Debug.LogError ("Client recieved a Tango Marker update");
 			return;
 		}
 

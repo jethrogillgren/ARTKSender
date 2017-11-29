@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class RoomAugARController : ARController
+public class RoomAugARToolkitController : ARController
 {
 
 

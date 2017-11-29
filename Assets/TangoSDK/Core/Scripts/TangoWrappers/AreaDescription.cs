@@ -75,7 +75,9 @@ namespace Tango
         ///
         /// This is the same as the Unix epoch, 00:00:00 UTC on January 1st, 1970.
         /// </summary>
-//        private static readonly DateTime METADATA_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+		#pragma warning disable 0414
+        private static readonly DateTime METADATA_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+		#pragma warning restore 0414
 
 #if UNITY_EDITOR
         /// <summary>
