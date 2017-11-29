@@ -45,7 +45,6 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 
 					}
 
-
 					if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerTracked", marker, SendMessageOptions.DontRequireReceiver);
 
 				} else {
