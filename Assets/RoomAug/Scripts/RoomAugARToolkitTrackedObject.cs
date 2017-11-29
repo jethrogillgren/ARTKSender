@@ -11,7 +11,7 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 		LogTag = "RoomAugARToolkitTrackedObject: ";
 		Invoke ( "FindEventReciever", 2 );
 
-		base.Start ();
+//		base.Start (); Without this, we do not draw ourselves
 	}
 
 
@@ -19,12 +19,44 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 	{
 		if (eventReceiverLookupName != "")
 			eventReceiver = GameObject.Find ( eventReceiverLookupName );
-
-		if (eventReceiver)
-			Debug.Log (name + " found Event Reciever: " + eventReceiver.name );
-		else
-			Debug.Log ( name + " unable to Find Event Reciever by name: " + eventReceiverLookupName );
-		
 	}
-		
+
+	//Overridden version strips all unnessecary (for us) draws
+	protected override void LateUpdate()
+	{
+		// Update tracking if we are running in the Player.
+		if (Application.isPlaying) {
+
+			// Sanity check, make sure we have an ARMarker assigned.
+			ARMarker marker = GetMarker();
+			if (marker == null) {
+				//visible = visibleOrRemain = false;
+			} else {
+
+				// Note the current time
+				float timeNow = Time.realtimeSinceStartup;
+
+				if (marker.Visible) {
+
+					if (!visible) {
+						// Marker was hidden but now is visible.
+						visible = true;
+						if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerFound", marker, SendMessageOptions.DontRequireReceiver);
+
+					}
+
+
+					if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerTracked", marker, SendMessageOptions.DontRequireReceiver);
+
+				} else {
+					
+					if ( timeNow - timeTrackingLost >= secondsToRemainVisible) {
+						if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerLost", marker, SendMessageOptions.DontRequireReceiver);
+					}
+				}
+			} // marker
+
+		} // Application.isPlaying
+
+	}
 }

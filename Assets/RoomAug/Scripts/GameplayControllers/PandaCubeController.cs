@@ -46,8 +46,6 @@ public class PandaCubeController : NetworkBehaviour {
     //Recieve a marker sighting from a Client Player
     public void RecieveMarker( TangoSupport.Marker marker ) {
 
-        //TODO sensible bounds checking (did it just teleport across the map in the last ms?)
-
         //Set the cubes position, overwriting and IMU values
         //TODO if the cube is being rotated, the 6identical markers will make it jump upright again...
         GetCube( marker ).SetMarker(marker);

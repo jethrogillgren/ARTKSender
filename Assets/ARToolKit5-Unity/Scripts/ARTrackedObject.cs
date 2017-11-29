@@ -44,13 +44,13 @@ public class ARTrackedObject : MonoBehaviour
 {
 	protected string LogTag = "ARTrackedObject: ";
 
-	private AROrigin _origin = null;
-	private ARMarker _marker = null;
+	protected AROrigin _origin = null;
+	protected ARMarker _marker = null;
 
-	private bool visible = false;					// Current visibility from tracking
-	private float timeTrackingLost = 0;				// Time when tracking was last lost
+	protected bool visible = false;					// Current visibility from tracking
+	protected float timeTrackingLost = 0;				// Time when tracking was last lost
 	public float secondsToRemainVisible = 0.0f;		// How long to remain visible after tracking is lost (to reduce flicker)
-	private bool visibleOrRemain = false;			// Whether to show the content (based on above variables)
+	protected bool visibleOrRemain = false;			// Whether to show the content (based on above variables)
 
 	public GameObject eventReceiver;
 
@@ -115,7 +115,7 @@ public class ARTrackedObject : MonoBehaviour
 	}
 
 	// Use LateUpdate to be sure the ARMarker has updated before we try and use the transformation.
-	void LateUpdate()
+	protected virtual void LateUpdate()
 	{
 		// Local scale is always 1 for now
 		transform.localScale = Vector3.one;
