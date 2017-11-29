@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 //Room Controller.  Knows all about Physical and Gameplay rooms.
 //That includes transfer between them (Teleports)
 //Provides itineries of all rooms.
+//Knows positions of eg ADF/Scan zero, Cameras, etc..
 public class RoomController : NetworkBehaviour
 {
 
@@ -20,6 +21,9 @@ public class RoomController : NetworkBehaviour
 	public GameplayRoom metalRoom;
 	public GameplayRoom fireRoom;
 	public GameplayRoom waterRoom;
+
+	public Transform trackingZeroPosition; //Where the ADF and 3DR scans call home
+	public Transform camera1ZeroPosition; //Where a Room Webcam is
 
 	private bool firstUpdate = true;
 

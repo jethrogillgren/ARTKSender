@@ -15,6 +15,8 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	[HideInInspector]
 	public GameplayRoom gameplayRoom;
 
+	private RoomController roomController;
+
 	public LineRenderer m_rect;
 
 	public Material defaultMaterial;
@@ -32,6 +34,10 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	{
 		base.Start ();
 
+		roomController = FindObjectOfType<RoomController> ();
+		if (!roomController)
+			Debug.LogError (name + " was unable to find a RoomController");
+		
 		FindGameplayRoom ();
 	}
 
@@ -131,6 +137,9 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		UpdateAll ();//This will change visibility (which includes mesh/solid, and the color)
 	}
 
+
+
+
 	//Server only
 	//The ARMarker object is tracking realtive to the ARToolkit (Room) camera
 	//
@@ -142,11 +151,13 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			return;
 		}
 
-		transform.position = ARUtilityFunctions.PositionFromMatrix(marker.TransformationMatrix);
-		transform.rotation = ARUtilityFunctions.QuaternionFromMatrix(marker.TransformationMatrix);
+		Matrix4x4 pose = roomController.camera1ZeroPosition.transform.localToWorldMatrix * marker.TransformationMatrix;
 
-		Debug.Log ("ARToolkit Marker:  Matrix   " + marker.TransformationMatrix);
-		Debug.Log ("ARToolkit Marker:  position " + marker.TransformationMatrix);
+		transform.position = ARUtilityFunctions.PositionFromMatrix( pose);
+		transform.rotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
+
+		Debug.Log ("ARToolkit Marker:  Marker Matrix " + marker.TransformationMatrix);
+		Debug.Log ("ARToolkit Marker:  Transform     " + transform.position + " / " + transform.rotation);
 	}
 
 	//Server only

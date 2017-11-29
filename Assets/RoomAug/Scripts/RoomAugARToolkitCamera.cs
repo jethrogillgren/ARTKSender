@@ -22,11 +22,11 @@ public class RoomAugARToolkitCamera : ARCamera {
 		return bb;
 	}
 
-	protected override void ApplyTracking()
-	{
-		base.ApplyTracking ();
-		Debug.LogWarning (name + ":  pos " + arPosition + "  rot " + arRotation);
-	}
+//	protected override void ApplyTracking()
+//	{
+//		base.ApplyTracking ();
+//		Debug.LogWarning (name + ":  pos " + arPosition + "  rot " + arRotation);
+//	}
 
 
 }

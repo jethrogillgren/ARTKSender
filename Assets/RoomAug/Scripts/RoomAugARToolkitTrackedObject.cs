@@ -9,11 +9,21 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 	// Use this for initialization
 	protected override void Start () {
 		LogTag = "RoomAugARToolkitTrackedObject: ";
-
-		if (!eventReceiver && eventReceiverLookupName != "")
-			eventReceiver = GameObject.Find (eventReceiverLookupName);
+		findEventReciever ();
 
 		base.Start ();
+	}
+
+	public void findEventReciever()
+	{
+		if (eventReceiverLookupName != "")
+			eventReceiver = GameObject.Find ( eventReceiverLookupName );
+
+		if (eventReceiver)
+			Debug.LogError (name + " found Event Reciever: " + eventReceiver.name );
+		else
+			Debug.LogError ( name + " unable to Find Event Reciever by name: " + eventReceiverLookupName );
+		
 	}
 		
 }

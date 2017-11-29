@@ -65,7 +65,10 @@ public class RoomAugARToolkitTrackedObjectEditor : Editor
 
 		EditorGUILayout.Separator();
 
-		arto.eventReceiverLookupName = EditorGUILayout.TextField("Event Receiver:", arto.eventReceiverLookupName);
+		arto.eventReceiverLookupName = EditorGUILayout.TextField("Event Receiver Name:", arto.eventReceiverLookupName);
 
+		arto.findEventReciever ();
+
+		EditorGUILayout.LabelField ( "Got Event Reciever: ", ( arto.eventReceiver ? "Yes" : "No" ) );
 	}
 }
