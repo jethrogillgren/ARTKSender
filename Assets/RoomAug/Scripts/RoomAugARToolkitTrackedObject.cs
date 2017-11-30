@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 
-	public string eventReceiverLookupName = "";
+//	public string eventReceiverLookupName = "";
+//	private PandaCubeController pandaCubeController;
 
 	// Use this for initialization
 	protected override void Start () {
 		LogTag = "RoomAugARToolkitTrackedObject: ";
+
+//		pandaCubeController =FindObjectOfType<PandaCubeController> ();
+
+
 		Invoke ( "FindEventReciever", 2 );
 
 //		base.Start (); Without this, we do not draw ourselves
@@ -17,8 +22,9 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 
 	public void FindEventReciever()
 	{
-		if (eventReceiverLookupName != "")
-			eventReceiver = GameObject.Find ( eventReceiverLookupName );
+		eventReceiver = (GameObject) FindObjectOfType<PandaCubeController> ().gameObject;
+//		if (eventReceiverLookupName != "")
+//			eventReceiver = GameObject.Find ( eventReceiverLookupName );
 	}
 
 	//Overridden version strips all unnessecary (for us) draws

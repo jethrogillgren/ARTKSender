@@ -59,13 +59,13 @@ public class RoomAugARToolkitTrackedObjectEditor : Editor
 			EditorGUILayout.LabelField("Marker UID", (marker.UID != ARMarker.NO_ID ? marker.UID.ToString() : "Not loaded") + " (" + type + ")");	
 		}
 
+//		EditorGUILayout.Separator();
+//
+//		arto.secondsToRemainVisible = EditorGUILayout.FloatField("Stay visible", arto.secondsToRemainVisible);
+
 		EditorGUILayout.Separator();
 
-		arto.secondsToRemainVisible = EditorGUILayout.FloatField("Stay visible", arto.secondsToRemainVisible);
-
-		EditorGUILayout.Separator();
-
-		arto.eventReceiverLookupName = EditorGUILayout.TextField("Event Receiver Name:", arto.eventReceiverLookupName);
+//		arto.eventReceiverLookupName = EditorGUILayout.TextField("Event Receiver Name:", arto.eventReceiverLookupName);
 
 		arto.FindEventReciever ();
 

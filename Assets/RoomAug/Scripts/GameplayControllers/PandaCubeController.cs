@@ -28,7 +28,6 @@ public class PandaCubeController : NetworkBehaviour {
 
 
 
-
 	// Use this for initialization
 	void Start () {
         //m_PandaCubes = new Dictionary<String, PandaCubeGameplayObject>();
@@ -43,22 +42,40 @@ public class PandaCubeController : NetworkBehaviour {
 		
 	}
 
-    //Recieve a marker sighting from a Client Player
+    //Recieve a Tango marker sighting from a Client Player
     public void RecieveMarker( TangoSupport.Marker marker ) {
 
         //Set the cubes position, overwriting and IMU values
         //TODO if the cube is being rotated, the 6identical markers will make it jump upright again...
-        GetCube( marker ).SetMarker(marker);
+		PandaCubeGameplayObject c = GetCube ( marker );
+		if (c)
+			c.SetMarker ( marker );
+		else
+			Debug.LogError (name + " Could not get a cube for Tango marker: " + marker);
     }
 
-	//Recieve IMU from Cubes
-	public void RecieveCube() {
-		//TODO
-
-		//TODO sensible bounds checking (did it just teleport across the map in the last ms?)
+	//Recieve an ARToolkit marker signhting
+	public void OnMarkerTracked ( ARMarker marker )
+	{
+		PandaCubeGameplayObject c = GetCube ( marker );
+		if (c)
+			c.SetMarker (marker, 1);
+		else
+			Debug.LogError (name + " Could not get a cube for ARToolkit marker: " + marker);
 	}
 
+	private PandaCubeGameplayObject GetCube( ARMarker marker ) {
+		if ( marker.Tag.Contains( cube1.cubeContentName ) )
+			return cube1;
+		else if ( marker.Tag.Contains( cube2.cubeContentName ) )
+			return cube2;
+		else if ( marker.Tag.Contains( cube3.cubeContentName ) )
+			return cube3;
+		else if ( marker.Tag.Contains( cube4.cubeContentName ) )
+			return cube4;
 
+		return null;
+	}
 
     private PandaCubeGameplayObject GetCube( TangoSupport.Marker marker ) {
         
@@ -73,5 +90,6 @@ public class PandaCubeController : NetworkBehaviour {
         
         return null;
     }
+
 
 }

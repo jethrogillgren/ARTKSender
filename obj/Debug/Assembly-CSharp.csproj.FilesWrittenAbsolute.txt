@@ -11,6 +11,8 @@
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.Analytics.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.HoloLens.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.VR.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/GUIAnimatorFREE.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/GETween.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Mono.Cecil.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.SerializationLogic.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.DataContract.dll
@@ -20,5 +22,3 @@
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Mono.Cecil.Mdb.dll
-/Users/jethro/git/TangoTests/Temp/bin/Debug/GUIAnimatorFREE.dll
-/Users/jethro/git/TangoTests/Temp/bin/Debug/GETween.dll

@@ -165,7 +165,8 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//The ARMarker object is tracking realtive to the ARToolkit (Room) camera
 	//TODO camera index
 	//TODO OnMarkerFound OnMarkerLost
-	public void OnMarkerTracked ( ARMarker marker )
+	//roomCanNum is 1 based
+	public void SetMarker ( ARMarker marker, int roomCameraNumber )
 	{
 		if (isClient)
 		{
@@ -175,10 +176,10 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 		Matrix4x4 pose = roomController.camera1ZeroPosition.transform.localToWorldMatrix * marker.TransformationMatrix;
 
-		transformPositions [ 0 ] = ARUtilityFunctions.PositionFromMatrix ( pose );
-		transformRotations [ 0 ] = ARUtilityFunctions.QuaternionFromMatrix ( pose );
+		transformPositions [ roomCameraNumber-1 ] = ARUtilityFunctions.PositionFromMatrix ( pose );
+		transformRotations [ roomCameraNumber-1 ] = ARUtilityFunctions.QuaternionFromMatrix ( pose );
 
-		transformTimestamps [ 0 ] = Time.time;
+		transformTimestamps [ roomCameraNumber-1 ] = Time.time;
 
 
 //		Debug.Log ("ARToolkit Marker:  Marker Matrix " + marker.TransformationMatrix);
@@ -196,8 +197,6 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			Debug.LogError ( "Client recieved a Tango Marker update" );
 			return;
 		}
-
-
 
 		// Apply the pose of the marker to the prefab.
 		// This also applies implicitly to the axis and cube objects.
@@ -242,6 +241,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	bool isTangoTrackingGood = false;
 	bool isARToolkitTrackingGood = false;
 	//Apply transformation after regular update so we have all readings in
+	//TODO sensible bounds checking
 	public void LateUpdate ()
 	{
 		isTrackingGood = false;

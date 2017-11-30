@@ -24,6 +24,7 @@ public class RoomController : NetworkBehaviour
 
 	public Transform trackingZeroPosition; //Where the ADF and 3DR scans call home
 	public Transform camera1ZeroPosition; //Where a Room Webcam is
+	public Transform camera2ZeroPosition; //Where a Room Webcam is
 
 	private bool firstUpdate = true;
 

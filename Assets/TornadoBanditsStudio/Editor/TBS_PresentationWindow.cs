@@ -156,7 +156,9 @@ namespace TornadoBanditsStudio.LowPolyFreePack
         private GUIStyle iconGUISkin;
         private GUIStyle textTitleGUISkin;
         private GUIStyle simpleTextGUISkin;
+		#pragma warning disable 0414
         private GUIStyle buttonGUIStyle;
+		#pragma warning restore 0414
         private GUIStyle simpleBackgroundColor;
         private GUIStyle linkTextGUISkin;
         private GUIStyle simpleMiddleTextGUISkin;
