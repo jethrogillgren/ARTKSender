@@ -400,7 +400,7 @@ public class ARController : MonoBehaviour
 		}
 	}
 	
-	void Update()
+	protected virtual void Update()
 
     {
 		//Log(LogTag + "ARController.Update()");

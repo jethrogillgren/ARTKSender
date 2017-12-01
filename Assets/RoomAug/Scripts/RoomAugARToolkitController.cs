@@ -187,10 +187,31 @@ public class RoomAugARToolkitController : ARController
 	}
 
 
+	protected override void Update()
+	{
+		//Log(LogTag + "ARController.Update()");
+
+		if (Application.isPlaying) {
+
+			/*/// jgillgr the only change to this overload is commenting these key handlers out.
+			if (Input.GetKeyDown(KeyCode.Menu) || Input.GetKeyDown(KeyCode.Return)) showGUIDebug = !showGUIDebug;
+			if (QuitOnEscOrBack && Input.GetKeyDown(KeyCode.Escape)) Application.Quit(); // On Android, maps to "back" button.*/
+			CalculateFPS();
+
+			UpdateAR();
+
+		} else {
+
+			// Editor update.
+
+		}
+	}
+
 
 	public override void OnEnable()
 	{
 		UseVideoBackground = enableVisual;
+		showGUIDebug = false;
 		LogTag = "RoomAugARController";
 
 		base.OnEnable ();

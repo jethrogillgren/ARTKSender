@@ -7,7 +7,8 @@ using System.Reflection;
 using System.Timers;
 using UnityEngine.Networking;
 
-//Attaches to the Gamemaster Controls and orchestrates puzzle flow / changes
+//Attaches to the Gamemaster Controls and orchestrates puzzle flow / changes.
+//Includes the clicker and anything do with progressing game state (Standby, Brief, Complete, etc.. )
 public class PuzzleController : NetworkBehaviour
 {
 	public const float startingTime = 60f;
@@ -62,7 +63,11 @@ public class PuzzleController : NetworkBehaviour
 	private Button cueInserterPuzzleButton;
 	private Button cancelInserterPuzzleButton;
 
-	private Button debugDoPuzzleButton;
+	private Button clickerTButton;
+	private Button clickerEButton;
+	private Button clickerUButton;
+	private Button clickerDButton;
+	private bool doingClicker = false;//Lock bool for one-at-a-time clicker actions
 
 	private Puzzle giantBombPuzzle;
 	private Puzzle inserterTestPuzzle;
@@ -78,6 +83,26 @@ public class PuzzleController : NetworkBehaviour
 	{
 		if (IsInvoking ( "HandleMinuteTimer" ))
 			CancelInvoke ( "HandleMinuteTimer" );
+	}
+
+	public void Update()
+	{
+		if ( !doingClicker && Input.GetKeyDown(KeyCode.Return) )
+		{
+			DoClickerE ();
+		}
+		if ( !doingClicker && Input.GetKeyDown(KeyCode.Tab) )
+		{
+			DoClickerT ();
+		}
+		if ( !doingClicker && Input.GetKeyDown(KeyCode.UpArrow) )
+		{
+			DoClickerU ();
+		}
+		if ( !doingClicker && Input.GetKeyDown(KeyCode.DownArrow) )
+		{
+			DoClickerD ();
+		}
 	}
 
 	public override void OnStartServer ()
@@ -116,11 +141,33 @@ public class PuzzleController : NetworkBehaviour
 					CancelInserterPuzzle ();
 				}
 			} );
-		debugDoPuzzleButton = ( Button )GameObject.Find ( "Debug Do Puzzle" ).GetComponent<Button> ();
-		debugDoPuzzleButton.onClick.AddListener ( delegate
+		//Clickers
+		clickerTButton = ( Button )GameObject.Find ( "Clicker T Button" ).GetComponent<Button> ();
+		clickerTButton.onClick.AddListener ( delegate
 			{
 				{
-					DebugDoPuzzle ();
+					DoClickerT ();
+				}
+			} );
+		clickerEButton = ( Button )GameObject.Find ( "Clicker E Button" ).GetComponent<Button> ();
+		clickerEButton.onClick.AddListener ( delegate
+			{
+				{
+					DoClickerE ();
+				}
+			} );
+		clickerUButton = ( Button )GameObject.Find ( "Clicker U Button" ).GetComponent<Button> ();
+		clickerUButton.onClick.AddListener ( delegate
+			{
+				{
+					DoClickerU ();
+				}
+			} );
+		clickerDButton = ( Button )GameObject.Find ( "Clicker D Button" ).GetComponent<Button> ();
+		clickerDButton.onClick.AddListener ( delegate
+			{
+				{
+					DoClickerD ();
 				}
 			} );
 
@@ -183,6 +230,48 @@ public class PuzzleController : NetworkBehaviour
 		
 		Debug.Log ( "Debug Doing puzzle: " + currentPuzzles [ 0 ].Name );
 		currentPuzzles [ currentPuzzles.Count - 1 ].Complete ();
+	}
+
+	//Handlheld Bluetooth clicker triggers things here.  Also a button in GUI as backup
+	public void DoClickerE()
+	{
+		if (doingClicker)
+			return;
+		
+		Debug.Log ("Doing Clicker - Enter");
+		DisableClickers ();
+		Invoke ( "EnableClickers", 3);
+	}
+	public void DoClickerT()
+	{
+		if (doingClicker)
+			return;
+		
+		Debug.Log ("Doing Clicker - Tab");
+	}
+	public void DoClickerU()
+	{
+		if (doingClicker)
+			return;
+		
+		Debug.Log ("Doing Clicker - Up");
+		DebugDoPuzzle ();
+	}
+	public void DoClickerD()
+	{
+		if (doingClicker)
+			return;
+		
+		Debug.Log ("Doing Clicker - Down");
+	}
+	private void EnableClickers(){ DisableClickers ( false );}
+	private void DisableClickers( bool disable = true ) //Call with true to disable clickers.  False to reenable
+	{
+		doingClicker = disable;
+		clickerEButton.interactable = !disable;
+		clickerTButton.interactable = !disable;
+		clickerUButton.interactable = !disable;
+		clickerDButton.interactable = !disable;
 	}
 
 	private void HandleMinuteTimer ()
