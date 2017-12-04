@@ -1,7 +1,12 @@
-﻿using System.Collections;
+﻿// Credit to damien_oconnell from http://forum.unity3d.com/threads/39513-Click-drag-camera-movement
+// for using the mouse displacement for calculating the amount of camera movement and panning code.
+
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Click Toggles, and Camera Control
 public class ServerCamera : MonoBehaviour {
 
 	private Camera cam;
@@ -14,6 +19,22 @@ public class ServerCamera : MonoBehaviour {
 
 	public bool focusToSecondMonitor = false;//As opposed to default Fullscreeen
 
+	public float turnSpeed = 0.1f;		// Speed of camera turning when mouse moves in along an axis
+	public float panSpeed = 0.2f;		// Speed of the camera when being panned
+	public float zoomSpeed = 4.0f;		// Speed of the camera going back and forth
+
+	private Vector3 mouseOrigin;	// Position of cursor when mouse dragging starts
+	private bool isPanning = false;		// Is the camera being panned?
+	private bool isRotating = false;	// Is the camera being rotated?
+
+	//
+	// UPDATE
+	//
+
+
+
+
+
 	// Use this for initialization
 	void Start () {
 		cam = GetComponent<Camera>();//Not the depth camera, the main one
@@ -21,15 +42,15 @@ public class ServerCamera : MonoBehaviour {
 
 		fullscreenRect = new Rect ( 0, 0, Screen.width, Screen.height );
 
-		if (focused)
-			ToggleFocus ();
+//		if (focused)
+//			ToggleFocus ();
 	}
 	
 	//We do the actual focusing in LateUpdate(), so all cameras have a chance to register the Update Click
 	void Update () {
 
-		//If we clicked
-		if( Input.GetMouseButtonDown(0) ) 
+		//Focussing / Unfocussing
+		if( Input.GetKeyDown(KeyCode.Space) ) 
 		{
 			//Get the click Position
 			Vector3 mouse = Input.mousePosition;
@@ -49,6 +70,67 @@ public class ServerCamera : MonoBehaviour {
 			}
 
 			//If Yes:  Focus();
+		}
+
+		if (focused)
+		{
+			// Get the left mouse button
+			if (Input.GetMouseButtonDown ( 0 ))
+			{
+				// Get mouse origin
+				mouseOrigin = Input.mousePosition;
+				isRotating = true;
+			}
+
+			// Get the right mouse button
+			if (Input.GetMouseButtonDown ( 1 ))
+			{
+				// Get mouse origin
+				mouseOrigin = Input.mousePosition;
+				isPanning = true;
+			}
+
+			if(Input.GetKey(KeyCode.Equals))
+			{
+//				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
+
+				Vector3 move = zoomSpeed * transform.forward; 
+				transform.Translate ( move, Space.World );
+
+			}
+			else if (Input.GetKey(KeyCode.Minus) )
+			{
+//				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
+
+				Vector3 move = zoomSpeed * -transform.forward; 
+				transform.Translate ( move, Space.World );
+			}
+
+			// Disable movements on button release
+			if (!Input.GetMouseButton ( 0 ))
+				isRotating = false;
+			if (!Input.GetMouseButton ( 1 ))
+				isPanning = false;
+			
+
+			// Rotate camera along X and Y axis
+			if (isRotating)
+			{
+				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
+//				pos = ( Input.mousePosition - mouseOrigin );
+				transform.RotateAround ( transform.position, transform.right, -pos.y * turnSpeed );
+				transform.RotateAround ( transform.position, Vector3.up, pos.x * turnSpeed );
+			}
+
+			// Move the camera on it's XY plane
+			if (isPanning)
+			{
+				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
+
+				Vector3 move = new Vector3 ( pos.x * panSpeed, pos.y * panSpeed, 0 );
+				transform.Translate ( move, Space.Self );
+			}
+
 		}
 	}
 
