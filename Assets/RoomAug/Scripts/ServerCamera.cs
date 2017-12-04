@@ -90,7 +90,7 @@ public class ServerCamera : MonoBehaviour {
 				isPanning = true;
 			}
 
-			if(Input.GetKey(KeyCode.Equals))
+			if(Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.Alpha2))
 			{
 //				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
 
@@ -98,7 +98,7 @@ public class ServerCamera : MonoBehaviour {
 				transform.Translate ( move, Space.World );
 
 			}
-			else if (Input.GetKey(KeyCode.Minus) )
+			else if (Input.GetKey(KeyCode.Minus)|| Input.GetKey(KeyCode.Alpha1) )
 			{
 //				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
 
