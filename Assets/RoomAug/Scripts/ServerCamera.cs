@@ -21,7 +21,7 @@ public class ServerCamera : MonoBehaviour {
 
 	public float turnSpeed = 0.1f;		// Speed of camera turning when mouse moves in along an axis
 	public float panSpeed = 0.2f;		// Speed of the camera when being panned
-	public float zoomSpeed = 4.0f;		// Speed of the camera going back and forth
+	public float zoomSpeed = 1.0f;		// Speed of the camera going back and forth
 
 	private Vector3 mouseOrigin;	// Position of cursor when mouse dragging starts
 	private bool isPanning = false;		// Is the camera being panned?
@@ -82,21 +82,29 @@ public class ServerCamera : MonoBehaviour {
 				isPanning = true;
 			}
 
-			if(Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.Alpha2))
+			if( Input.mouseScrollDelta.y != 0 )
 			{
-//				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
+				Debug.LogError ( Input.mouseScrollDelta.y );
 
-				Vector3 move = zoomSpeed * transform.forward; 
-				transform.Translate ( move, Space.World );
-
-			}
-			else if (Input.GetKey(KeyCode.Minus)|| Input.GetKey(KeyCode.Alpha1) )
-			{
-//				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
-
-				Vector3 move = zoomSpeed * -transform.forward; 
+				Vector3 move = zoomSpeed * Input.mouseScrollDelta.y * transform.forward; 
 				transform.Translate ( move, Space.World );
 			}
+
+//			if(Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.Alpha2))
+//			{
+////				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
+//
+//				Vector3 move = zoomSpeed * transform.forward; 
+//				transform.Translate ( move, Space.World );
+//
+//			}
+//			else if (Input.GetKey(KeyCode.Minus)|| Input.GetKey(KeyCode.Alpha1) )
+//			{
+////				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
+//
+//				Vector3 move = zoomSpeed * -transform.forward; 
+//				transform.Translate ( move, Space.World );
+//			}
 
 			// Disable movements on button release
 			if (!Input.GetMouseButton ( 0 ))
