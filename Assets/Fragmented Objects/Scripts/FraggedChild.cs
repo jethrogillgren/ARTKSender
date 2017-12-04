@@ -4,7 +4,7 @@ using System;
 [AddComponentMenu("FragChild")]
 
 public class FraggedChild:MonoBehaviour{
-    
+
     int forceMax;
     int forceMin;
     [HideInInspector] 
@@ -16,7 +16,7 @@ public class FraggedChild:MonoBehaviour{
     Vector3 sScale;
     //// CONTROLLER
     
-    FraggedController fragControl;
+    protected FraggedController fragControl;
     [HideInInspector] 
     public float hitPoints = 1.0f;
     public bool stickyFrag;
@@ -28,26 +28,10 @@ public class FraggedChild:MonoBehaviour{
     bool checkToggle = true;
     
     public Rigidbody cacheRB;
-    
-
-	public void OnTriggerEnter ( Collider collision ) {//Handle usual teleport collission with player trigger
-		Debug.Log ( name + " Triggered by: " + collision.name );
-
-		if ( collision.name == "Deer" )
-		{
-			Debug.LogError ( "FRAGMENT  Calling Damage on " + gameObject.name );
-
-			Damage ( 5f );		
-
-		}
-	}
-
-
 
 
     //// USE THIS FUNCTION TO DAMAGE THE FRAGMENTS SO THEY FALL OFF //// gameObject.SendMessage("Damage", 1f, SendMessageOptions.DontRequireReceiver);
     public void Damage(float damage) {
-		Debug.Log ("DAMAGE");
 		fragMe(fragControl.hitPointDecrease * damage);		
 		if(fragControl.fragAllOnDamage){
 			fragControl.FragAll();
@@ -90,8 +74,20 @@ public class FraggedChild:MonoBehaviour{
     			}
     		}
     	}
-    	//frags fracture fragments on Collisions
+
+	public void OnTriggerEnter ( Collider collision ) {//Handle usual teleport collission with player trigger
+
+		if (( fragControl.collideMask.value & 1 << collision.gameObject.layer ) == 1 << collision.gameObject.layer)
+		{
+			Debug.LogError ( name + "  Hit by " + collision.name );
+
+			Damage ( fragControl.collidefragMagnitude );
+		}
+	}
+
+    //frags fracture fragments on Collisions
     public void OnCollisionEnter(Collision collision) {
+//		Debug.LogError ("### " + collision.gameObject.name );
     	if((fragControl.collideMask.value & 1<<collision.gameObject.layer) == 1<<collision.gameObject.layer){
     		if (this.fragControl.collidefragMagnitude > 0 && collision.relativeVelocity.magnitude > this.fragControl.collidefragMagnitude) {
     		fragMe(collision.relativeVelocity.magnitude * .2f * fragControl.hitPointDecrease);
