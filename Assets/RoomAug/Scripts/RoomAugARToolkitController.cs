@@ -13,6 +13,13 @@ public class RoomAugARToolkitController : ARController
 //
 //	}
 
+//	//Limit Log messages to Lower log levels
+//	public override void Log(String msg)
+//	{
+//			base.Log ( msg );
+//		
+//	}
+
 
 
 	public override bool StartAR()

@@ -309,7 +309,7 @@ public class ARController : MonoBehaviour
 	[SerializeField]
 	protected bool currentNFTMultiMode = false;
 	[SerializeField]
-	protected AR_LOG_LEVEL currentLogLevel = AR_LOG_LEVEL.AR_LOG_LEVEL_INFO;
+	public static AR_LOG_LEVEL currentLogLevel = AR_LOG_LEVEL.AR_LOG_LEVEL_WARN;
 
 	//
 	// MonoBehavior methods.
@@ -1624,15 +1624,23 @@ public class ARController : MonoBehaviour
 
     public static void Log(String msg)
     {
-        // Add the new log message to the collection. If the collection has grown too large
-        // then remove the oldest messages.
-        logMessages.Add(msg);
-        while (logMessages.Count > MaximumLogMessages) logMessages.RemoveAt(0);
+		if (currentLogLevel == AR_LOG_LEVEL.AR_LOG_LEVEL_INFO || currentLogLevel == AR_LOG_LEVEL.AR_LOG_LEVEL_DEBUG)
+		{
 
-        // If there is a logCallback then use that to handle the log message. Otherwise simply
-        // print out on the debug console.
-        if (logCallback != null) logCallback(msg);
-        else Debug.Log(msg);
+
+			// Add the new log message to the collection. If the collection has grown too large
+			// then remove the oldest messages.
+			logMessages.Add ( msg );
+			while (logMessages.Count > MaximumLogMessages)
+				logMessages.RemoveAt ( 0 );
+
+			// If there is a logCallback then use that to handle the log message. Otherwise simply
+			// print out on the debug console.
+			if (logCallback != null)
+				logCallback ( msg );
+			else
+				Debug.Log ( msg );
+		}
     }
 
     protected void CalculateFPS()
