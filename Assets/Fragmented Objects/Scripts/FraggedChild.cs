@@ -29,12 +29,29 @@ public class FraggedChild:MonoBehaviour{
     
     public Rigidbody cacheRB;
     
+
+	public void OnTriggerEnter ( Collider collision ) {//Handle usual teleport collission with player trigger
+		Debug.Log ( name + " Triggered by: " + collision.name );
+
+		if ( collision.name == "Deer" )
+		{
+			Debug.LogError ( "FRAGMENT  Calling Damage on " + gameObject.name );
+
+			Damage ( 5f );		
+
+		}
+	}
+
+
+
+
     //// USE THIS FUNCTION TO DAMAGE THE FRAGMENTS SO THEY FALL OFF //// gameObject.SendMessage("Damage", 1f, SendMessageOptions.DontRequireReceiver);
     public void Damage(float damage) {
-    		fragMe(fragControl.hitPointDecrease * damage);		
-    		if(fragControl.fragAllOnDamage){
-    			fragControl.FragAll();
-    		}
+		Debug.Log ("DAMAGE");
+		fragMe(fragControl.hitPointDecrease * damage);		
+		if(fragControl.fragAllOnDamage){
+			fragControl.FragAll();
+		}
     }
     
     public void Start() {

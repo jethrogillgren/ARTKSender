@@ -18,7 +18,7 @@ public class CharacterShootEXAMPLE:MonoBehaviour{
     }
     
     public void Shoot(){
-    	if(shoot){
+    	if(shoot) {
     		RaycastHit hit = new RaycastHit();
     		Ray ray = Camera.main.ViewportPointToRay (new Vector3(0.5f,0.5f,0.0f));
     		if (Physics.Raycast (ray, out hit)){

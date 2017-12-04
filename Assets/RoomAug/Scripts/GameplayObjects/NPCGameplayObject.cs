@@ -17,6 +17,9 @@ public class NPCGameplayObject : BaseGameplayObject {
 		base.Start ();
 	}
 
+//	public void OnTriggerEnter ( Collider collision ) {//Handle usual teleport collission with player trigger
+//		Debug.Log(name + " Triggered by: " + collision.name );
+//	}
 
 	public void SetLookTargetToNearestPlayer()
 	{
