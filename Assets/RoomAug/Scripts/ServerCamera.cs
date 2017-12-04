@@ -27,14 +27,6 @@ public class ServerCamera : MonoBehaviour {
 	private bool isPanning = false;		// Is the camera being panned?
 	private bool isRotating = false;	// Is the camera being rotated?
 
-	//
-	// UPDATE
-	//
-
-
-
-
-
 	// Use this for initialization
 	void Start () {
 		cam = GetComponent<Camera>();//Not the depth camera, the main one

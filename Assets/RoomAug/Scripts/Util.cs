@@ -12,6 +12,31 @@ public static class Util
 	public static readonly float ARToolkitViewportRectW = 0.25f* Screen.width;
 	public static readonly float ARToolkitViewportRectH = 0.25f* Screen.height;
 
+	//Return the closest Client object to the given position
+	public static RoomAugPlayerController GetNearestPlayer(Transform fromTransform)
+	{
+		RoomAugPlayerController closest = null;
+		float closestMagnitude = 999;
+
+		//TODO is this slooooooww?
+		RoomAugPlayerController[] players = GameObject.FindObjectsOfType<RoomAugPlayerController> ();
+		foreach(RoomAugPlayerController player in players)
+		{
+			if (!closest) //First player is chosen automatically
+			{
+				closest = player;
+
+				//If another player is closer, choose that instead
+			} else if( ( fromTransform.position - player.transform.position ).magnitude < closestMagnitude)
+			{
+				closest = player;
+				closestMagnitude = (fromTransform.position - player.transform.position ).magnitude;
+			}
+				
+		}
+
+		return closest;
+	}
 
 
 	//Get an average (mean) from more then two quaternions (with two, slerp would be used).
