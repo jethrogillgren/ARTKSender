@@ -8,7 +8,7 @@ using UnityEngine;
 //Should really replace all fraggedChild with RoomAugFraggedChild but that would take ages.
 public class RoomAugFraggedChild : FraggedChild {
 
-	public void OnTriggerEnter ( Collider collision ) {//Handle usual teleport collission with player trigger
+	public new void OnTriggerEnter ( Collider collision ) {//Handle usual teleport collission with player trigger
 
 		if (( fragControl.collideMask.value & 1 << collision.gameObject.layer ) == 1 << collision.gameObject.layer)
 		{

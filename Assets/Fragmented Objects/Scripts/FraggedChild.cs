@@ -79,7 +79,7 @@ public class FraggedChild:MonoBehaviour{
 
 		if (( fragControl.collideMask.value & 1 << collision.gameObject.layer ) == 1 << collision.gameObject.layer)
 		{
-			Debug.LogError ( name + "  Hit by " + collision.name );
+//			Debug.Log ( name + "  Hit by " + collision.name );
 
 			Damage ( fragControl.collidefragMagnitude );
 		}

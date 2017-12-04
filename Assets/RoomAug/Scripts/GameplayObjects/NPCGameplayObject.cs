@@ -30,26 +30,36 @@ public class NPCGameplayObject : BaseGameplayObject {
 //			Debug.LogWarning (name + " found no Player to look at...");
 	}
 
+	public override void UpdateVisibility()
+	{
+		return;
+	}
+
+
 	//As base, except we keep our Malbers Animal on Animal Layer
 	//Relies on Animals layer being already created
 	public override void SetLayer(string roomName = "")
 	{
-		//If not specified, find our current parent
-		if (roomName == null || roomName.Length == 0)
-		{
-			GameplayRoom gr = GetComponentInParent<GameplayRoom>();
-			if (gr)
-				roomName = gr.roomName;
-		}
+		SetLayerRecursively ( gameObject, LayerMask.NameToLayer ( "Animal" ) );
 
-		if (roomName != null && roomName.Length > 0)
-		{
-			//Set Everything to Animal to start
-			SetLayerRecursively ( gameObject, LayerMask.NameToLayer ( "Animal" ) );
 
-			//But then make the GameplayObject only the Room Layer.
-			gameObject.layer = LayerMask.NameToLayer ( roomName );
-		}
+
+//		//If not specified, find our current parent
+//		if (roomName == null || roomName.Length == 0)
+//		{
+//			GameplayRoom gr = GetComponentInParent<GameplayRoom>();
+//			if (gr)
+//				roomName = gr.roomName;
+//		}
+//
+//		if (roomName != null && roomName.Length > 0)
+//		{
+//			//Set Everything to Animal to start
+//			SetLayerRecursively ( gameObject, LayerMask.NameToLayer ( "Animal" ) );
+
+//			//But then make the GameplayObject only the Room Layer.
+//			gameObject.layer = LayerMask.NameToLayer ( roomName );
+//		}
 		
 	}
 }
