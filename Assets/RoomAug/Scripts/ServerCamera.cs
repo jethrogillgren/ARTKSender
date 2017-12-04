@@ -37,6 +37,11 @@ public class ServerCamera : MonoBehaviour {
 //		if (focused)
 //			ToggleFocus ();
 	}
+
+	public void AddAnimalsToCullingMask()
+	{
+		
+	}
 	
 	//We do the actual focusing in LateUpdate(), so all cameras have a chance to register the Update Click
 	void Update () {
@@ -84,27 +89,9 @@ public class ServerCamera : MonoBehaviour {
 
 			if( Input.mouseScrollDelta.y != 0 )
 			{
-				Debug.LogError ( Input.mouseScrollDelta.y );
-
 				Vector3 move = zoomSpeed * Input.mouseScrollDelta.y * transform.forward; 
 				transform.Translate ( move, Space.World );
 			}
-
-//			if(Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.Alpha2))
-//			{
-////				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
-//
-//				Vector3 move = zoomSpeed * transform.forward; 
-//				transform.Translate ( move, Space.World );
-//
-//			}
-//			else if (Input.GetKey(KeyCode.Minus)|| Input.GetKey(KeyCode.Alpha1) )
-//			{
-////				Vector3 pos = cam.ScreenToViewportPoint ( Input.mousePosition - mouseOrigin );
-//
-//				Vector3 move = zoomSpeed * -transform.forward; 
-//				transform.Translate ( move, Space.World );
-//			}
 
 			// Disable movements on button release
 			if (!Input.GetMouseButton ( 0 ))

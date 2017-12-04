@@ -18,7 +18,6 @@ public class NPCGameplayObject : BaseGameplayObject {
 	}
 
 
-
 	public void SetLookTargetToNearestPlayer()
 	{
 		RoomAugPlayerController closest = Util.GetNearestPlayer (this.transform);
@@ -26,5 +25,28 @@ public class NPCGameplayObject : BaseGameplayObject {
 			lookAt.Target = closest.transform;
 //		else
 //			Debug.LogWarning (name + " found no Player to look at...");
+	}
+
+	//As base, except we keep our Malbers Animal on Animal Layer
+	//Relies on Animals layer being already created
+	public override void SetLayer(string roomName = "")
+	{
+		//If not specified, find our current parent
+		if (roomName == null || roomName.Length == 0)
+		{
+			GameplayRoom gr = GetComponentInParent<GameplayRoom>();
+			if (gr)
+				roomName = gr.roomName;
+		}
+
+		if (roomName != null && roomName.Length > 0)
+		{
+			//Set Everything to Animal to start
+			SetLayerRecursively ( gameObject, LayerMask.NameToLayer ( "Animal" ) );
+
+			//But then make the GameplayObject only the Room Layer.
+			gameObject.layer = LayerMask.NameToLayer ( roomName );
+		}
+		
 	}
 }

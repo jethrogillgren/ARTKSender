@@ -41,14 +41,13 @@ public class GizmoVisualizer : MonoBehaviour
             NewColor.a = alpha;
             UnityEditor.Handles.color = NewColor;
 
-#pragma warning disable 0618
 #if UNITY_2017_1_OR_NEWER
             UnityEditor.Handles.ArrowHandleCap(1, transform.position, transform.rotation, AxisSize, EventType.Ignore);
-#else
+#else 
+#pragma warning disable 0618
             UnityEditor.Handles.ArrowCap(1, transform.position, transform.rotation, AxisSize);
-#endif
 #pragma warning restore 0618
-			
+#endif
         }
 
         Gizmos.color = DebugColor;
