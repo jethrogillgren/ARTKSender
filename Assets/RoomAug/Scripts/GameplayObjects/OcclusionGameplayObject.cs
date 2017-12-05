@@ -32,7 +32,26 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 	public override void SetLayer( string roomName = "" ) {
 		//Do nothing, we don't want to change Occlusion layers
 	}
-		
+
+	public override void UpdateVisibility() {
+
+		//GameplayState has first priority on setting enabled state.
+		if (gameplayState != GameplayState.Started)
+		{
+			gameObject.SetActive(false);
+			return;
+		}
+
+		//Only clientes care about occlusion
+		if (isClient)
+			base.UpdateVisibility ();
+		else if (Application.platform != RuntimePlatform.Android && Application.isPlaying)
+			gameObject.SetActive ( false );
+		else
+			Debug.LogWarning ("The pig flys!");
+	}
+
+
 
 	//Used to disable occulusion while running.  You can also just set GameplayState to Inactive, which os cheaper and more clear.
 	public void setOcclusion( bool turnOn ) {

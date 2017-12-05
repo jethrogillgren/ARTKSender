@@ -5,20 +5,8 @@ using System;
 
 public class RoomAugARToolkitController : ARController
 {
-//	public void Start()
-//	{
-//		UseVideoBackground = false;
-//
-//	}
 
-//	//Limit Log messages to Lower log levels
-//	public override void Log(String msg)
-//	{
-//			base.Log ( msg );
-//		
-//	}
-
-
+	public bool showVideoFeed = false;
 	public Vector3 farfaraway = new Vector3(0,1000,0);
 
 
@@ -181,7 +169,7 @@ public class RoomAugARToolkitController : ARController
 		}
 
 
-		if (!_sceneConfiguredForVideo)
+		if (showVideoFeed && !_sceneConfiguredForVideo)
 		{
 
 			// Wait for the wrapper to confirm video frames have arrived before configuring our video-dependent stuff.
@@ -288,7 +276,7 @@ public class RoomAugARToolkitController : ARController
 		bool ok = PluginFunctions.arwUpdateAR();
 		if (!ok) return false;
 		if (gotFrame) {
-			if (_sceneConfiguredForVideo && UseVideoBackground) {
+			if (showVideoFeed && _sceneConfiguredForVideo && UseVideoBackground) {
 				UpdateTexture();
 			}
 		}
