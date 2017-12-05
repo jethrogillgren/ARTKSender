@@ -218,7 +218,7 @@ public class PuzzleController : NetworkBehaviour
 
 		UpdateTimeText ();
 
-		InvokeRepeating ( "HandleMinuteTimer", 1, 1 );// Seconds
+		InvokeRepeating ( "HandleMinuteTimer", 60, 60 );// Seconds
 
 	}
 
