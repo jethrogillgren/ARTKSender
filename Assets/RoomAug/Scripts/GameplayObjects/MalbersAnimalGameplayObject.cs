@@ -2,20 +2,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NPCGameplayObject : BaseGameplayObject {
+using MalbersAnimations;
+using MalbersAnimations.Utilities;
 
+public class MalbersAnimalGameplayObject : BaseGameplayObject {
+
+	public MWayPoint scareWaypoint;
 	public bool lookAtNearestPlayer = true;
-	private MalbersAnimations.Utilities.LookAt lookAt;
+
+	protected LookAt lookAt;
+
+	protected Animal animal;
+	protected AnimalAIControl aiControl;
+
+	protected bool scared = false;
+
 
 	public override void Start()
 	{
-		lookAt = GetComponentInChildren<MalbersAnimations.Utilities.LookAt> ();
-		
+		lookAt = GetComponentInChildren<LookAt> ();
+		aiControl = GetComponentInChildren<AnimalAIControl> ();
+		animal = GetComponentInChildren<Animal> ();
+
 		if (lookAtNearestPlayer)
 			InvokeRepeating ( "SetLookTargetToNearestPlayer", 0, 1 );
 		
 		base.Start ();
 	}
+
+
+	//Called on server when a player gets close to the deer.
+	//It smashes through the fragment wall
+	public void ScareOverWall()
+	{
+		if (scared)
+			return;
+		
+		scared = true;
+
+		animal.Speed3 = true; //Make it run so it can jump.  We assume it has enough time to build up speed.
+		aiControl.SetTarget (scareWaypoint.transform);
+	}
+
 
 //	public void OnTriggerEnter ( Collider collision ) {//Handle usual teleport collission with player trigger
 //		Debug.Log(name + " Triggered by: " + collision.name );

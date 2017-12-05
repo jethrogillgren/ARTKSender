@@ -40,6 +40,10 @@ public class RoomAugPlayerController : NetworkBehaviour
     }
     public override void OnStartLocalPlayer() {
 		Instantiate(new AudioListener());
+
+		//Collisions are all handled on the server
+		foreach ( PlayerDistanceCollider c in GetComponentsInChildren<PlayerDistanceCollider>() )
+			c.enabled = false;
     }
 
     public void SetTangoHardwareSpecific(bool enable) {
@@ -101,6 +105,19 @@ public class RoomAugPlayerController : NetworkBehaviour
 	[Command]
 	public void CmdWatchEarth() {
 		FindObjectOfType<WatcherGameplayObject>().m_LookTarget = GameObject.Find ("Earth");
+	}
+
+
+	public void ScareDeer() {
+		if (isClient)
+			Debug.LogError ("A client asked to Scare the deer, but that is a Server controlled activity!");
+		else
+			DoScareDeer ();
+	}
+	private void DoScareDeer() {
+		foreach( MalbersAnimalGameplayObject animalGPO in GameObject.FindObjectsOfType<MalbersAnimalGameplayObject> () ) {
+			animalGPO.ScareOverWall ();
+		}
 	}
 
 

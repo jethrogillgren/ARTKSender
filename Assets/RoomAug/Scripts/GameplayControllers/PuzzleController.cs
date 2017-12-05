@@ -248,6 +248,7 @@ public class PuzzleController : NetworkBehaviour
 			return;
 		
 		Debug.Log ("Doing Clicker - Tab");
+		DebugDoPuzzle ();
 	}
 	public void DoClickerU()
 	{
@@ -255,7 +256,9 @@ public class PuzzleController : NetworkBehaviour
 			return;
 		
 		Debug.Log ("Doing Clicker - Up");
-		DebugDoPuzzle ();
+		MalbersAnimalGameplayObject animalGPO = GameObject.FindObjectOfType<MalbersAnimalGameplayObject> ();
+		if (animalGPO)
+			animalGPO.ScareOverWall ();
 	}
 	public void DoClickerD()
 	{

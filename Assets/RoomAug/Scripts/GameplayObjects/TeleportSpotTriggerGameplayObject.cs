@@ -17,8 +17,6 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
     //Client
     public override void OnTriggerEnter( Collider collision ) {
         
-		Debug.Log ( name + " TriggerEnter: " + collision.name );
-
 		//Client handles player teleports as it affects their own object mainly.
 		//Server can still track it OK.
 		if (isClient && teleportOpen)
