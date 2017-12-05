@@ -22,7 +22,11 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 
 	public void FindEventReciever()
 	{
-		eventReceiver = (GameObject) FindObjectOfType<PandaCubeController> ().gameObject;
+		PandaCubeController c = FindObjectOfType<PandaCubeController> ();
+		if (c)
+			eventReceiver = ( GameObject )c.gameObject;
+		else
+			Debug.LogWarning(name + " couldn't find an PandaCubeController for Event Reciever");
 //		if (eventReceiverLookupName != "")
 //			eventReceiver = GameObject.Find ( eventReceiverLookupName );
 	}

@@ -17,6 +17,7 @@ public class RoomAugARToolkitCamera : ARCamera {
 		{
 			Camera c = this.gameObject.GetComponent<Camera> ();
 			c.rect = new Rect ( Util.ARToolkitViewportRectX, Util.ARToolkitViewportRectY, Util.ARToolkitViewportRectW, Util.ARToolkitViewportRectH );
+
 		}
 
 		return bb;

@@ -10,7 +10,7 @@ public static class Util
 	public static readonly float ARToolkitViewportRectX = 0.5f * Screen.width;
 	public static readonly float ARToolkitViewportRectY = 0.0f * Screen.height;
 	public static readonly float ARToolkitViewportRectW = 0.25f* Screen.width;
-	public static readonly float ARToolkitViewportRectH = 0.25f* Screen.height;
+	public static readonly float ARToolkitViewportRectH = 0.5f* Screen.height;
 
 	//Return the closest Client object to the given position
 	public static RoomAugPlayerController GetNearestPlayer(Transform fromTransform)

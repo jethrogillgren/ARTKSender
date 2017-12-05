@@ -1231,7 +1231,7 @@ public class ARController : MonoBehaviour
 	
 	// Creates a GameObject in layer 'layer' which renders a mesh displaying the video stream.
 	// Places references to the Color array (as required), the texture and the material into the out parameters.
-	protected GameObject CreateVideoBackgroundMesh(int index, int w, int h, int layer, out Color[] vbca, out Color32[] vbc32a, out Texture2D vbt, out Material vbm)
+	protected virtual GameObject CreateVideoBackgroundMesh(int index, int w, int h, int layer, out Color[] vbca, out Color32[] vbc32a, out Texture2D vbt, out Material vbm)
 	{
 		// Check parameters.
 		if (w <= 0 || h <= 0) {
@@ -1316,7 +1316,7 @@ public class ARController : MonoBehaviour
 	}
 
 	// Creates a GameObject holding a camera with name 'name', which will render layer 'layer'.
-	protected GameObject CreateVideoBackgroundCamera(String name, int layer, out Camera vbc)
+	protected virtual GameObject CreateVideoBackgroundCamera(String name, int layer, out Camera vbc)
 	{
 		// Create new GameObject to hold camera.
 		GameObject vbcgo = new GameObject(name);
@@ -1504,7 +1504,7 @@ public class ARController : MonoBehaviour
 	}
 
 	// Iterate through all ARCamera objects, asking each to set its viewing frustum and any viewing pose.
-	protected bool ConfigureForegroundCameras()
+	protected virtual bool ConfigureForegroundCameras()
 	{
 		// Note if  any of the ARCamera objects are in optical mode so we can adjust UseVideoBackground.
 		bool optical = false;
