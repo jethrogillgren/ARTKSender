@@ -8,6 +8,11 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 	public Material m_visibleMat;// The reference to the visible material applied to the mesh.
 
 	public bool occludeOnServer = false;
+	public void SetOccludeOnServer(bool b)
+	{
+		occludeOnServer = b;
+		UpdateVisibility ();
+	}
 
 	public OcclusionGameplayObject(Material depthMaskMat, Material visibleMat) {
 		this.m_depthMaskMat = depthMaskMat;
@@ -79,7 +84,7 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 
 		//Turn occluson on, making the object invisible but blocking further back objects
 		if (turnOn  &&  m_depthMaskMat != null) {
-			Debug.Log ("Turning " + name + "'s Occlusion On");
+//			Debug.Log ("Turning " + name + "'s Occlusion On");
 
 			gameObject.layer = LayerMask.NameToLayer ("Occlusion");
 			
@@ -94,7 +99,7 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 
 		//Turn occlusion off, making the object a regular visible object
 		} else if ( !turnOn  &&  m_visibleMat != null) {
-			Debug.Log ("Turning " + name + "'s Occlusion Off");
+//			Debug.Log ("Turning " + name + "'s Occlusion Off");
 
 			gameObject.layer = LayerMask.NameToLayer ("Default");
 			foreach (MeshRenderer m in gameObject.GetComponents<MeshRenderer>()) {

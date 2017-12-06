@@ -14,12 +14,17 @@ public class OcclusionGameplayObjectEditor : Editor {
 		if (o == null)
 			return;
 
-		EditorGUILayout.HelpBox("CUBE DID NOT FIND FLOOR", MessageType.Error);
-
-		//These can live outside of GameplayRooms, so trigger Updates.
-		o.UpdateVisibility ();
+		EditorGUI.BeginChangeCheck ();
 
 		DrawDefaultInspector();
+
+		if (EditorGUI.EndChangeCheck ()) {
+			// Code to execute if GUI.changed
+			// was set to true inside the block of code above.
+			//These can live outside of GameplayRooms, so trigger Updates.
+			Debug.LogError ("CHANGE");
+			o.UpdateVisibility ();
+		}
 	}
 
 }
