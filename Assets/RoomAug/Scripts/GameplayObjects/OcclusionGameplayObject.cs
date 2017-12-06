@@ -7,6 +7,8 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 	public Material m_depthMaskMat;// The reference to the depth mask material to be applied to occlusion meshes.
 	public Material m_visibleMat;// The reference to the visible material applied to the mesh.
 
+	public bool occludeOnServer = false;
+
 	public OcclusionGameplayObject(Material depthMaskMat, Material visibleMat) {
 		this.m_depthMaskMat = depthMaskMat;
 		this.m_visibleMat = visibleMat;
@@ -16,6 +18,7 @@ public class OcclusionGameplayObject : BaseGameplayObject {
     public override void Start() {
         base.Start();
 
+		//Our occlusion default is determined by out GameplayState.
         if( m_GameplayState == GameplayState.Started )
 		    setOcclusion (true);
         else
@@ -38,17 +41,35 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 		//GameplayState has first priority on setting enabled state.
 		if (gameplayState != GameplayState.Started)
 		{
-			gameObject.SetActive(false);
+			gameObject.SetActive ( false );
 			return;
 		}
 
-		//Only clientes care about occlusion
-		if (isClient)
-			base.UpdateVisibility ();
-		else if (Application.platform != RuntimePlatform.Android && Application.isPlaying)
-			gameObject.SetActive ( false );
+		//Only clientes normally care about occlusion.  Servers can opt in.
+		if (isClient || occludeOnServer)
+		{
+			setOcclusion ( true );
+			base.UpdateVisibility (); //Clients will also follow normal rules for show / hiding
+		}
 		else
-			Debug.LogWarning ("The pig flys!");
+		{
+			setOcclusion ( false );
+		}
+
+
+
+//		else if (Application.platform != RuntimePlatform.Android && Application.isPlaying)
+//		{
+//			gameObject.SetActive ( false );
+//		}
+//		else if (Application.platform != RuntimePlatform.Android && !Application.isPlaying)
+//		{
+//			setOcclusion ( false );
+//		}
+//		else
+//		{
+//			Debug.LogWarning ( "The pig flys!" );
+//		}
 	}
 
 
