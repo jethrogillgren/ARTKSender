@@ -256,6 +256,7 @@ public class RoomAugARToolkitController : ARController
 				// tell the native plugin the texture ID in advance, so do that now.
 				if (_useNativeGLTexturing) {
 					if (Application.platform != RuntimePlatform.IPhonePlayer && Application.platform != RuntimePlatform.Android) {
+						
 						if (!VideoIsStereo) PluginFunctions.arwSetUnityRenderEventUpdateTextureGLTextureID(_videoTexture0.GetNativeTextureID());
 						else PluginFunctions.arwSetUnityRenderEventUpdateTextureGLStereoTextureIDs(_videoTexture0.GetNativeTextureID(), _videoTexture1.GetNativeTextureID());
 					}

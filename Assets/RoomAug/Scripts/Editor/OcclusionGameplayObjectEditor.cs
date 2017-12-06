@@ -22,7 +22,6 @@ public class OcclusionGameplayObjectEditor : Editor {
 			// Code to execute if GUI.changed
 			// was set to true inside the block of code above.
 			//These can live outside of GameplayRooms, so trigger Updates.
-			Debug.LogError ("CHANGE");
 			o.UpdateVisibility ();
 		}
 	}
