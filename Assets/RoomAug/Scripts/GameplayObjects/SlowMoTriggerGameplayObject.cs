@@ -6,7 +6,7 @@ public class SlowMoTriggerGameplayObject : BaseGameplayObject {
 
 	[Space]
 
-	public Collider collider;
+	public Collider targetCollider;
 	public MonoBehaviour targetObj;
 	public string targetInvoke;
 
@@ -17,7 +17,7 @@ public class SlowMoTriggerGameplayObject : BaseGameplayObject {
 			return;
 
 		//Deer Teleporting
-		if (collision == collider)
+		if (collision == targetCollider)
 		{
 			Debug.Log ( name + " Triggering slowmo for " + collision.name );
 			Trigger ();

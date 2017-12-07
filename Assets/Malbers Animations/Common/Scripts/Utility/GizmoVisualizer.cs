@@ -43,10 +43,8 @@ public class GizmoVisualizer : MonoBehaviour
 
 #if UNITY_2017_1_OR_NEWER
             UnityEditor.Handles.ArrowHandleCap(1, transform.position, transform.rotation, AxisSize, EventType.Ignore);
-#else 
-#pragma warning disable 0618
+#else
             UnityEditor.Handles.ArrowCap(1, transform.position, transform.rotation, AxisSize);
-#pragma warning restore 0618
 #endif
         }
 
