@@ -39,7 +39,7 @@ namespace MalbersAnimations
         /// <summary>
         /// Important for changing Waypoints
         /// </summary>
-        private bool isMoving = false;
+        protected bool isMoving = false;
 
         protected float RemainingDistance;
 
@@ -58,7 +58,7 @@ namespace MalbersAnimations
             }
         }
 
-        void Start(){ StartAgent();  }
+        protected virtual void Start(){ StartAgent();  }
 
         /// <summary>
         /// Initialize the Ai Animal Control Values
@@ -71,7 +71,7 @@ namespace MalbersAnimations
             DefaultStoppingDistance = Agent.stoppingDistance; //Save the Stoping Distance
         }
 
-        void Update()
+        protected virtual void Update()
         {
             DisableAgent();                                             
             TryActionZone();
@@ -114,7 +114,7 @@ namespace MalbersAnimations
         /// <summary>
         /// This will disable the Agent when is not on Idle or Locomotion 
         /// </summary>
-        void DisableAgent()
+        protected virtual void DisableAgent()
         {
             if ((animal.CurrentAnimState.IsTag("Locomotion") 
                 || animal.CurrentAnimState.IsTag("Idle")))          //Activate the Agent when the animal is moving

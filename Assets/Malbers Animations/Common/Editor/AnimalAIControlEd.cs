@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace MalbersAnimations
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(AnimalAIControl))]
+    [CustomEditor(typeof(AnimalAIControl), true)]
     public class AnimalAIControlEd : Editor
     {
         AnimalAIControl M;

@@ -17,12 +17,16 @@ public class MalbersAnimalGameplayObject : BaseGameplayObject {
 
 	protected bool scared = false;
 
+	protected SlowMotionController slowMo;
+
 
 	public override void Start()
 	{
 		lookAt = GetComponentInChildren<LookAt> ();
 		aiControl = GetComponentInChildren<AnimalAIControl> ();
 		animal = GetComponentInChildren<Animal> ();
+
+		slowMo = GameObject.Find ( "GameplayController" ).GetComponent<SlowMotionController>();
 
 		if (lookAtNearestPlayer)
 			InvokeRepeating ( "SetLookTargetToNearestPlayer", 0, 1 );
@@ -42,6 +46,26 @@ public class MalbersAnimalGameplayObject : BaseGameplayObject {
 
 		animal.Speed3 = true; //Make it run so it can jump.  We assume it has enough time to build up speed.
 		aiControl.SetTarget (scareWaypoint.transform);
+	}
+
+	public void OnDeerLocomotionOrIdle(Animal animal)
+	{
+		
+	}
+
+
+	public void OnDeerJump()
+	{
+
+		slowMo.SlowDownUpDeer ();
+
+
+//
+//
+//		if (animal.CurrentAnimState.IsTag ( "Jump" ))
+//			slowMo.SlowDownUpDeer ();
+//		else
+//			Debug.LogWarning ("Ignoring Deer Action: " + animal.CurrentAnimState );
 	}
 
 

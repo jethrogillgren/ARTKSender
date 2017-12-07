@@ -75,6 +75,8 @@ public class FraggedChild:MonoBehaviour{
     		}
     	}
 
+
+	//Modification: jgillgr
 	public void OnTriggerEnter ( Collider collision ) {//Handle usual teleport collission with player trigger
 
 		if (( fragControl.collideMask.value & 1 << collision.gameObject.layer ) == 1 << collision.gameObject.layer)
@@ -109,17 +111,17 @@ public class FraggedChild:MonoBehaviour{
     public void addForce(int fMin,int fMax) {
     	
     	if(!cacheRB.isKinematic && this.cacheRB.velocity.magnitude < 1){
-    	float forceX = (float)UnityEngine.Random.Range(fMin, fMax);
-    	if (UnityEngine.Random.value > 0.5f) {
-    		forceX *= -1.0f;
-    	}
-    	float forceY = (float)UnityEngine.Random.Range(fMin, fMax);
-    	if (UnityEngine.Random.value > 0.5f) {
-    		forceY *= -1.0f;
-    	}
-    	
-    	//cacheRB.AddForce(forceX, Random.Range(fMin, fMax), forceY);
-    	cacheRB.velocity = new Vector3(forceX, (float)UnityEngine.Random.Range(fMin, fMax), forceY)*.05f;
+	    	float forceX = (float)UnityEngine.Random.Range(fMin, fMax);
+	    	if (UnityEngine.Random.value > 0.5f) {
+	    		forceX *= -1.0f;
+	    	}
+	    	float forceY = (float)UnityEngine.Random.Range(fMin, fMax);
+	    	if (UnityEngine.Random.value > 0.5f) {
+	    		forceY *= -1.0f;
+	    	}
+	    	
+	    	//cacheRB.AddForce(forceX, Random.Range(fMin, fMax), forceY);
+	    	cacheRB.velocity = new Vector3(forceX, (float)UnityEngine.Random.Range(fMin, fMax), forceY)*.05f;
     	}
     }
     
