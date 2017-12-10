@@ -260,7 +260,7 @@ namespace SKStudios.Portals
         }
 
         [SerializeField] private SKEffectCamera _portalCameraScript;
-        private SKEffectCamera PortalCameraScript {
+        public SKEffectCamera PortalCameraScript {
             get {
                 if (!_portalCameraScript)
                 {

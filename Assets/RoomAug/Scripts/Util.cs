@@ -116,28 +116,28 @@ public static class Util
 
 	//Used by gameplayRooms, and PandaCubes.
 	public enum ElementalType {
-		None,
-		Wood,
-		Fire,
-		Earth,
-		Metal,
-		Water
+		none,
+		wood,
+		fire,
+		earth,
+		metal,
+		water
 	}
 
 	public static Color GetColor( ElementalType elementalType ) {
 		switch (elementalType)
 		{
-			case ElementalType.None:
+			case ElementalType.none:
 				return Color.white;
-			case ElementalType.Wood:
+			case ElementalType.wood:
 				return Color.green;
-			case ElementalType.Fire:
+			case ElementalType.fire:
 				return Color.red;
-			case ElementalType.Earth:
+			case ElementalType.earth:
 				return Color.yellow;
-			case ElementalType.Metal:
+			case ElementalType.metal:
 				return Color.grey;
-			case ElementalType.Water:
+			case ElementalType.water:
 				return Color.blue;
 			default:
 				Debug.LogError ( "Invalid CubeType" );
