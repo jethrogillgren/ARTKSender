@@ -1,7 +1,3 @@
-/Users/jethro/git/TangoTests/Temp/bin/Debug/Assembly-CSharp.dll.mdb
-/Users/jethro/git/TangoTests/Temp/bin/Debug/Assembly-CSharp.dll
-/Users/jethro/git/TangoTests/obj/Debug/Assembly-CSharp.dll
-/Users/jethro/git/TangoTests/obj/Debug/Assembly-CSharp.dll.mdb
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEditor.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.UI.dll
@@ -13,6 +9,12 @@
 /Users/jethro/git/TangoTests/Temp/bin/Debug/UnityEngine.VR.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/GUIAnimatorFREE.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/GETween.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/SK_CustomRender.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/SK_Editor.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/SK_Common.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/RenderStructs.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/Assembly-CSharp-firstpass.dll
+/Users/jethro/git/TangoTests/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Mono.Cecil.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.SerializationLogic.dll
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Unity.DataContract.dll

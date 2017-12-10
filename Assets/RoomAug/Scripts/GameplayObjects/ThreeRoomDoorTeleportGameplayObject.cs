@@ -34,7 +34,7 @@ public class ThreeRoomDoorTeleportGameplayObject : BaseTeleportGameplayObject
 
 	//	}
 
-	public override void OnTriggerEnter ( Collider collision )
+	public void OnTriggerEnter ( Collider collision )
 	{
 		if (isClient)
 		{

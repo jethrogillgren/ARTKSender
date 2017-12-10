@@ -15,7 +15,7 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
 	}
 
     //Client
-    public override void OnTriggerEnter( Collider collision ) {
+    public void OnTriggerEnter( Collider collision ) {
         
 		//Client handles player teleports as it affects their own object mainly.
 		//Server can still track it OK.

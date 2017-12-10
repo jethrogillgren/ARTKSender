@@ -11,7 +11,6 @@ public abstract class BaseTeleportGameplayObject : BaseGameplayObject {
 	protected RoomController roomController;
 	protected PhysicalRoom physicalRoom; //Not swappable
 
-
 	public bool teleportOpen = false; //True if players can currently all use this teleport
 
 	// Use this for initialization
@@ -29,6 +28,6 @@ public abstract class BaseTeleportGameplayObject : BaseGameplayObject {
 
 	public abstract void AnimateOpening();
 
-	public abstract void OnTriggerEnter ( Collider collision );//Handle usual teleport collission with player trigger
+//	public abstract void OnTriggerEnter ( Collider collision );//Handle usual teleport collission with player trigger
 	public abstract void Trigger();//Can be called to force a teleport
 }

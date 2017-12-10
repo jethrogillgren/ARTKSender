@@ -111,6 +111,20 @@ public class RoomController : NetworkBehaviour
 	}
 
 
+	//Used for all SKPortal Teleports.  Called when SKPortal tells us a valid teleport is happening.
+	//It's portal teleporting is disabled, as we move the rooms instead.
+	public void OnSKPortalTeleport(SKStudios.Portals.Portal portal, SKStudios.Portals.Teleportable movingObject)
+	{
+		BaseTeleportGameplayObject teleportGPO = portal.GetComponentInParent<BaseTeleportGameplayObject> ();
+		if( teleportGPO )
+		{
+			teleportGPO.Trigger ();
+		}
+		else
+		{
+			Debug.LogError ("Not teleporting " + movingObject.name + " as it does not have a Parent BaseTeleportGameplayObject");
+		}
+	}
 
 	//Used for the Three Room Door Teleporter
 	public void doorSwitchTeleportTriggered (ThreeRoomDoorTeleportGameplayObject t, PhysicalRoom oldRoom, PhysicalRoom newRoom, bool backwards = false) {
