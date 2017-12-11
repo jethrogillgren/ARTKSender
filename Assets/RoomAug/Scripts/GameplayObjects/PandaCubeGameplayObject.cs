@@ -141,8 +141,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			svr_ShowingDebugLabels = value;
 			if(value)
 			{
-				Debug.Log ("Starting Server Debug");
-				DisplayTextAtPopupPosition ( ChooseTextPopupOffset ( false ), cubeType.ToString () + " in " + gameplayRoom.roomName );
+				DisplayTextAtPopupPosition ( ChooseTextPopupOffset ( true ), cubeType.ToString () + " in " + gameplayRoom.roomName );
 				StartCoroutine(TrackThenDestroyTextMesh(1f, 0)); // Or whatever delay we want.
 			} else {
 				StopCoroutine ( "TrackThenDestroyTextMesh" );
@@ -344,7 +343,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	{
 		if (textMesh)
 		{
-			Vector3 newPosition = ChooseTextPopupOffset ();
+			Vector3 newPosition = ChooseTextPopupOffset (true);
 			if( ! newPosition.Equals( currentPositionOffset) )
 			{
 				DisplayTextAtPopupPosition ( newPosition, textMesh.GetComponentInChildren<TextMesh> ().text );
@@ -572,8 +571,13 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 				return;
 
 			Vector3 posOffset = ChooseTextPopupOffset ();
-			DisplayTextAtPopupPosition(posOffset, "Tap cube to Pull");
-			TrackThenDestroyTextMesh ();
+			if (posOffset != Vector3.zero)
+			{
+				DisplayTextAtPopupPosition ( posOffset, "Tap cube to Pull" );
+				TrackThenDestroyTextMesh ();
+			} else {
+				Debug.LogWarning ("We throught we could display the ClickPull hint but did not get one from ChooseTextPopupOffset() ");
+			}
 
 
 			//If we didn't get anything, wait for next time as player may have moved

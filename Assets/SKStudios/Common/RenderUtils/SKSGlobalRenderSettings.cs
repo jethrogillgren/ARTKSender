@@ -4,8 +4,8 @@ using UnityEngine;
 using System.Linq;
 using System.Text;
 using SKStudios.Portals;
-using UnityEditorInternal;
 #if UNITY_EDITOR
+using UnityEditorInternal;
 using UnityEditor.Callbacks;
 using UnityEditor;
 #endif
