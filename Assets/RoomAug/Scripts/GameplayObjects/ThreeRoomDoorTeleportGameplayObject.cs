@@ -64,13 +64,13 @@ public class ThreeRoomDoorTeleportGameplayObject : BaseTeleportGameplayObject
 				else if (m_originalSide) //Backwards to Otherside
 				{
 					Debug.Log ( "Passing Backwards!" );
-					roomController.doorSwitchTeleportTriggered ( this, originalRoom, otherRoom, true );
+					roomController.Cnt_DoorSwitchTeleportTriggered ( this, originalRoom, otherRoom, true );
 
 				}
 				else if (!m_originalSide) //Backwards to OriginalSide
 				{
 					Debug.Log ( "Returning Backwards!" );
-					roomController.doorSwitchTeleportTriggered ( this, otherRoom, originalRoom, true );
+					roomController.Cnt_DoorSwitchTeleportTriggered ( this, otherRoom, originalRoom, true );
 
 				}
 
@@ -90,13 +90,13 @@ public class ThreeRoomDoorTeleportGameplayObject : BaseTeleportGameplayObject
 		if (m_originalSide)
 		{//Assume Forward to Otherside
 			Debug.Log ( "Passing Forward " );
-			roomController.doorSwitchTeleportTriggered ( this, originalRoom, otherRoom );
+			roomController.Cnt_DoorSwitchTeleportTriggered ( this, originalRoom, otherRoom );
 
 		}
 		else if (!m_originalSide)
 		{//Assume Forward to OriginalSide
 			Debug.Log ( "Returning Forward " );
-			roomController.doorSwitchTeleportTriggered ( this, otherRoom, originalRoom );
+			roomController.Cnt_DoorSwitchTeleportTriggered ( this, otherRoom, originalRoom );
 
 		}
 	}

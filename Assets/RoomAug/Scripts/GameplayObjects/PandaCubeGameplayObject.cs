@@ -21,10 +21,10 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//Number of seconds to consider a sensor reading valid
 	public const float dropoffDelay = 1.0f; 
 
-	protected Vector3 m_corner3DP0;
-	protected Vector3 m_corner3DP1;
-	protected Vector3 m_corner3DP2;
-	protected Vector3 m_corner3DP3;
+	protected Vector3 corner3DP0;
+	protected Vector3 corner3DP1;
+	protected Vector3 corner3DP2;
+	protected Vector3 corner3DP3;
 
 	[HideInInspector]
 	public GameplayRoom gameplayRoom; //The gameplayRoom that the cube is in
@@ -32,9 +32,21 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	public RoomController roomController;
 
 	[HideInInspector]
-	public LineRenderer m_rect;
+	public LineRenderer lineRenderer;
 	[HideInInspector]
 	public Collider myCollider;
+
+	public GameObject textMeshPrefab;
+	[HideInInspector]
+	public GameObject textMesh;
+	[HideInInspector]
+	public LinkedList<Vector3> textPopupOffsets; //Relative positions of each Text SLot
+	Vector3 currentPositionOffset;
+	protected const float distanceAbove = 0.05f;
+	protected const float distanceAside = 0.1f;
+	protected float[] xOffsets = new float[]{ 0f, +0.5f * distanceAside, -0.5f * distanceAside, distanceAside, -distanceAside, +0.5f * distanceAside, -0.5f * distanceAside, 0f };
+	protected float[] zOffsets = new float[]{ +distanceAside, +0.5f * distanceAside, +0.5f * distanceAside, 0f, 0f, -0.5f * distanceAside, -0.5f * distanceAside, -distanceAside };
+
 
 
 	[Space]
@@ -105,36 +117,66 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		if (!myCollider)
 			Debug.LogError (name + " did not find it's collider");
 
-		m_rect = GetComponentInChildren<LineRenderer> ();
-		if (!m_rect)
+		lineRenderer = GetComponentInChildren<LineRenderer> ();
+		if (!lineRenderer)
 			Debug.LogError (name + " did not find it's Line Renderer");
 
-//		playerController = FindObjectOfType<RoomAugPlayerController>();
-//		if (!playerController)
-//			Debug.LogError ( name + " was unable to find a PlayerController" );
-
 		FindGameplayRoom ();
-
-		InvokeRepeating ( "DisplayClickPullHint", 1, 1 );
-	}
-
-	//Client Only
-	public void Update() {
-		if (isClient)
-			Cnt_CheckInputTouch ();
-	}
-
-	public void LateUpdate()  //svr only
-	{
-		if (!isClient)
-			Svr_ApplyTransformations ();
+		BuildTextPopupOffset ();
 	}
 
 	//Servers always draw full.
 	public override void OnStartServer ()
 	{
 		DrawFull ();
-	} 
+		Invoke ( "D", 1 );
+	}
+
+	private void D(){Svr_ShowDebugLabel = true;} //Getting around OnStartServer being called before Object has Started
+
+	private bool svr_ShowingDebugLabels = false;
+	public bool Svr_ShowDebugLabel
+	{
+		set{
+			svr_ShowingDebugLabels = value;
+			if(value)
+			{
+				Debug.Log ("Starting Server Debug");
+				DisplayTextAtPopupPosition ( ChooseTextPopupOffset ( false ), cubeType.ToString () + " in " + gameplayRoom.roomName );
+				StartCoroutine(TrackThenDestroyTextMesh(1f, 0)); // Or whatever delay we want.
+			} else {
+				StopCoroutine ( "TrackThenDestroyTextMesh" );
+				ClearPopupPositionText ();
+			}
+		}
+		get{
+			return svr_ShowingDebugLabels;
+		}
+	}
+
+	//Clients show hint icons over the cube to ClickPull
+	public override void OnStartClient ()
+	{
+		InvokeRepeating ( "Cnt_CheckIfINeedToDisplayClickPullHint", 1, 1 );
+	}
+
+	public void Update() {
+		if (isClient)
+			Cnt_CheckInputTouch ();
+
+		RerotatePopupText ();
+
+	}
+	public void LateUpdate()  //svr only
+	{
+		if (!isClient)
+			Svr_ApplyTransformations ();
+	}
+
+
+
+
+
 
 	//Cubes are special, they are always active across rooms/clients.
 	//This overrides the usual UpdateVisibility() which does client roomBased enabling
@@ -185,17 +227,17 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	protected void DrawRect() {
 
 		if (isTangoTrackingGood)
-			m_rect.startColor = m_rect.endColor = Color.blue;
+			lineRenderer.startColor = lineRenderer.endColor = Color.blue;
 		else if (isTangoTrackingGood && isARToolkitTrackingGood)
-			m_rect.startColor = m_rect.endColor = Color.green;
+			lineRenderer.startColor = lineRenderer.endColor = Color.green;
 		else
 			return;
 
-		m_rect.SetPosition ( 0, m_corner3DP0 );
-		m_rect.SetPosition ( 1, m_corner3DP1 );
-		m_rect.SetPosition ( 2, m_corner3DP2 );
-		m_rect.SetPosition ( 3, m_corner3DP3 );
-		m_rect.SetPosition ( 4, m_corner3DP0 );
+		lineRenderer.SetPosition ( 0, corner3DP0 );
+		lineRenderer.SetPosition ( 1, corner3DP1 );
+		lineRenderer.SetPosition ( 2, corner3DP2 );
+		lineRenderer.SetPosition ( 3, corner3DP3 );
+		lineRenderer.SetPosition ( 4, corner3DP0 );
 	}
 
 	//Register any new Gameplayroom we are in, and return it.
@@ -217,11 +259,142 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		UpdateAll ();//This will change visibility (which includes mesh/solid, and the color)
 	}
 		
+	public GameObject DEBUGgizmoPrfab;
+	protected void BuildTextPopupOffset()
+	{
+		textPopupOffsets = new LinkedList<Vector3> ();
+
+		//Eight Slots
+		for(int i = 0; i < 8; i++)
+		{
+			Vector3 pos = new Vector3 ( xOffsets[i], distanceAbove, zOffsets[i] );
+//			Debug.Log ( pos );
+			textPopupOffsets.AddLast ( pos );
+
+			GameObject debugGizmo = (GameObject)Instantiate(DEBUGgizmoPrfab, this.gameObject.transform);
+			debugGizmo.transform.localPosition = pos;
+		}
+
+	}
+
+	protected Vector3 ChooseTextPopupOffset( bool force = false )
+	{
+		if (textPopupOffsets == null)
+			BuildTextPopupOffset ();
+
+		//For each Position we consider
+		foreach(Vector3 posOffset in textPopupOffsets)
+		{
+			//Calc the positions in world space
+			Vector3 worldPoint = transform.position + posOffset;
+
+
+			//Raycast to the Position
+			Camera c = Camera.main;
+			if(c)
+			{
+				Vector3 direction = worldPoint - c.transform.position;
+				Vector3 castShape = new Vector3(0.1f,0.1f,0.1f);//TODO
+				float distance = Vector3.Distance ( c.transform.position, worldPoint );// * 1.2f;
 
 
 
+				//TODO Use a Sphere Cast
+//				bool hit = Physics.BoxCast ( c.transform.position, castShape, direction, Quaternion.identity, distance);
+//				RaycastHit hitInfo;
+//				hit = Physics.SphereCast(c.transform.position, 0.001f, direction, out hitInfo, distance);
+				bool hit = Physics.Raycast ( c.transform.position, direction, distance);
 
 
+
+				Debug.DrawRay(c.transform.position, posOffset);
+				if (!hit)
+					return posOffset;
+			}
+		}
+
+		//If forced to, we would choose the first one.
+		if (force)
+			return textPopupOffsets.First.Value;
+		
+		return Vector3.zero;
+	}
+
+	public void DisplayTextAtPopupPosition( Vector3 positionOffset, string text )
+	{
+		if(positionOffset.magnitude==0 || text.Length==0)
+		{
+			Debug.LogWarning ("Unable to Display Text (" + text + ") at " + positionOffset );
+			return;
+		}
+
+		if (textMesh != null)
+			Destroy ( textMesh );
+
+		textMesh = ( GameObject )Instantiate ( textMeshPrefab, this.gameObject.transform );
+		textMesh.GetComponentInChildren<TextMesh> ().text = text;
+		textMesh.transform.localPosition = positionOffset;
+		currentPositionOffset = positionOffset;
+
+		RerotatePopupText ();
+	}
+
+	//If appropiate, move an existing TextMesh to a better Posiiton, and Rotate too
+	public void RepositionPopupText()
+	{
+		if (textMesh)
+		{
+			Vector3 newPosition = ChooseTextPopupOffset ();
+			if( ! newPosition.Equals( currentPositionOffset) )
+			{
+				DisplayTextAtPopupPosition ( newPosition, textMesh.GetComponentInChildren<TextMesh> ().text );
+			}
+		}
+			
+	}
+
+	public void RerotatePopupText()
+	{
+
+		//		textMesh.transform.localPosition = currentPopupTextPositionOffset;
+		if (textMesh && Camera.main)
+		{
+			textMesh.transform.LookAt ( Camera.main.transform );
+		}
+	}
+
+	public void ClearPopupPositionText()
+	{
+		if (textMesh)
+			Destroy ( textMesh );
+		currentPositionOffset = Vector3.zero;
+	}
+	public void TrackThenDestroyTextMesh()
+	{
+		StopCoroutine("TrackThenDestroyTextMesh");
+		StartCoroutine(TrackThenDestroyTextMesh(3f, 9)); // Or whatever delay we want.
+	}
+
+	//Update posiiton of the Text intermittently, and eventually hide it
+	IEnumerator TrackThenDestroyTextMesh(float secondsBetweenChecks, float secondsUntilSelfHide)
+	{
+		float cnt = 0;
+		// Repeat until keepSpawning == false or this GameObject is disabled/destroyed.
+		while(cnt <= secondsUntilSelfHide && textMesh != null)
+		{
+			// Put this coroutine to sleep until the next spawn time.
+			yield return new WaitForSeconds(secondsBetweenChecks);
+
+			// Now it's time to spawn again.
+			RepositionPopupText ();
+
+			if(secondsUntilSelfHide!=0)
+				cnt += secondsBetweenChecks;
+		}
+
+		//Now we are Finished, destroy the textMesh if it still exists
+		ClearPopupPositionText ();
+	}
 
 
 
@@ -263,10 +436,10 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		svr_transformTimestamps [ tangoOffset ] = Time.time;
 
 
-		m_corner3DP0 =  marker.m_corner3DP0 ;
-		m_corner3DP1 =  marker.m_corner3DP1 ;
-		m_corner3DP2 =  marker.m_corner3DP2 ;
-		m_corner3DP3 =  marker.m_corner3DP3 ;
+		corner3DP0 =  marker.m_corner3DP0 ;
+		corner3DP1 =  marker.m_corner3DP1 ;
+		corner3DP2 =  marker.m_corner3DP2 ;
+		corner3DP3 =  marker.m_corner3DP3 ;
 
 		//		Debug.LogError ( "Tango Says " + transformPositions [ tangoOffset ] );
 	}
@@ -381,13 +554,16 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	* There is an ordered list of preffered positions.  The first which is not blocked is chosen.
 	* The text looks like a 2D space text, ie always facing the player and flat.
 	*/
-	public void Cnt_DisplayClickPullHint()
+	protected bool cnt_IsClickPullHinting = false;
+
+
+	public void Cnt_CheckIfINeedToDisplayClickPullHint()
 	{
 		if (!isClient)
 			return;
 
 		//Check if the Object is good for ClickPulling
-		if(isTrackingGood && !gameplayRoom.roomActive && Util.IsObjectInMainCamerasFOV ( this.transform ))
+		if( !textMesh && isTrackingGood && !gameplayRoom.roomActive && Util.IsObjectInMainCamerasFOV ( this.transform ))
 		{
 			Util.JLogErr ("DisplayClickPullHint saw it", false);
 			//Wait a bit if we're being pushy
@@ -395,10 +571,10 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			if (cnt_delaySoFar < cnt_timeToDelay)
 				return;
 
-			//For each Position we consider
+			Vector3 posOffset = ChooseTextPopupOffset ();
+			DisplayTextAtPopupPosition(posOffset, "Tap cube to Pull");
+			TrackThenDestroyTextMesh ();
 
-			//Raycast to the Position
-			//Select that position if Hit
 
 			//If we didn't get anything, wait for next time as player may have moved
 
@@ -423,6 +599,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 				if (raycastHit.collider == myCollider)
 				{
 					Util.JLogErr( name + " Click Pull", true );
+					ClearPopupPositionText ();
 					Cnt_PlayerController.CmdClickPullCube( cubeContentName, Util.GetCurrentMainGameplayRoom().roomName );
 					CmdTest ();
 				}

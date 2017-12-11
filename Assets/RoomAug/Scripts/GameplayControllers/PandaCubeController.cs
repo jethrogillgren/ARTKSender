@@ -48,7 +48,7 @@ public class PandaCubeController : NetworkBehaviour {
 
 	public void ClickPullCube( string cubeContentName, string targetRoomName ) {
 		PandaCubeGameplayObject c = GetCube ( cubeContentName );
-		GameplayRoom r = roomController.getGameplayRoomByName ( targetRoomName );
+		GameplayRoom r = roomController.GetGameplayRoomByName ( targetRoomName );
 		if (c && r)
 			c.Svr_TeleportTo ( r );
 	}

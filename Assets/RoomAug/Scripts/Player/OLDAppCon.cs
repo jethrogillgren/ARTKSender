@@ -152,7 +152,7 @@ public class OLDAppCon : MonoBehaviour, ITangoLifecycle, ITangoEvent, ITangoPose
 			tmp.m_depthMaskMat = m_depthMaskMat;
 			tmp.gameplayState = OcclusionGameplayObject.GameplayState.Started;
 			tmp.m_IsDecorationOnly = true;
-			m_roomController.addGameplayObject (tmp);
+			m_roomController.AddGameplayObject (tmp);
 			tmp.setOcclusion (true);	
 			
 			JLog ("Created the Area Mesh Programatically OK:  " + m_areaMesh.name + "  as an occluder: " + m_areaMesh.GetComponent<OcclusionGameplayObject>().gameplayState );
@@ -462,7 +462,7 @@ public class OLDAppCon : MonoBehaviour, ITangoLifecycle, ITangoEvent, ITangoPose
 	//Called by Canvas Checkbox
 	public void OnMeshViewToggle(bool newVal)
 	{
-		foreach (OcclusionGameplayObject occluder in m_roomController.getOcclusionGameplayObjects() ){
+		foreach (OcclusionGameplayObject occluder in m_roomController.GetOcclusionGameplayObjects() ){
 			occluder.setOcclusion (!newVal);
 			JLog ("Set GameplayObject " + occluder.gameObject.name + " to occlusion=" + !newVal);
 		}

@@ -39,7 +39,7 @@ public class DebugUtil : MonoBehaviour {
 			if (gr != gc.m_physicalRooms.FirstOrDefault().gameplayRoom)
 				newRoom = gr;
 		}
-		gc.replace (gc.m_physicalRooms.FirstOrDefault().gameplayRoom, newRoom, gc.m_physicalRooms.FirstOrDefault());
+		gc.Cnt_Replace (gc.m_physicalRooms.FirstOrDefault().gameplayRoom, newRoom, gc.m_physicalRooms.FirstOrDefault());
 		ShoutPhysicalAndGameplayState ();
 
 	}
@@ -107,19 +107,19 @@ public class DebugUtil : MonoBehaviour {
 	}
 
 	public void OnEarthTeleport() {
-		FindObjectOfType<RoomController> ().LoadEarthRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().Cnt_LoadEarthRoomInMainRoom ();
 	}
 	public void OnWoodTeleport() {
-		FindObjectOfType<RoomController> ().LoadWoodRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().Cnt_LoadWoodRoomInMainRoom ();
 	}
 	public void OnMetalTeleport() {
-		FindObjectOfType<RoomController> ().LoadMetalRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().Cnt_LoadMetalRoomInMainRoom ();
 	}
 	public void OnFireTeleport() {
-		FindObjectOfType<RoomController> ().LoadFireRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().Cnt_LoadFireRoomInMainRoom ();
 	}
 	public void OnWaterTeleport() {
-		FindObjectOfType<RoomController> ().LoadWaterRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().Cnt_LoadWaterRoomInMainRoom ();
 	}
 
 }
