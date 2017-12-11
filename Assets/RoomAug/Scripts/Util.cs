@@ -12,6 +12,33 @@ public static class Util
 	public static readonly float ARToolkitViewportRectW = 0.25f* Screen.width;
 	public static readonly float ARToolkitViewportRectH = 0.5f* Screen.height;
 
+	//Get this main Physical room's Gameplay Room.
+	public static GameplayRoom GetCurrentMainGameplayRoom()
+	{
+		foreach( PhysicalRoom pr in GameObject.FindObjectsOfType<PhysicalRoom> () )
+		{
+			if (pr.roomName == "main")
+				return pr.gameplayRoom;
+		}
+
+		return null;
+	}
+
+	public static bool IsObjectInMainCamerasFOV( Transform targetPoint){
+		return IsObjectInCamerasFOV ( Camera.main, targetPoint );
+	}
+
+	public static bool IsObjectInCamerasFOV(Camera camera, Transform targetPoint)
+	{
+		if (!camera || !targetPoint)
+			Debug.LogError ("IsObjectInCamerasFOV Invalid Params recieved");
+		
+		Vector3 screenPoint = camera.WorldToViewportPoint(targetPoint.position);
+		bool ret = (screenPoint.z > 0 && screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1);
+		Debug.Log ("Checking if " + targetPoint.name + " is within " + screenPoint + " .... " + ret + "!" );
+		return ret;
+	}
+
 	//Return the closest Client object to the given position
 	public static RoomAugPlayerController GetNearestPlayer(Transform fromTransform)
 	{

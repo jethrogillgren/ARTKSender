@@ -20,6 +20,8 @@ public class PandaCubeController : NetworkBehaviour {
     ///// </summary>
     //private Dictionary<String, PandaCubeGameplayObject> m_PandaCubes;
 
+	public RoomController roomController;
+
     //public HashSet<PandaCubeGameplayObject> m_PandaCubes;
     public PandaCubeGameplayObject cube1;
     public PandaCubeGameplayObject cube2;
@@ -32,6 +34,8 @@ public class PandaCubeController : NetworkBehaviour {
 	void Start () {
         //m_PandaCubes = new Dictionary<String, PandaCubeGameplayObject>();
 
+		roomController = GetComponentInParent<RoomController> ();
+
         if ( !cube1 || !cube2 || !cube3 || !cube4 )
             Debug.LogError( name + ": DID NOT FIND ALL CUBE GAMEOBJECTS" );
 
@@ -42,6 +46,13 @@ public class PandaCubeController : NetworkBehaviour {
 		
 	}
 
+	public void ClickPullCube( string cubeContentName, string targetRoomName ) {
+		PandaCubeGameplayObject c = GetCube ( cubeContentName );
+		GameplayRoom r = roomController.getGameplayRoomByName ( targetRoomName );
+		if (c && r)
+			c.Svr_TeleportTo ( r );
+	}
+
     //Recieve a Tango marker sighting from a Client Player
     public void RecieveMarker( TangoSupport.Marker marker ) {
 
@@ -49,7 +60,7 @@ public class PandaCubeController : NetworkBehaviour {
         //TODO if the cube is being rotated, the 6identical markers will make it jump upright again...
 		PandaCubeGameplayObject c = GetCube ( marker );
 		if (c)
-			c.SetMarker ( marker );
+			c.Svr_SetMarker ( marker );
 		else
 			Debug.LogError (name + " Could not get a cube for Tango marker: " + marker);
     }
@@ -59,7 +70,7 @@ public class PandaCubeController : NetworkBehaviour {
 	{
 		PandaCubeGameplayObject c = GetCube ( marker );
 		if (c)
-			c.SetMarker (marker, 1);
+			c.Svr_SetMarker (marker, 1);
 		else
 			Debug.LogError (name + " Could not get a cube for ARToolkit marker: " + marker);
 	}
@@ -77,19 +88,21 @@ public class PandaCubeController : NetworkBehaviour {
 		return null;
 	}
 
-    private PandaCubeGameplayObject GetCube( TangoSupport.Marker marker ) {
-        
-        if ( marker.m_content == cube1.cubeContentName )
-            return cube1;
-        else if ( marker.m_content == cube2.cubeContentName )
-            return cube2;
-        else if ( marker.m_content == cube3.cubeContentName )
-            return cube3;
-        else if ( marker.m_content == cube4.cubeContentName )
-            return cube4;
-        
-        return null;
-    }
+	public PandaCubeGameplayObject GetCube( TangoSupport.Marker marker ) {
+		return ( GetCube ( marker.m_content ) );
 
+	}
 
+	public PandaCubeGameplayObject GetCube( string cubeContentName ) {
+		if ( cubeContentName == cube1.cubeContentName )
+			return cube1;
+		else if ( cubeContentName == cube2.cubeContentName )
+			return cube2;
+		else if ( cubeContentName == cube3.cubeContentName )
+			return cube3;
+		else if ( cubeContentName == cube4.cubeContentName )
+			return cube4;
+
+		return null;
+	}
 }

@@ -46,6 +46,8 @@ public class RoomAugPlayerController : NetworkBehaviour
 			c.enabled = false;
     }
 
+
+
     public void SetTangoHardwareSpecific(bool enable) {
 
 		if (gameObject.GetComponent<Camera> () != null) {
@@ -105,6 +107,11 @@ public class RoomAugPlayerController : NetworkBehaviour
 	[Command]
 	public void CmdWatchEarth() {
 		FindObjectOfType<WatcherGameplayObject>().m_LookTarget = GameObject.Find ("Earth");
+	}
+
+	[Command] //TODO - Passing GameplayRoom to server efficiency?
+	public void CmdClickPullCube( string cubeContentName, string gameplayRoomName ) {
+		m_pandaCubeController.ClickPullCube(cubeContentName, gameplayRoomName );
 	}
 
 

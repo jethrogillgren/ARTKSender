@@ -2,6 +2,7 @@
 
 using UnityEngine;
 
+//TODO does not find disabled instances in the scene
 public class LoadServerOrClientScopedPrefab : NetworkBehaviour
 {
 	public GameObject serverOnlyPrefab;

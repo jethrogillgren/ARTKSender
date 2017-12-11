@@ -18,8 +18,6 @@ public class PandaCubeGameplayObjectEditor : Editor {
         pc.FindGameplayRoom ();
 		EditorGUILayout.LabelField("Gameplay Room:", pc.gameplayRoom ? pc.gameplayRoom.roomName : "None");
 
-
-
         DrawDefaultInspector();
 	}
 }

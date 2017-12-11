@@ -5,6 +5,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.IO.Ports;
+using System.IO;
 
 public class ArduinoSerialCommunicator : MonoBehaviour {
 	[Space]
@@ -76,7 +77,9 @@ public class ArduinoSerialCommunicator : MonoBehaviour {
 //	int cnt = 0;
 	void Update()
 	{
-		
+		if (!stream.IsOpen)
+			return;
+
 		writeClear(ref toggleAccelerometer, "a");
 		writeClear(ref toggleGyro, "g");
 		writeClear(ref toggleMagnetometer, "m");
@@ -150,10 +153,14 @@ public class ArduinoSerialCommunicator : MonoBehaviour {
 
 	public void Open () {
 		// Opens the serial port
-		stream = new SerialPort(port, baudrate);
-		stream.ReadTimeout = 50;
-		stream.Open();
-		//this.stream.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+		try {
+			stream = new SerialPort(port, baudrate);
+			stream.ReadTimeout = 50;
+			stream.Open();
+			//this.stream.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+		} catch(IOException e) {
+			Debug.LogWarning ("No Connection to Arduino");
+		}
 	}
 
 

@@ -34,8 +34,11 @@ public class ServerCamera : MonoBehaviour {
 
 		fullscreenRect = new Rect ( 0, 0, Screen.width, Screen.height );
 
-//		if (focused)
-//			ToggleFocus ();
+		if (focused)
+		{
+			focused = false;
+			pleaseToggleFocus = true;
+		}
 	}
 
 	public void AddAnimalsToCullingMask()

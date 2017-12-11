@@ -263,6 +263,21 @@ public class RoomController : NetworkBehaviour
 		return false;
 	}
 
+	public GameplayRoom getGameplayRoomByName(string roomName)
+	{
+		foreach (GameplayRoom gr in m_gameplayRooms)
+			if (gr.roomName == roomName)
+				return gr;
+
+		return null;
+	}
+	public PhysicalRoom getPhysicalRoomByName(string roomName)
+	{
+		foreach (PhysicalRoom pr in m_physicalRooms)
+			if (pr.roomName == roomName)
+				return pr;
+		return null;
+	}
 	public Component getRoomByName(string roomName)
 	{
 		foreach (GameplayRoom gr in m_gameplayRooms)
