@@ -37,7 +37,7 @@ public class PortalDoorwayTeleportGameplayObject : BaseTeleportGameplayObject {
 	//Do the Teleport.  Clients Only
 	public override void Trigger() {//Can be called to force a teleport
 		if( teleportOpen && portalController && isClient )
-			roomController.LoadRoomInMainRoom(targetGameplayRoom);
+			roomController.Cnt_LoadRoomInMainRoom(targetGameplayRoom);
 	}
 		
 

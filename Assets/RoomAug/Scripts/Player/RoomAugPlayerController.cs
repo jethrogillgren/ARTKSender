@@ -46,6 +46,8 @@ public class RoomAugPlayerController : NetworkBehaviour
 			c.enabled = false;
     }
 
+
+
     public void SetTangoHardwareSpecific(bool enable) {
 
 		if (gameObject.GetComponent<Camera> () != null) {
@@ -107,6 +109,11 @@ public class RoomAugPlayerController : NetworkBehaviour
 		FindObjectOfType<WatcherGameplayObject>().m_LookTarget = GameObject.Find ("Earth");
 	}
 
+	[Command] //TODO - Passing GameplayRoom to server efficiency?
+	public void CmdClickPullCube( string cubeContentName, string gameplayRoomName ) {
+		m_pandaCubeController.ClickPullCube(cubeContentName, gameplayRoomName );
+	}
+
 
 	public void ScareDeer() {
 		if (isClient)
@@ -125,7 +132,7 @@ public class RoomAugPlayerController : NetworkBehaviour
     [Command]
     public void CmdSetOccludersVis( bool occluding ) {
 
-        foreach ( OcclusionGameplayObject occluder in FindObjectOfType<RoomController>().getOcclusionGameplayObjects() ) {
+        foreach ( OcclusionGameplayObject occluder in FindObjectOfType<RoomController>().GetOcclusionGameplayObjects() ) {
 
             if ( occluder.gameplayState == BaseGameplayObject.GameplayState.Started ) {
                 Debug.Log( "Server: Setting " + occluder.gameObject.name + " to Occluding: " + occluding );

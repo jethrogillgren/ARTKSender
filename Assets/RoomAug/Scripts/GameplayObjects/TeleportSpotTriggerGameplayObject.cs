@@ -42,7 +42,7 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
 			if( cube ) {
 				//TODO Animate Portal
 				Debug.Log ( "Teleporting Cube " + cube.name + " to " + targetGameplayRoom.roomName );
-				cube.TeleportTo (targetGameplayRoom);
+				cube.Svr_TeleportTo (targetGameplayRoom);
 			}
 		}
     }
@@ -53,7 +53,7 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
 
 	public override void Trigger() {
 		//TODO animate portal
-		roomController.LoadRoomInMainRoom(targetGameplayRoom);
+		roomController.Cnt_LoadRoomInMainRoom(targetGameplayRoom);
 	}
 
 }

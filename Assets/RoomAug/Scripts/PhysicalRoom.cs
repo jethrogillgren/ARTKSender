@@ -39,7 +39,7 @@ public class PhysicalRoom : MonoBehaviour {
 		registerAnyChildGameplayRoom ();
 		if( !gameplayRoom ) {
 			RoomController gc = FindObjectOfType<RoomController> ();
-			gc.activate (m_startGameplayRoom, this);
+			gc.Cnt_Activate (m_startGameplayRoom, this);
 		}
 	}
 

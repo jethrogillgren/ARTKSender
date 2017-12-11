@@ -213,7 +213,7 @@ public class TangoApplicationController : MonoBehaviour, ITangoLifecycle, ITango
     //Either enable the mesh visibally, or make it occlude only.
     public void DebugSetOccludersVis( bool occluding ) {
 
-        foreach ( OcclusionGameplayObject occluder in m_roomController.getOcclusionGameplayObjects() ) {
+        foreach ( OcclusionGameplayObject occluder in m_roomController.GetOcclusionGameplayObjects() ) {
 
             if ( occluder.gameplayState == BaseGameplayObject.GameplayState.Started ) {
                 Debug.Log( "Setting " + occluder.gameObject.name + " to Occluding: " + occluding );

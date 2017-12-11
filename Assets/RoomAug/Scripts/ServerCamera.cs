@@ -19,9 +19,9 @@ public class ServerCamera : MonoBehaviour {
 
 	public bool focusToSecondMonitor = false;//As opposed to default Fullscreeen
 
-	public float turnSpeed = 0.1f;		// Speed of camera turning when mouse moves in along an axis
-	public float panSpeed = 0.2f;		// Speed of the camera when being panned
-	public float zoomSpeed = 1.0f;		// Speed of the camera going back and forth
+	protected float turnSpeed = 3f;		// Speed of camera turning when mouse moves in along an axis
+	protected float panSpeed = 0.2f;	// Speed of the camera when being panned
+	protected float zoomSpeed = 0.1f;	// Speed of the camera going back and forth
 
 	private Vector3 mouseOrigin;	// Position of cursor when mouse dragging starts
 	private bool isPanning = false;		// Is the camera being panned?
@@ -34,8 +34,11 @@ public class ServerCamera : MonoBehaviour {
 
 		fullscreenRect = new Rect ( 0, 0, Screen.width, Screen.height );
 
-//		if (focused)
-//			ToggleFocus ();
+		if (focused)
+		{
+			focused = false;
+			pleaseToggleFocus = true;
+		}
 	}
 
 	public void AddAnimalsToCullingMask()
@@ -137,11 +140,13 @@ public class ServerCamera : MonoBehaviour {
 		if( focused ) //We are shrinking back
 		{
 			cam.rect = new Rect( originalRect );
+			cam.tag = "Untagged";
 			DecreaseDepth ();
 		}
 		else //We are Focusing in
 		{
 			IncreaseDepth ();
+			cam.tag = "MainCamera";
 
 			if (focusToSecondMonitor)
 			{
