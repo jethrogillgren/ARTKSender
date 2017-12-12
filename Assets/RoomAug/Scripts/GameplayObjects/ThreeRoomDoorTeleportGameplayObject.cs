@@ -79,13 +79,13 @@ public class ThreeRoomDoorTeleportGameplayObject : BaseTeleportGameplayObject
 		}
 	}
 
-	public override void AnimateOpening ()
+	public override void AnimateOpening (bool altSide = false)
 	{
 		//TODO
 	}
 
 	//Assumes a forward pass.  
-	public override void Trigger ()
+	public override void Trigger (bool altSide = false)
 	{
 		if (m_originalSide)
 		{//Assume Forward to Otherside

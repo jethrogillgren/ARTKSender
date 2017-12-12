@@ -47,11 +47,11 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
 		}
     }
 
-	public override void AnimateOpening() {
+	public override void AnimateOpening(bool altSide = false) {
 		//TODO
 	}
 
-	public override void Trigger() {
+	public override void Trigger(bool altSide = false) {
 		//TODO animate portal
 		roomController.Cnt_LoadRoomInMainRoom(targetGameplayRoom);
 	}

@@ -109,13 +109,18 @@ public class RoomController : NetworkBehaviour
 
 
 	//Used for all SKPortal Teleports.  Called when SKPortal tells us a valid teleport is happening.
-	//It's portal teleporting is disabled, as we move the rooms instead.
+	//SK's portal teleporting is disabled, as we move the rooms instead.
 	public void OnSKPortalTeleport(SKStudios.Portals.Portal portal, SKStudios.Portals.Teleportable movingObject)
 	{
 		BaseTeleportGameplayObject teleportGPO = portal.GetComponentInParent<BaseTeleportGameplayObject> ();
-		if( teleportGPO )
+		if( teleportGPO  &&  movingObject == SKStudios.Portals.GlobalPortalSettings.PlayerTeleportable)
 		{
-			teleportGPO.Trigger ();
+			if (portal.gameObject.name == "SKPortalA")
+				teleportGPO.Trigger ();
+			else if (portal.gameObject.name == "SKPortalB")
+				teleportGPO.Trigger ( true );
+			else
+				Debug.LogError ("Not teleporting as " + portal.gameObject.name + " is not SKPortalA/B");
 		}
 		else
 		{

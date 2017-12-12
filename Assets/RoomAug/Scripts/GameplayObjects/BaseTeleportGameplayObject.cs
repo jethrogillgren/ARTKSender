@@ -21,13 +21,15 @@ public abstract class BaseTeleportGameplayObject : BaseGameplayObject {
 		physicalRoom = GetComponentInParent<PhysicalRoom>();
 	}
 
-	public virtual void SetTeleportOpen(bool open = true) {
+	//TODO - if open == false...
+	public virtual void SetTeleportOpen(bool open = true, bool altSide = false) {
 		teleportOpen = open;
 		AnimateOpening ();
 	}
 
-	public abstract void AnimateOpening();
+	public abstract void AnimateOpening(bool altSide = false);
 
 //	public abstract void OnTriggerEnter ( Collider collision );//Handle usual teleport collission with player trigger
-	public abstract void Trigger();//Can be called to force a teleport
+	public abstract void Trigger(bool altSide = false);//Can be called to force a teleport
+
 }
