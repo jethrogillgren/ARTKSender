@@ -9,24 +9,26 @@ public class GameplayRoom : MonoBehaviour {
 	public string roomName; //Must match Layer name
 	public Util.ElementalType roomType;
 
-	private PhysicalRoom m_physicalRoom; //1 to 1 relationship, or empty.  relationship controlled by parent
-	public PhysicalRoom physicalRoom
+	public Vector3 offsetLocalPosition; //Where the room lives if it is not active on a client
+
+	private PhysicalRoom cnt_physicalRoom; //1 to 1 relationship, or empty.  relationship controlled by parent
+	public PhysicalRoom cnt_PhysicalRoom
 	{
 		get
 		{
-			return m_physicalRoom;
+			return cnt_physicalRoom;
 		}
 
 		set
 		{
-			this.m_physicalRoom = value;
+			this.cnt_physicalRoom = value;
 //			value.gameplayRoom = this;  Not done as a loop would form.  Parent controls the ownership.
 		}
 	}
 
-	public bool roomActive{
+	public bool cnt_roomActive{
 		get  {
-			return (m_physicalRoom != null);
+			return (cnt_physicalRoom != null);
 		}
 	}
 
@@ -35,6 +37,7 @@ public class GameplayRoom : MonoBehaviour {
         UpdateAll();
 	}
 
+
 	//Update my state, for when rooms change
     public virtual void UpdateAll(){
         RegisterAnyParentPhysicalRoom();
@@ -42,7 +45,7 @@ public class GameplayRoom : MonoBehaviour {
     }
 
 	public void RegisterAnyParentPhysicalRoom() {
-		physicalRoom  = GetComponentInParent<PhysicalRoom> (); //TODO check depth
+		cnt_PhysicalRoom  = GetComponentInParent<PhysicalRoom> (); //TODO check depth
 	}
 
 	public void UpdateAllAllGameplayObjects() {

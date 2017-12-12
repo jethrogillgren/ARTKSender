@@ -53,7 +53,7 @@ public class TeleportSpotTriggerGameplayObject : BaseTeleportGameplayObject {
 
 	public override void Trigger(bool altSide = false) {
 		//TODO animate portal
-		roomController.Cnt_LoadRoomInMainRoom(targetGameplayRoom);
+		roomController.SwapRoomInMainRoom(targetGameplayRoom);
 	}
 
 }

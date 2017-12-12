@@ -15,7 +15,7 @@ public class RoomAugPlayerController : NetworkBehaviour
 		updatePlayerText ();
 	}
 
-    private PandaCubeController m_pandaCubeController;
+	private PandaCubeController svr_pandaCubeController;
 
 //  public GameObject clientOnlyPrefab;
 
@@ -36,7 +36,7 @@ public class RoomAugPlayerController : NetworkBehaviour
     //This is invoked for NetworkBehaviour objects when they become active on the server.
     public override void OnStartServer() {
         SetTangoHardwareSpecific( false );
-        m_pandaCubeController = FindObjectOfType<PandaCubeController>();
+        svr_pandaCubeController = FindObjectOfType<PandaCubeController>();
     }
     public override void OnStartLocalPlayer() {
 		Instantiate(new AudioListener());
@@ -99,8 +99,8 @@ public class RoomAugPlayerController : NetworkBehaviour
 
     [Command]
     public void CmdSendMarkerUpdate( TangoSupport.Marker marker ) {
-        if( m_pandaCubeController ) {
-            m_pandaCubeController.RecieveMarker(marker);
+        if( svr_pandaCubeController ) {
+            svr_pandaCubeController.RecieveMarker(marker);
         }
     }
 
@@ -111,7 +111,7 @@ public class RoomAugPlayerController : NetworkBehaviour
 
 	[Command] //TODO - Passing GameplayRoom to server efficiency?
 	public void CmdClickPullCube( string cubeContentName, string gameplayRoomName ) {
-		m_pandaCubeController.ClickPullCube(cubeContentName, gameplayRoomName );
+		svr_pandaCubeController.ClickPullCube(cubeContentName, gameplayRoomName );
 	}
 
 

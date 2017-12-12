@@ -24,11 +24,11 @@ public static class Util
 		return null;
 	}
 
-	public static bool IsObjectInMainCamerasFOV( Transform targetPoint){
-		return IsObjectInCamerasFOV ( Camera.main, targetPoint );
+	public static bool Cnt_IsObjectInMainCamerasFOV( Transform targetPoint){
+		return Cnt_IsObjectInCamerasFOV ( Camera.main, targetPoint );
 	}
 
-	public static bool IsObjectInCamerasFOV(Camera camera, Transform targetPoint)
+	public static bool Cnt_IsObjectInCamerasFOV(Camera camera, Transform targetPoint)
 	{
 		if (!camera || !targetPoint)
 			Debug.LogError ("IsObjectInCamerasFOV Invalid Params recieved");

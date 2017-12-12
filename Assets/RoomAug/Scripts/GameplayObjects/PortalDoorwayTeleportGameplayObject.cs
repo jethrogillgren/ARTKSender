@@ -85,11 +85,11 @@ public class PortalDoorwayTeleportGameplayObject : BaseTeleportGameplayObject {
 		}
 		
 		if( teleportOpen && portalController && isClient )
-			roomController.Cnt_LoadRoomInMainRoom(targetGameplayRoom);
+			roomController.SwapRoomInMainRoom(targetGameplayRoom);
 	}
 	public void TriggerB() {//Can be called to force a teleport
 		if( teleportOpenB && portalControllerB && isClient )
-			roomController.Cnt_LoadRoomInMainRoom(targetGameplayRoomB);
+			roomController.SwapRoomInMainRoom(targetGameplayRoomB);
 	}
 		
 

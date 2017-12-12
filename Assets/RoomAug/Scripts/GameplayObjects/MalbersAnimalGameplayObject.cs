@@ -82,10 +82,10 @@ public class MalbersAnimalGameplayObject : BaseGameplayObject {
 //			Debug.LogWarning (name + " found no Player to look at...");
 	}
 
-	public override void UpdateVisibility()
-	{
-		return;
-	}
+//	public override void UpdateVisibility()
+//	{
+//		return;
+//	}
 
 
 	//As base, except we keep our Malbers Animal on Animal Layer

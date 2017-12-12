@@ -178,15 +178,15 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 
 	//Cubes are special, they are always active across rooms/clients.
-	//This overrides the usual UpdateVisibility() which does client roomBased enabling
+	//This overrides the usual UpdateVisibility()
 	public override void UpdateVisibility ()
 	{
-		gameObject.SetActive ( true );
+		base.UpdateVisibility ();
 
 		//Clients see either wireframe or full versions depending on their gameplayRoom
 		if (isClient)
 		{
-			if (gameplayRoom.roomActive)
+			if (gameplayRoom.cnt_roomActive)
 				DrawFull ();
 			else
 				DrawAsWireframe ();
@@ -293,7 +293,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			if(c)
 			{
 				Vector3 direction = worldPoint - c.transform.position;
-				Vector3 castShape = new Vector3(0.1f,0.1f,0.1f);//TODO
+//				Vector3 castShape = new Vector3(0.1f,0.1f,0.1f);//TODO
 				float distance = Vector3.Distance ( c.transform.position, worldPoint );// * 1.2f;
 
 
@@ -562,7 +562,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			return;
 
 		//Check if the Object is good for ClickPulling
-		if( !textMesh && isTrackingGood && !gameplayRoom.roomActive && Util.IsObjectInMainCamerasFOV ( this.transform ))
+		if( !textMesh && isTrackingGood && !gameplayRoom.cnt_roomActive && Util.Cnt_IsObjectInMainCamerasFOV ( this.transform ))
 		{
 			Util.JLogErr ("DisplayClickPullHint saw it", false);
 			//Wait a bit if we're being pushy
@@ -591,7 +591,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	{
 		Debug.Log ( "Touch Count: " + Input.touchCount + "   TouchPhase: " + ( Input.touchCount > 0 ? Input.GetTouch ( 0 ).phase.ToString() : "N/A") );
 
-		if ( isTrackingGood && !gameplayRoom.roomActive && Input.touchCount > 0  &&  Input.GetTouch(0).phase == TouchPhase.Began  &&  Util.IsObjectInMainCamerasFOV ( this.transform ) )
+		if ( isTrackingGood && !gameplayRoom.cnt_roomActive && Input.touchCount > 0  &&  Input.GetTouch(0).phase == TouchPhase.Began  &&  Util.Cnt_IsObjectInMainCamerasFOV ( this.transform ) )
 		{
 			Debug.Log (name + " touch");
 

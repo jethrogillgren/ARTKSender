@@ -18,11 +18,16 @@ public class GameplayRoomEditor : Editor {
 //		gr.roomName = EditorGUILayout.TextField("Room Name", gr.roomName);
 
 		gr.RegisterAnyParentPhysicalRoom ();
+		if (gr.cnt_PhysicalRoom)
+			gr.transform.localPosition = Vector3.zero;
+//			gr.GetComponentInParent<RoomController>().ActivateInMainRoom(gr);
+		else
+			gr.transform.localPosition = gr.offsetLocalPosition;
+
 		gr.UpdateAllGameplayObjectsVisibility ();
         gr.SetAppropiateLayers();
-		EditorGUILayout.LabelField("Active", gr.roomActive ? "yes" : "no");
+		EditorGUILayout.LabelField("Active", gr.cnt_roomActive ? "yes" : "no");
 
 		DrawDefaultInspector();
-
 	}
 }

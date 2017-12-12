@@ -7,9 +7,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Click Toggles, and Camera Control
+//SERVER ONLY
 public class ServerCamera : MonoBehaviour {
 
+	public Util.ElementalType elementalType;
+
 	private Camera cam;
+	private GameplayRoom gameplayRoom;
+	private RoomController roomController;
 
 	private Rect originalRect; //Don't edit these or reference them, make copies
 	private Rect fullscreenRect;
@@ -27,11 +32,27 @@ public class ServerCamera : MonoBehaviour {
 	private bool isPanning = false;		// Is the camera being panned?
 	private bool isRotating = false;	// Is the camera being rotated?
 
+	private bool BUG_DELAY_STARTED = false;
+
 	// Use this for initialization
 	void Start () {
-		cam = GetComponent<Camera>();//Not the depth camera, the main one
-		originalRect = new Rect ( cam.rect );//
+		Invoke ( "BUG_DELAY_START", 1 );
+	}
 
+	void BUG_DELAY_START() //TODO - on Start() other objects were not awake yet?
+	{
+		cam = GetComponent<Camera>();//Not the depth camera, the main one
+
+		//We adopt ourselves to the Room we are Watching so we track it's teleporting
+		roomController = GameObject.FindObjectOfType<RoomController> ();
+		if (roomController && elementalType != Util.ElementalType.none)
+			gameplayRoom = roomController.GetGameplayRoomByType ( elementalType );
+		else
+			Debug.LogError ("Camera Unable to Track its Room");
+		if (gameplayRoom)
+			this.transform.SetParent ( gameplayRoom.transform, false );
+
+		originalRect = new Rect ( cam.rect );//
 		fullscreenRect = new Rect ( 0, 0, Screen.width, Screen.height );
 
 		if (focused)
@@ -39,16 +60,15 @@ public class ServerCamera : MonoBehaviour {
 			focused = false;
 			pleaseToggleFocus = true;
 		}
+		BUG_DELAY_STARTED = true;
 	}
 
-	public void AddAnimalsToCullingMask()
-	{
-		
-	}
 	
 	//We do the actual focusing in LateUpdate(), so all cameras have a chance to register the Update Click
 	void Update () {
-
+		if (!BUG_DELAY_STARTED)
+			return;
+		
 		//Focussing / Unfocussing
 		if( Input.GetKeyDown(KeyCode.Space) ) 
 		{
@@ -126,6 +146,9 @@ public class ServerCamera : MonoBehaviour {
 
 	void LateUpdate()
 	{
+		if (!BUG_DELAY_STARTED)
+			return;
+		
 		if( pleaseToggleFocus )
 		{
 			ToggleFocus ();
@@ -137,6 +160,9 @@ public class ServerCamera : MonoBehaviour {
 	//Either make it fullscreen, or if available put it on the second monitor
 	public void ToggleFocus()
 	{
+		if (!BUG_DELAY_STARTED)
+			return;
+		
 		if( focused ) //We are shrinking back
 		{
 			cam.rect = new Rect( originalRect );
@@ -147,6 +173,7 @@ public class ServerCamera : MonoBehaviour {
 		{
 			IncreaseDepth ();
 			cam.tag = "MainCamera";
+			roomController.SwapRoomInMainRoom(gameplayRoom); //Camera moves with the swap, so we can see Physical Room Wide Elements
 
 			if (focusToSecondMonitor)
 			{

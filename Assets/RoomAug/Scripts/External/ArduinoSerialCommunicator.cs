@@ -159,7 +159,7 @@ public class ArduinoSerialCommunicator : MonoBehaviour {
 			stream.Open();
 			//this.stream.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 		} catch(IOException e) {
-			Debug.LogWarning ("No Connection to Arduino");
+			Debug.LogWarning ( "No Connection to Arduino: "+ e.Message);
 		}
 	}
 

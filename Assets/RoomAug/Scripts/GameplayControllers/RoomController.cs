@@ -77,34 +77,39 @@ public class RoomController : NetworkBehaviour
 
 
 	//Util Teleport functions.  Assume a room is loaded already.
-	public bool Cnt_LoadEarthRoomInMainRoom()
+	public bool SwapEarthRoomInMainRoom()
 	{
-		return isClient && Cnt_UnActivate(mainRoom) && Cnt_Activate(earthRoom, mainRoom);
+		return UnActivate(mainRoom) && Activate(earthRoom, mainRoom);
 	}
 
-	public bool Cnt_LoadWoodRoomInMainRoom()
+	public bool SwapWoodRoomInMainRoom()
 	{
-		return isClient && Cnt_UnActivate(mainRoom) && Cnt_Activate(woodRoom, mainRoom);
+		return UnActivate(mainRoom) && Activate(woodRoom, mainRoom);
 	}
 
-	public bool Cnt_LoadMetalRoomInMainRoom()
+	public bool SwapMetalRoomInMainRoom()
 	{
-		return isClient && Cnt_UnActivate(mainRoom) && Cnt_Activate(metalRoom, mainRoom);
+		return UnActivate(mainRoom) && Activate(metalRoom, mainRoom);
 	}
 
-	public bool Cnt_LoadFireRoomInMainRoom()
+	public bool SwapFireRoomInMainRoom()
 	{
-		return isClient && Cnt_UnActivate(mainRoom) && Cnt_Activate(fireRoom, mainRoom);
+		return UnActivate(mainRoom) && Activate(fireRoom, mainRoom);
 	}
 
-	public bool Cnt_LoadWaterRoomInMainRoom()
+	public bool SwapWaterRoomInMainRoom()
 	{
-		return isClient && Cnt_UnActivate(mainRoom) && Cnt_Activate(waterRoom, mainRoom);
+		return UnActivate(mainRoom) && Activate(waterRoom, mainRoom);
 	}
 
-	public bool Cnt_LoadRoomInMainRoom(GameplayRoom g)
+	public bool SwapRoomInMainRoom(GameplayRoom g)
 	{
-		return isClient && Cnt_UnActivate(mainRoom) && Cnt_Activate(g, mainRoom);
+		return UnActivate(mainRoom) && Activate(g, mainRoom);
+	}
+
+
+	public bool ActivateInMainRoom(GameplayRoom gr){
+		return Activate ( gr, mainRoom );
 	}
 
 
@@ -112,7 +117,19 @@ public class RoomController : NetworkBehaviour
 	//SK's portal teleporting is disabled, as we move the rooms instead.
 	public void OnSKPortalTeleport(SKStudios.Portals.Portal portal, SKStudios.Portals.Teleportable movingObject)
 	{
-		Debug.Log ("RoomController heard that Teleportable: " + movingObject.name + " has triggered in" + portal.name );
+		//CLIENTS have their Own GameplayRoom Positions and own Interactions
+		if (isClient)
+			Cnt_TeleportRoomPosition (portal, movingObject);
+
+		//SERVERS have the GameplayRooms at the set Positions, so do not need to teleport.
+		//TODO - how do they know the players current room?
+
+	}
+
+	public void Cnt_TeleportRoomPosition(SKStudios.Portals.Portal portal, SKStudios.Portals.Teleportable movingObject)
+	{
+		
+		Debug.Log ("name + : " + movingObject.name + " has triggered in" + portal.name );
 
 		BaseTeleportGameplayObject teleportGPO = portal.GetComponentInParent<BaseTeleportGameplayObject> ();
 		if( teleportGPO  &&  movingObject == SKStudios.Portals.GlobalPortalSettings.PlayerTeleportable)
@@ -129,6 +146,8 @@ public class RoomController : NetworkBehaviour
 			Debug.LogError ("Not teleporting " + movingObject.name + " as it does not have a Parent BaseTeleportGameplayObject");
 		}
 	}
+
+
 
 	//Used for the Three Room Door Teleporter
 	public void Cnt_DoorSwitchTeleportTriggered (ThreeRoomDoorTeleportGameplayObject t, PhysicalRoom oldRoom, PhysicalRoom newRoom, bool backwards = false) {
@@ -154,14 +173,14 @@ public class RoomController : NetworkBehaviour
 //		}
 	}
 
-	public bool Cnt_Replace(GameplayRoom oldGr, GameplayRoom newGr, PhysicalRoom pr)
+	public bool Replace(GameplayRoom oldGr, GameplayRoom newGr, PhysicalRoom pr)
 	{
-		if (!isClient)
-			return false;
+//		if (!isClient)
+//			return false;
 		
-		if (oldGr.physicalRoom == pr)
+		if (oldGr.cnt_PhysicalRoom == pr)
 		{
-			return (Cnt_UnActivate(oldGr) && Cnt_Activate(newGr, pr));
+			return (UnActivate(oldGr) && Activate(newGr, pr));
 
 		} else
 		{
@@ -171,14 +190,14 @@ public class RoomController : NetworkBehaviour
 	}
 
 	//Hide whichever GameplayRoom was active in a physical room
-	public bool Cnt_UnActivate(PhysicalRoom pr)
+	public bool UnActivate(PhysicalRoom pr)
 	{
-		if (!isClient)
-			return false;
+//		if (!isClient)
+//			return false;
 		
 		if (pr && pr.gameplayRoom)
 		{ //If room is currently Active
-			return Cnt_UnActivate(pr.gameplayRoom);
+			return UnActivate(pr.gameplayRoom);
 
 		} else
 		{
@@ -188,18 +207,19 @@ public class RoomController : NetworkBehaviour
 	}
 
 	//Hide a GameplayRoom from whichever Physical Room it was in.  Done on Client
-	public bool Cnt_UnActivate(GameplayRoom gr)
+	public bool UnActivate(GameplayRoom gr)
 	{
-		if (!isClient)
-			return false;
+//		if (!isClient)
+//			return false;
 		
-		if (gr && gr.roomActive)
+		if (gr && gr.cnt_roomActive)
 			{ //If room is currently Active
-				if (gr.physicalRoom)
-					gr.physicalRoom.gameplayRoom = null;
+				if (gr.cnt_PhysicalRoom)
+					gr.cnt_PhysicalRoom.gameplayRoom = null;
 				gr.transform.SetParent(this.transform, false);
+				gr.transform.localPosition = gr.offsetLocalPosition;
 
-				gr.physicalRoom = null;
+				gr.cnt_PhysicalRoom = null;
 				gr.UpdateAll();
 
 //			gr.UpdateAll ();
@@ -212,30 +232,31 @@ public class RoomController : NetworkBehaviour
 			}
 	}
 
+
 	//Show a GameplayRoom in a specified PhysicalRoom.
-	public bool Cnt_Activate(GameplayRoom gr, PhysicalRoom pr)
+	public bool Activate(GameplayRoom gr, PhysicalRoom pr)
 	{
-		if (!isClient)
-			return false;
+//		if (!isClient)
+//			return false;
         
-		if (gr && !gr.roomActive && pr && pr.roomEmpty)
-			{
-				gr.transform.SetParent(pr.transform);
-				gr.transform.localPosition = new Vector3(0, 0, 0);//TODO shouldn't be needed?
-				pr.gameplayRoom = gr;
+		if (gr && !gr.cnt_roomActive && pr && pr.roomEmpty)
+		{
+			gr.transform.SetParent(pr.transform);
+			gr.transform.localPosition = new Vector3(0, 0, 0);//I am the currentRoom
+			pr.gameplayRoom = gr;
 
-				gr.UpdateAll();
+			gr.UpdateAll();
 
-//			gr.UpdateAll();
-
+			if(isClient)
 				Handheld.Vibrate();
-				return true;
+			return true;
 
-			} else
-			{
-				Debug.LogError("Unable to Activate a GameplayRoom " + gr + " into PhysicalRoom: " + pr);
-				return false;
-			}
+		}
+		else
+		{
+			Debug.LogError("Unable to Activate a GameplayRoom " + gr + " into PhysicalRoom: " + pr);
+			return false;
+		}
 	}
 
 
@@ -245,18 +266,18 @@ public class RoomController : NetworkBehaviour
 		HashSet<BaseGameplayObject> ret = new HashSet<BaseGameplayObject>();
 
 		if (m_gameplayObjects == null || m_gameplayObjects.Count <= 0)
-			{
-				Debug.Log("Asked to get Gameplay Objects by state, but there are " + (m_gameplayObjects == null ? "NULL" : m_gameplayObjects.Count.ToString()) + " stored");
-				Util.collectGameplayObjects(ref m_gameplayObjects);
-			}
+		{
+			Debug.Log("Asked to get Gameplay Objects by state, but there are " + (m_gameplayObjects == null ? "NULL" : m_gameplayObjects.Count.ToString()) + " stored");
+			Util.collectGameplayObjects(ref m_gameplayObjects);
+		}
 
 		foreach (BaseGameplayObject g in m_gameplayObjects)
-			{
-				if (g.gameplayState == state)
-					{
-						ret.Add(g);
-					}
-			}
+		{
+			if (g.gameplayState == state)
+				{
+					ret.Add(g);
+				}
+		}
 		Debug.Log("Returning the " + ret.Count + "/" + m_gameplayObjects.Count + " Gameplay Objects that are " + state);
 		return ret;
 	}
@@ -313,6 +334,14 @@ public class RoomController : NetworkBehaviour
 		foreach (PhysicalRoom pr in m_physicalRooms)
 			if (pr.roomName == roomName)
 				return pr;
+		return null;
+	}
+
+	public GameplayRoom GetGameplayRoomByType(Util.ElementalType type)
+	{
+		foreach (GameplayRoom gr in m_gameplayRooms)
+			if (gr.roomType == type)
+				return gr;
 		return null;
 	}
 

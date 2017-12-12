@@ -15,7 +15,7 @@ public class PhysicalRoomEditor : Editor {
 		if (pr.gameplayRoom)
 			EditorGUILayout.LabelField ("Got GameplayRoom", pr.gameplayRoom.roomName);
 		else
-			pr.m_startGameplayRoom = (GameplayRoom) EditorGUILayout.ObjectField ("Starting GameplayRoom:", pr.m_startGameplayRoom, typeof(GameplayRoom), true);
+			pr.startGameplayRoom = (GameplayRoom) EditorGUILayout.ObjectField ("Starting GameplayRoom:", pr.startGameplayRoom, typeof(GameplayRoom), true);
 
 	}
 }

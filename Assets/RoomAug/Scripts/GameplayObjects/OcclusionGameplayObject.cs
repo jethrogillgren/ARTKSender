@@ -51,12 +51,11 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 			gameObject.SetActive ( false );
 			return;
 		}
-
-		//Only clientes normally care about occlusion.  Servers can opt in.
+			
+		//OK We're Active - additionally, clientes care about occlusion.  Servers can opt in.
 		if (isClient || occludeOnServer)
 		{
 			setOcclusion ( true );
-			base.UpdateVisibility (); //Clients will also follow normal rules for show / hiding
 		}
 		else
 		{

@@ -70,7 +70,7 @@ public class AudioGameplayObject : BaseGameplayObject {
 	//We override the default Hiding/Showing as we may exist outside of any Rooms.
 	public override void UpdateVisibility()
 	{
-		//If we are in a gamelpay room, do the default Visibility check
+		//If we are in a gameplay room, do the default Visibility check
 		if ( GetComponentInParent<GameplayRoom>() != null)
 			base.UpdateVisibility ();
 		else //Otherwise just go by gameplayState

@@ -39,7 +39,7 @@ public class DebugUtil : MonoBehaviour {
 			if (gr != gc.m_physicalRooms.FirstOrDefault().gameplayRoom)
 				newRoom = gr;
 		}
-		gc.Cnt_Replace (gc.m_physicalRooms.FirstOrDefault().gameplayRoom, newRoom, gc.m_physicalRooms.FirstOrDefault());
+		gc.Replace (gc.m_physicalRooms.FirstOrDefault().gameplayRoom, newRoom, gc.m_physicalRooms.FirstOrDefault());
 		ShoutPhysicalAndGameplayState ();
 
 	}
@@ -51,11 +51,11 @@ public class DebugUtil : MonoBehaviour {
         RoomController gc = FindObjectOfType<RoomController> ();
 
 		foreach (GameplayRoom gr in gc.m_gameplayRooms) {
-			if (gr.physicalRoom == null) {
+			if (gr.cnt_PhysicalRoom == null) {
 				builder.AppendLine (gr.roomName);
 
 			} else {
-                builder.AppendLine (gr.physicalRoom.roomName + " Pos: " + gr.physicalRoom.transform.position );
+                builder.AppendLine (gr.cnt_PhysicalRoom.roomName + " Pos: " + gr.cnt_PhysicalRoom.transform.position );
                 builder.AppendLine ("-" + gr.roomName + " is " + (gr.enabled ? "Enabled" : "Not Enabled") + " Pos: " + gr.transform.position);
 
 			}
@@ -107,19 +107,19 @@ public class DebugUtil : MonoBehaviour {
 	}
 
 	public void OnEarthTeleport() {
-		FindObjectOfType<RoomController> ().Cnt_LoadEarthRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().SwapEarthRoomInMainRoom ();
 	}
 	public void OnWoodTeleport() {
-		FindObjectOfType<RoomController> ().Cnt_LoadWoodRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().SwapWoodRoomInMainRoom ();
 	}
 	public void OnMetalTeleport() {
-		FindObjectOfType<RoomController> ().Cnt_LoadMetalRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().SwapMetalRoomInMainRoom ();
 	}
 	public void OnFireTeleport() {
-		FindObjectOfType<RoomController> ().Cnt_LoadFireRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().SwapFireRoomInMainRoom ();
 	}
 	public void OnWaterTeleport() {
-		FindObjectOfType<RoomController> ().Cnt_LoadWaterRoomInMainRoom ();
+		FindObjectOfType<RoomController> ().SwapWaterRoomInMainRoom ();
 	}
 
 }
