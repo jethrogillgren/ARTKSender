@@ -28,6 +28,8 @@ public class OcclusionGameplayObject : BaseGameplayObject {
 		    setOcclusion (true);
         else
             setOcclusion( false );
+
+		SetOccludeOnServer (occludeOnServer);
 	}
 
 	// Update is called once per frame

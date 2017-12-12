@@ -112,6 +112,8 @@ public class RoomController : NetworkBehaviour
 	//SK's portal teleporting is disabled, as we move the rooms instead.
 	public void OnSKPortalTeleport(SKStudios.Portals.Portal portal, SKStudios.Portals.Teleportable movingObject)
 	{
+		Debug.Log ("RoomController heard that Teleportable: " + movingObject.name + " has triggered in" + portal.name );
+
 		BaseTeleportGameplayObject teleportGPO = portal.GetComponentInParent<BaseTeleportGameplayObject> ();
 		if( teleportGPO  &&  movingObject == SKStudios.Portals.GlobalPortalSettings.PlayerTeleportable)
 		{

@@ -57,7 +57,6 @@ public class SlowMotionController : NetworkBehaviour {
 	{
 		if( Time.timeScale == 1 )
 		{
-			Debug.Log ("Slow-Motion for Deer Jump initiated");
 			slowMoTimeScale = 0.08f;
 			slowMoSpeed = 1.25f;
 			PleaseEnableSlowTime ();
@@ -93,7 +92,7 @@ public class SlowMotionController : NetworkBehaviour {
 		//If we're asked to slow and we are currently not
 		if (pleaseSlowTime && Time.timeScale == 1)
 		{
-			Debug.Log ("Slowing");
+			Debug.Log ("Slowing Time");
 			StartCoroutine(SlowTime());
 			Time.fixedDeltaTime = 0.02F * Time.timeScale;
 
@@ -101,7 +100,6 @@ public class SlowMotionController : NetworkBehaviour {
 		//If we don't want to slow but we are set to slowest
 		else if (!pleaseSlowTime && Time.timeScale == slowMoTimeScale)
 		{
-			Debug.Log ("Resoring");
 			StartCoroutine(RestartTime());
 			Time.fixedDeltaTime = 0.02F * Time.timeScale;
 
@@ -117,7 +115,6 @@ public class SlowMotionController : NetworkBehaviour {
 			Time.fixedDeltaTime = 0.02F * Time.timeScale;
 			yield return null;
 		}
-		Debug.Log ("DOne");
 		Time.timeScale = slowMoTimeScale;
 	}
 
@@ -128,7 +125,7 @@ public class SlowMotionController : NetworkBehaviour {
 			Time.timeScale += 1 / slowMoSpeed * Time.unscaledDeltaTime;
 			yield return null;
 		}
-		Debug.Log ("DOne");
+		Debug.Log ("Resored Time");
 
 		Time.timeScale = 1;
 	}
