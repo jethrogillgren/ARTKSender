@@ -267,7 +267,7 @@ public class PuzzleController : NetworkBehaviour
 		
 		Debug.Log ("Doing Clicker - Down");
 
-		GetComponent<SlowMotionController>().Svr_SlowDownUpDefault();
+		GetComponent<SlowMotionController>().SlowDownUpDefault();
 	}
 	private void EnableClickers(){ DisableClickers ( false );}
 	private void DisableClickers( bool disable = true ) //Call with true to disable clickers.  False to reenable

@@ -196,8 +196,6 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	}
 
 
-
-
 	//Use to draw the cube properly, locally
 	public void DrawFull ()
 	{

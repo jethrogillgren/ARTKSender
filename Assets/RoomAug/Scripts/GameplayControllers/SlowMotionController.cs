@@ -15,41 +15,33 @@ public class SlowMotionController : NetworkBehaviour {
 
 
 	[Space]
-	[SyncVar]
-	private bool syn_pleaseSlowTime = false ;//Set this on server to make everyone slow-mo.
-	[SyncVar]
-	private float syn_slowMoTimeScale;
-	[SyncVar]
-	private float syn_slowMoSpeed;
+	private bool pleaseSlowTime = false ;//Everyone triggers seperately to maintain sync
+	private float slowMoTimeScale;
+	private float slowMoSpeed;
 
 
 	//Callees manual slowmo
-	public void Svr_PleaseDisableSlowTime()
+	public void PleaseDisableSlowTime()
 	{
-		if (isClient)
-			return;
-		
-		syn_pleaseSlowTime = false;
+
+		pleaseSlowTime = false;
 	}
-	public void Svr_PleaseEnableSlowTime()
+	public void PleaseEnableSlowTime()
 	{
-		if (isClient)
-			return;
+
 		
-		syn_pleaseSlowTime = true;
+		pleaseSlowTime = true;
 	}
 
 
 	//Slow down time then back up again in a set manner
-	public bool Svr_SlowDownUpDefault()
+	public bool SlowDownUpDefault()
 	{
-		if (isClient)
-			return false;
 		
 		if( Time.timeScale == 1 )
 		{
 			SetDefaultTimes ();
-			syn_pleaseSlowTime = true;
+			pleaseSlowTime = true;
 
 			return true;
 
@@ -63,18 +55,17 @@ public class SlowMotionController : NetworkBehaviour {
 
 	}
 
-	public bool Svr_SlowDownUpDeer()
+	public bool SlowDownUpDeer()
 	{
-		if (isClient)
-			return false;
+
 		
 		if( Time.timeScale == 1 )
 		{
-			syn_slowMoTimeScale = 0.08f;
-			syn_slowMoSpeed = 1.25f;
-			Svr_PleaseEnableSlowTime ();
+			slowMoTimeScale = 0.08f;
+			slowMoSpeed = 1.25f;
+			PleaseEnableSlowTime ();
 
-			Invoke ( "Svr_PleaseDisableSlowTime", syn_slowMoSpeed );
+			Invoke ( "PleaseDisableSlowTime", slowMoSpeed );
 
 			return true;
 		}
@@ -95,8 +86,8 @@ public class SlowMotionController : NetworkBehaviour {
 	//TODO - Svr_ ?
 	protected void SetDefaultTimes()
 	{
-		syn_slowMoTimeScale = defaultSlowMoTimeScale;
-		syn_slowMoSpeed = defaultSlowMoSpeed;
+		slowMoTimeScale = defaultSlowMoTimeScale;
+		slowMoSpeed = defaultSlowMoSpeed;
 	}
 
 
@@ -104,7 +95,7 @@ public class SlowMotionController : NetworkBehaviour {
 	protected void Update()
 	{
 		//If we're asked to slow and we are currently not
-		if (syn_pleaseSlowTime && Time.timeScale == 1)
+		if (pleaseSlowTime && Time.timeScale == 1)
 		{
 			Debug.Log ("Slowing Time");
 			StartCoroutine(SlowTime());
@@ -112,7 +103,7 @@ public class SlowMotionController : NetworkBehaviour {
 
 		}
 		//If we don't want to slow but we are set to slowest
-		else if (!syn_pleaseSlowTime && Time.timeScale == syn_slowMoTimeScale)
+		else if (!pleaseSlowTime && Time.timeScale == slowMoTimeScale)
 		{
 			StartCoroutine(RestartTime());
 			Time.fixedDeltaTime = 0.02F * Time.timeScale;
@@ -123,20 +114,20 @@ public class SlowMotionController : NetworkBehaviour {
 
 	IEnumerator SlowTime()
 	{
-		while (Time.timeScale > syn_slowMoTimeScale)
+		while (Time.timeScale > slowMoTimeScale)
 		{
-			Time.timeScale -= 1/syn_slowMoSpeed * Time.unscaledDeltaTime;
+			Time.timeScale -= 1/slowMoSpeed * Time.unscaledDeltaTime;
 			Time.fixedDeltaTime = 0.02F * Time.timeScale;
 			yield return null;
 		}
-		Time.timeScale = syn_slowMoTimeScale;
+		Time.timeScale = slowMoTimeScale;
 	}
 
 	IEnumerator RestartTime()
 	{
 		while (Time.timeScale <1)
 		{
-			Time.timeScale += 1 / syn_slowMoSpeed * Time.unscaledDeltaTime;
+			Time.timeScale += 1 / slowMoSpeed * Time.unscaledDeltaTime;
 			yield return null;
 		}
 		Debug.Log ("Resored Time");

@@ -10,11 +10,7 @@ public class SlowMoTriggerGameplayObject : BaseGameplayObject {
 	public MonoBehaviour targetObj;
 	public string targetInvoke;
 
-	//Server Only
 	public void OnTriggerEnter( Collider collision ) {
-
-		if ( isClient )
-			return;
 
 		//Deer Teleporting
 		if (collision == targetCollider)
