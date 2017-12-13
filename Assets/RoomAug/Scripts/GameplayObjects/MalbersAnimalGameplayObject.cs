@@ -57,7 +57,7 @@ public class MalbersAnimalGameplayObject : BaseGameplayObject {
 	public void OnDeerJump()
 	{
 
-		slowMo.SlowDownUpDeer ();
+		slowMo.Svr_SlowDownUpDeer ();
 
 
 //

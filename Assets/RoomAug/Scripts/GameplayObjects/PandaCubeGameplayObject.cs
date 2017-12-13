@@ -77,16 +77,16 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	/// These are Server controlled only, and sync to all clients
 	[SyncVar]
 	[HideInInspector]
-	public bool isTrackingGood = true;
+	public bool syn_isTrackingGood = true;
 	[SyncVar]
 	[HideInInspector]
-	public bool isTangoTrackingGood = false;
+	public bool syn_isTangoTrackingGood = false;
 	[SyncVar]
 	[HideInInspector]
-	public bool isARToolkitTrackingGood = false;
+	public bool syn_isARToolkitTrackingGood = false;
 
 	[SyncVar]
-	public Util.ElementalType cubeType;
+	public Util.ElementalType syn_cubeType;
 
 
 
@@ -141,7 +141,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			svr_ShowingDebugLabels = value;
 			if(value)
 			{
-				DisplayTextAtPopupPosition ( ChooseTextPopupOffset ( true ), cubeType.ToString () + " in " + gameplayRoom.roomName );
+				DisplayTextAtPopupPosition ( ChooseTextPopupOffset ( true ), syn_cubeType.ToString () + " in " + gameplayRoom.roomName );
 				StartCoroutine(TrackThenDestroyTextMesh(1f, 0)); // Or whatever delay we want.
 			} else {
 				StopCoroutine ( "TrackThenDestroyTextMesh" );
@@ -202,14 +202,14 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	public void DrawFull ()
 	{
 //		Debug.Log ( name + " Rendering Full " + cubeType );
-		SetMaterialAndColor ( defaultMaterial, Util.GetColor ( cubeType ) );
+		SetMaterialAndColor ( defaultMaterial, Util.GetColor ( syn_cubeType ) );
 	}
 
 	//Use to draw the cube when it is not in the same gameplay room as you, locally
 	public void DrawAsWireframe ()
 	{
 //		Debug.Log ( name + " Rendering Wireframe " + cubeType );
-		SetMaterialAndColor ( wireframeMaterial, Util.GetColor ( cubeType ) );
+		SetMaterialAndColor ( wireframeMaterial, Util.GetColor ( syn_cubeType ) );
 	}
 
 	protected void SetMaterialAndColor ( Material m, Color c )
@@ -225,9 +225,9 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//Rect is at Tangos last seen point
 	protected void DrawRect() {
 
-		if (isTangoTrackingGood)
+		if (syn_isTangoTrackingGood)
 			lineRenderer.startColor = lineRenderer.endColor = Color.blue;
-		else if (isTangoTrackingGood && isARToolkitTrackingGood)
+		else if (syn_isTangoTrackingGood && syn_isARToolkitTrackingGood)
 			lineRenderer.startColor = lineRenderer.endColor = Color.green;
 		else
 			return;
@@ -486,9 +486,9 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//Handled on Server, and clients get NetworkTransform'd the position
 	protected void Svr_ApplyTransformations() 
 	{
-		isTrackingGood = false;
-		isTangoTrackingGood = false;
-		isARToolkitTrackingGood = false;
+		syn_isTrackingGood = false;
+		syn_isTangoTrackingGood = false;
+		syn_isARToolkitTrackingGood = false;
 
 		//Global variable which holds the amount of rotations which 
 		//need to be averaged.
@@ -508,9 +508,9 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			{
 				//				Debug.LogError ("Set  : " + transformTimestamps[i] + " " + transformPositions[i] );
 
-				isTrackingGood = true;
-				if( i < tangoOffset ) isARToolkitTrackingGood = true;
-				if( i >= tangoOffset ) isTangoTrackingGood = true;
+				syn_isTrackingGood = true;
+				if( i < tangoOffset ) syn_isARToolkitTrackingGood = true;
+				if( i >= tangoOffset ) syn_isTangoTrackingGood = true;
 
 				addAmount++; //Amount of separate values so far
 
@@ -524,7 +524,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			}
 		}
 
-		if (isTrackingGood)
+		if (syn_isTrackingGood)
 		{
 			transform.position = culminativePosition / ( float )addAmount;
 			transform.rotation = result;
@@ -562,7 +562,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			return;
 
 		//Check if the Object is good for ClickPulling
-		if( !textMesh && isTrackingGood && !gameplayRoom.cnt_roomActive && Util.Cnt_IsObjectInMainCamerasFOV ( this.transform ))
+		if( !textMesh && syn_isTrackingGood && !gameplayRoom.cnt_roomActive && Util.Cnt_IsObjectInMainCamerasFOV ( this.transform ))
 		{
 			Util.JLogErr ("DisplayClickPullHint saw it", false);
 			//Wait a bit if we're being pushy
@@ -591,7 +591,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	{
 		Debug.Log ( "Touch Count: " + Input.touchCount + "   TouchPhase: " + ( Input.touchCount > 0 ? Input.GetTouch ( 0 ).phase.ToString() : "N/A") );
 
-		if ( isTrackingGood && !gameplayRoom.cnt_roomActive && Input.touchCount > 0  &&  Input.GetTouch(0).phase == TouchPhase.Began  &&  Util.Cnt_IsObjectInMainCamerasFOV ( this.transform ) )
+		if ( syn_isTrackingGood && !gameplayRoom.cnt_roomActive && Input.touchCount > 0  &&  Input.GetTouch(0).phase == TouchPhase.Began  &&  Util.Cnt_IsObjectInMainCamerasFOV ( this.transform ) )
 		{
 			Debug.Log (name + " touch");
 
