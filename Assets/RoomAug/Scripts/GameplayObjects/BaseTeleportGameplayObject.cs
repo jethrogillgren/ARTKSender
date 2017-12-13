@@ -21,6 +21,19 @@ public abstract class BaseTeleportGameplayObject : BaseGameplayObject {
 		physicalRoom = GetComponentInParent<PhysicalRoom>();
 	}
 
+	public virtual GameplayRoom GetTargetGameplayRoom(bool altSide = false)
+	{
+		if (altSide)
+		{
+			Debug.LogError ( "Alt Side of Teleport not configured!" );
+			return null;
+		}
+		else
+		{
+			return targetGameplayRoom;
+		}
+	}
+
 	//TODO - if open == false...
 	public virtual void SetTeleportOpen(bool open = true, bool altSide = false) {
 		teleportOpen = open;

@@ -12,6 +12,27 @@ public static class Util
 	public static readonly float ARToolkitViewportRectW = 0.25f* Screen.width;
 	public static readonly float ARToolkitViewportRectH = 0.5f* Screen.height;
 
+	public static bool GetIsAltSide(SKStudios.Portals.Portal portal){
+		if (portal.gameObject.name == "SKPortalA")
+			return false;
+		else if (portal.gameObject.name == "SKPortalB")
+			return true;
+
+		Debug.LogError ("Badly named portal");
+		return false;
+	}
+	public static GameplayRoom GetGameplayRoom(SKStudios.Portals.Portal portal){
+		BaseTeleportGameplayObject teleportGPO = portal.GetComponentInParent<BaseTeleportGameplayObject> ();
+
+		if (portal.gameObject.name == "SKPortalA")
+			return teleportGPO.GetTargetGameplayRoom();
+		else if (portal.gameObject.name == "SKPortalB")
+			return teleportGPO.GetTargetGameplayRoom(true);
+
+		Debug.LogError ("Badly named portal");
+		return null;
+	}
+
 	//Get this main Physical room's Gameplay Room.
 	public static GameplayRoom GetCurrentMainGameplayRoom()
 	{

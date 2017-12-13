@@ -12,15 +12,16 @@ using MalbersAnimations;
 public partial class RoomAugMalbersAnimal : Animal
 {
 	public SlowMotionController slowMoController;
+	public RoomAugMalbersAIAnimalControl ai;
 	
 	protected override void AdditionalSpeed()
 	{
 		base.AdditionalSpeed ();
-		if (slowMoController)
+		if ( slowMoController.SlowMoTimeScale != 1 )
 		{
 			_anim.speed = slowMoController.SlowMoTimeScale;
 //			Debug.Log ( "RoomAug Overrided AnialMovementSpeed to " + slowMoController.SlowMoTimeScale );
-		}
+		} 
 	}
 
 

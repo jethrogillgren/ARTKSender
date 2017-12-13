@@ -241,11 +241,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//Client and Server both call this
 	public GameplayRoom FindGameplayRoom ()
 	{
-		gameplayRoom = GetComponentInParent<GameplayRoom> ();
-		if (!gameplayRoom)
-			Debug.LogError ( name + " : " + cubeContentName + " has escaped outside of any Gameplayroom!  Not supported." );
-
-		return gameplayRoom;
+		return GetComponentInParent<GameplayRoom> ();
 	}
 
 	protected void SetNewParent ( Transform newParent )
@@ -407,7 +403,10 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	public void Svr_TeleportTo ( GameplayRoom dest )
 	{
 		if (isClient)
-			Debug.LogError ( name + ": CLIENT INITIATED TELEPORT" );
+		{
+			Debug.LogError ( name + ": CLIENT INITIATED CUBE TELEPORT" );
+			return;
+		}
 
 		SetNewParent ( dest.transform );
 
@@ -524,8 +523,8 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 		if (syn_isTrackingGood)
 		{
-			transform.position = culminativePosition / ( float )addAmount;
-			transform.rotation = result;
+			transform.localPosition = culminativePosition / ( float )addAmount;
+			transform.localRotation = result;
 			DrawRect ();
 		}
 	}

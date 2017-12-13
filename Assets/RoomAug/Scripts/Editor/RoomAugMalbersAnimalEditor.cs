@@ -16,6 +16,8 @@ public class RoomAugMalbersAnimalEditor : MalbersAnimations.AnimalEditor {
 
 		roomAugAnimal = (RoomAugMalbersAnimal)target;
 		roomAugAnimal.slowMoController = (SlowMotionController) EditorGUILayout.ObjectField("SlowMotionController", roomAugAnimal.slowMoController, typeof(SlowMotionController));
+		roomAugAnimal.ai = (RoomAugMalbersAIAnimalControl) EditorGUILayout.ObjectField("SlowMotionController", roomAugAnimal.ai, typeof(RoomAugMalbersAIAnimalControl));
+
 	}
 
 }

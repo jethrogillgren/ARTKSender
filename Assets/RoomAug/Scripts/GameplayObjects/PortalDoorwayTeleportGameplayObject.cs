@@ -48,6 +48,14 @@ public class PortalDoorwayTeleportGameplayObject : BaseTeleportGameplayObject {
 			SetCullingMask (cam, true);
 	}
 
+	public override GameplayRoom GetTargetGameplayRoom(bool altSide = false)
+	{
+		if (altSide)
+			return targetGameplayRoomB;
+		else
+			return targetGameplayRoom;
+	}
+
 	public override void SetTeleportOpen(bool open = true, bool altSide = false) {
 		if (altSide)
 		{

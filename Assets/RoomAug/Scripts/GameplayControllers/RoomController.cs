@@ -118,11 +118,19 @@ public class RoomController : NetworkBehaviour
 	public void OnSKPortalTeleport(SKStudios.Portals.Portal portal, SKStudios.Portals.Teleportable movingObject)
 	{
 		//CLIENTS have their Own GameplayRoom Positions and own Interactions
-		if (isClient)
+		if (isClient  &&  movingObject == SKStudios.Portals.GlobalPortalSettings.PlayerTeleportable )
 			Cnt_TeleportRoomPosition (portal, movingObject);
 
 		//SERVERS have the GameplayRooms at the set Positions, so do not need to teleport.
 		//TODO - how do they know the players current room?
+
+		//SERVERS need to track a Cube going through the Portal and teleporting
+		if( movingObject != SKStudios.Portals.GlobalPortalSettings.PlayerTeleportable )
+		{
+			PandaCubeGameplayObject isACube = GetComponent<PandaCubeGameplayObject> ();
+			if (!isClient && isACube)
+				isACube.Svr_TeleportTo ( Util.GetGameplayRoom(portal) );
+		}
 
 	}
 
@@ -130,16 +138,11 @@ public class RoomController : NetworkBehaviour
 	{
 		
 		Debug.Log ("name + : " + movingObject.name + " has triggered in" + portal.name );
-
 		BaseTeleportGameplayObject teleportGPO = portal.GetComponentInParent<BaseTeleportGameplayObject> ();
+
 		if( teleportGPO  &&  movingObject == SKStudios.Portals.GlobalPortalSettings.PlayerTeleportable)
 		{
-			if (portal.gameObject.name == "SKPortalA")
-				teleportGPO.Trigger ();
-			else if (portal.gameObject.name == "SKPortalB")
-				teleportGPO.Trigger ( true );
-			else
-				Debug.LogError ("Not teleporting as " + portal.gameObject.name + " is not SKPortalA/B");
+			teleportGPO.Trigger (Util.GetIsAltSide(portal));
 		}
 		else
 		{
