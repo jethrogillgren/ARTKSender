@@ -59,7 +59,7 @@ public class FraggedController:MonoBehaviour{
     /// RESET FRAGMENTED OBJECT
     public void ResetFrags() {
     	if (startMesh != null) this.startMesh.GetComponent<Renderer>().enabled =true;
-    	fragParticles.Clear();
+		fragParticles.Clear ();
     	foreach(Transform child in fragments) {
     		child.GetComponent<FraggedChild>().resetMe();
     	}
@@ -70,12 +70,14 @@ public class FraggedController:MonoBehaviour{
     	reCombine();
     }
     
-    public void Start() {
+    public virtual void Start() {
     	//// SETUP PARTICLES
     	fragParticles = transform.Find("Particles Fragment").GetComponent<ParticleSystem>();
     	fragParticles.Stop();
+
     	dustParticles = transform.Find("Particles Dust").GetComponent<ParticleSystem>();
     	dustParticles.Stop();
+
     	startMesh = transform.Find("Original Mesh");
     	fragments = transform.Find("Fragments");	
     	meshFilters = new MeshFilter[fragments.transform.childCount];

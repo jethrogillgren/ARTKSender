@@ -26,3 +26,5 @@
 /Users/jethro/git/TangoTests/Temp/bin/Debug/Mono.Cecil.Mdb.dll
 /Users/jethro/git/TangoTests/obj/Debug/Assembly-CSharp.dll
 /Users/jethro/git/TangoTests/obj/Debug/Assembly-CSharp.dll.mdb
+/Users/jethro/git/TangoTests/Temp/bin/Debug/Assembly-CSharp.dll.mdb
+/Users/jethro/git/TangoTests/Temp/bin/Debug/Assembly-CSharp.dll

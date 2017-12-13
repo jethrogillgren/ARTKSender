@@ -5,8 +5,8 @@ using UnityEditor;
 	Copyright Unluck Software	
  	www.chemicalbliss.com																															
 *****************************************/
-[CustomEditor(typeof(FraggedController))]
 
+[CustomEditor(typeof(FraggedController), true)]
 [System.Serializable]
 public class FraggedControllerEditor: Editor {
     public override void OnInspectorGUI() {

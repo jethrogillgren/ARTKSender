@@ -13,11 +13,23 @@ public class SlowMotionController : NetworkBehaviour {
 	[Range (0.1f,10)]
 	[SerializeField] float defaultSlowMoSpeed = 2f;
 
+	private float m_slowMoTimeScale = 1.0f;
+	public float SlowMoTimeScale {
+		get{
+			return m_slowMoTimeScale;
+		}
+		set {
+			m_slowMoTimeScale = value;
+			Debug.LogError ("Set SlowMo Timescale: " + value);
+		}
+	}
 
 	[Space]
 	private bool pleaseSlowTime = false ;//Everyone triggers seperately to maintain sync
-	private float slowMoTimeScale;
-	private float slowMoSpeed;
+
+	[HideInInspector]
+	protected float slowMoTargetTimeScale; //How slow we go
+	protected float slowMoSpeed; //How long it takes to get there
 
 
 	//Callees manual slowmo
@@ -38,7 +50,7 @@ public class SlowMotionController : NetworkBehaviour {
 	public bool SlowDownUpDefault()
 	{
 		
-		if( Time.timeScale == 1 )
+		if( SlowMoTimeScale == 1 )
 		{
 			SetDefaultTimes ();
 			pleaseSlowTime = true;
@@ -59,10 +71,10 @@ public class SlowMotionController : NetworkBehaviour {
 	{
 
 		
-		if( Time.timeScale == 1 )
+		if( SlowMoTimeScale == 1 )
 		{
-			slowMoTimeScale = 0.08f;
-			slowMoSpeed = 1.25f;
+//			slowMoTargetTimeScale = 0.08f;
+//			slowMoSpeed = 1.25f;
 			PleaseEnableSlowTime ();
 
 			Invoke ( "PleaseDisableSlowTime", slowMoSpeed );
@@ -86,7 +98,7 @@ public class SlowMotionController : NetworkBehaviour {
 	//TODO - Svr_ ?
 	protected void SetDefaultTimes()
 	{
-		slowMoTimeScale = defaultSlowMoTimeScale;
+		slowMoTargetTimeScale = defaultSlowMoTimeScale;
 		slowMoSpeed = defaultSlowMoSpeed;
 	}
 
@@ -95,18 +107,21 @@ public class SlowMotionController : NetworkBehaviour {
 	protected void Update()
 	{
 		//If we're asked to slow and we are currently not
-		if (pleaseSlowTime && Time.timeScale == 1)
+		if (pleaseSlowTime && SlowMoTimeScale == 1)
 		{
 			Debug.Log ("Slowing Time");
-			StartCoroutine(SlowTime());
-			Time.fixedDeltaTime = 0.02F * Time.timeScale;
+//			StartCoroutine(SlowTime());
+			SlowMoTimeScale = slowMoTargetTimeScale;
+
+//			Time.fixedDeltaTime = 0.02F * slowMoTimeScale;
 
 		}
 		//If we don't want to slow but we are set to slowest
-		else if (!pleaseSlowTime && Time.timeScale == slowMoTimeScale)
+		else if (!pleaseSlowTime && SlowMoTimeScale == slowMoTargetTimeScale)
 		{
-			StartCoroutine(RestartTime());
-			Time.fixedDeltaTime = 0.02F * Time.timeScale;
+//			StartCoroutine(RestartTime());
+//			Time.fixedDeltaTime = 0.02F * slowMoTimeScale;
+			SlowMoTimeScale = 1;
 
 		}
 
@@ -114,25 +129,25 @@ public class SlowMotionController : NetworkBehaviour {
 
 	IEnumerator SlowTime()
 	{
-		while (Time.timeScale > slowMoTimeScale)
+		while (SlowMoTimeScale > slowMoTargetTimeScale)
 		{
-			Time.timeScale -= 1/slowMoSpeed * Time.unscaledDeltaTime;
-			Time.fixedDeltaTime = 0.02F * Time.timeScale;
+			SlowMoTimeScale -= 1/slowMoSpeed * Time.deltaTime;
+//			Time.fixedDeltaTime = 0.02F * slowMoTimeScale;
 			yield return null;
 		}
-		Time.timeScale = slowMoTimeScale;
+		SlowMoTimeScale = slowMoTargetTimeScale;
 	}
 
 	IEnumerator RestartTime()
 	{
-		while (Time.timeScale <1)
+		while (SlowMoTimeScale <1)
 		{
-			Time.timeScale += 1 / slowMoSpeed * Time.unscaledDeltaTime;
+			SlowMoTimeScale += 1 / slowMoSpeed * Time.deltaTime;
 			yield return null;
 		}
 		Debug.Log ("Resored Time");
 
-		Time.timeScale = 1;
+		SlowMoTimeScale = 1;
 	}
 
 }

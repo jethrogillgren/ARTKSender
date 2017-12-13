@@ -15,6 +15,7 @@ public class RoomAugMalbersAIAnimalControl : MalbersAnimations.AnimalAIControl {
 	{
 		base.Update ();
 
+
 		if ( animal.CurrentAnimState.IsTag("Jump") )
 		{
 			gameplayObject.OnDeerJump ();

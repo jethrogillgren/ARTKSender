@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace MalbersAnimations
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(Animal))]
+    [CustomEditor(typeof(Animal), true)]
     public class AnimalEditor : Editor
     {
         protected Animal myAnimal;
@@ -75,7 +75,7 @@ namespace MalbersAnimations
             serializedObject.ApplyModifiedProperties();
         }
 
-        protected void DrawAnimalInspector()
+        protected virtual void DrawAnimalInspector()
         {
             EditorGUILayout.BeginVertical(MalbersEditor.StyleBlue);
             EditorGUILayout.HelpBox("Locomotion System", MessageType.None,true);

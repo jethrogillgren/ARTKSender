@@ -191,7 +191,7 @@ namespace MalbersAnimations
             _transform.position =
                 Vector3.Lerp(_transform.position, _transform.position + _transform.forward * amount * movementAxis.z / 5f, Time.deltaTime);
 
-            _anim.speed = Mathf.Lerp(Anim.speed, CurrentAnimatorSpeed, Time.deltaTime * 8f);
+			_anim.speed = Mathf.Lerp(Anim.speed, CurrentAnimatorSpeed, Time.deltaTime * 8f );
         }
 
         ///─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -540,7 +540,7 @@ namespace MalbersAnimations
                 }
             }
 
-            speed = Mathf.Lerp(speed, movementAxis.z * maxspeed, Time.deltaTime * smooth);  //smoothly transitions bettwen velocities
+			speed = Mathf.Lerp(speed, movementAxis.z * maxspeed, Time.deltaTime * smooth);  //smoothly transitions bettwen velocities
             direction = Mathf.Lerp(direction, movementAxis.x * (shift ? 2 : 1), Time.deltaTime * 8f);    //smoothly transitions bettwen directions
 
             if ((movementAxis.x != 0) || (Mathf.Abs(speed) > 0.2f))   //Check if the Character is Standing
