@@ -83,9 +83,9 @@ public class ServerCamera : MonoBehaviour {
 				{
 					/*/TODO pleaseToggleFocus ();*/
 
-				} else if ( !IsOtherFocused() ) { // 
+				} else { // 
 					pleaseToggleFocus = true; //LateUpdate does the actual change
-				} //Else - someone else is fullscreen - don't act as the click was for them.
+				}
 					
 			}
 
@@ -166,7 +166,7 @@ public class ServerCamera : MonoBehaviour {
 		if( focused ) //We are shrinking back
 		{
 			cam.rect = new Rect( originalRect );
-			cam.tag = "Untagged";
+//			cam.tag = "Untagged"; //Untagged by the Camera which takes the tag over
 			DecreaseDepth ();
 		}
 		else //We are Focusing in
@@ -201,16 +201,13 @@ public class ServerCamera : MonoBehaviour {
 		GetComponentInChildren<Camera>().depth -= 5;
 	}
 
-	private bool IsOtherFocused()
+	protected void UntagOtherCameraMains()
 	{
-		ServerCamera[] cams = transform.parent.GetComponentsInChildren<ServerCamera> ();
-		foreach(ServerCamera c in cams)
+		foreach( GameObject otherCam in GameObject.FindGameObjectsWithTag("MainCamera") )
 		{
-			//If focused, or about to focus in LateUpdate
-			if ( (c.focused || c.pleaseToggleFocus)  && c.name != this.name)
-				return true;
+			if(otherCam != this.cam)
+				cam.tag = "Untagged";
 		}
-
-		return false;
 	}
+
 }
