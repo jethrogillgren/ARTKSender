@@ -47,6 +47,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	protected float[] xOffsets = new float[]{ 0f, +0.5f * distanceAside, -0.5f * distanceAside, distanceAside, -distanceAside, +0.5f * distanceAside, -0.5f * distanceAside, 0f };
 	protected float[] zOffsets = new float[]{ +distanceAside, +0.5f * distanceAside, +0.5f * distanceAside, 0f, 0f, -0.5f * distanceAside, -0.5f * distanceAside, -distanceAside };
 
+	public GhostPandaCubeGameplayObject[] ghosts;
 
 
 	[Space]
@@ -67,6 +68,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	[HideInInspector]
 	public bool cnt_isInSameRoom = false;
 
+	protected bool cnt_IsClickPullHinting = false;
 	public int cnt_timeToDelay = 2; //Time to wait before showing the hint so players don't feel hassled
 	protected int cnt_delaySoFar = 0; //Time waited soo far
 
@@ -121,6 +123,9 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		if (!lineRenderer)
 			Debug.LogError (name + " did not find it's Line Renderer");
 
+		foreach ( GhostPandaCubeGameplayObject ghost in ghosts )
+			ghost.realLivingCube = this;
+
 		FindGameplayRoom ();
 		BuildTextPopupOffset ();
 	}
@@ -159,14 +164,14 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		InvokeRepeating ( "Cnt_CheckIfINeedToDisplayClickPullHint", 1, 1 );
 	}
 
-	public void Update() {
+	public virtual void Update() {
 		if (isClient)
 			Cnt_CheckInputTouch ();
 
 		RerotatePopupText ();
 
 	}
-	public void LateUpdate()  //svr only
+	public virtual void LateUpdate()  //svr only
 	{
 		if (!isClient)
 			Svr_ApplyTransformations ();
@@ -179,11 +184,12 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 	//Cubes are special, they are always active across rooms/clients.
 	//This overrides the usual UpdateVisibility()
+	//This cube lives only in the Physical Room
 	public override void UpdateVisibility ()
 	{
 		base.UpdateVisibility ();
 
-		//Clients see either wireframe or full versions depending on their gameplayRoom
+		//Cients see either wireframe or full versions depending on wether the player is in the cubes room.
 		if (isClient)
 		{
 			if (gameplayRoom.cnt_roomActive)
@@ -191,26 +197,33 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			else
 				DrawAsWireframe ();
 		}
+		//Servers don't live in any room, so we draw it full if it is in its own room.
+		//Server cameras follow the rooms position, so follow any cube in it's room too.
+		else
+		{
+			//This cube is already in it's appropiate room, so we just draw it full.
+			DrawFull ();
+			//Other Server views onto rooms see the GHosts.
+		}
 
-		//Servers rely on the layer being updated (automatic) so their CullingMask shows the cube in only the right room.
 	}
 
 
 	//Use to draw the cube properly, locally
-	public void DrawFull ()
+	public virtual void DrawFull ( bool includeClones = true )
 	{
 //		Debug.Log ( name + " Rendering Full " + cubeType );
 		SetMaterialAndColor ( defaultMaterial, Util.GetColor ( syn_cubeType ) );
 	}
 
 	//Use to draw the cube when it is not in the same gameplay room as you, locally
-	public void DrawAsWireframe ()
+	public  virtual void DrawAsWireframe ()
 	{
 //		Debug.Log ( name + " Rendering Wireframe " + cubeType );
 		SetMaterialAndColor ( wireframeMaterial, Util.GetColor ( syn_cubeType ) );
 	}
 
-	protected void SetMaterialAndColor ( Material m, Color c )
+	protected  virtual void SetMaterialAndColor ( Material m, Color c )
 	{
 		foreach ( MeshRenderer mr in gameObject.GetComponentsInChildren<MeshRenderer>() )
 		{
@@ -221,7 +234,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 	//Draw a Blue rect for Tango, and a green Rect for both.
 	//Rect is at Tangos last seen point
-	protected void DrawRect() {
+	protected virtual  void DrawRect() {
 
 		if (syn_isTangoTrackingGood)
 			lineRenderer.startColor = lineRenderer.endColor = Color.blue;
@@ -239,12 +252,12 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 	//Register any new Gameplayroom we are in, and return it.
 	//Client and Server both call this
-	public GameplayRoom FindGameplayRoom ()
+	public virtual  GameplayRoom FindGameplayRoom ()
 	{
 		return GetComponentInParent<GameplayRoom> ();
 	}
 
-	protected void SetNewParent ( Transform newParent )
+	protected virtual  void SetNewParent ( Transform newParent )
 	{
 		transform.SetParent ( newParent, true );
 		FindGameplayRoom ();
@@ -253,7 +266,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	}
 		
 	public GameObject DEBUGgizmoPrfab;
-	protected void BuildTextPopupOffset()
+	protected virtual  void BuildTextPopupOffset()
 	{
 		textPopupOffsets = new LinkedList<Vector3> ();
 
@@ -270,7 +283,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 	}
 
-	protected Vector3 ChooseTextPopupOffset( bool force = false )
+	protected virtual  Vector3 ChooseTextPopupOffset( bool force = false )
 	{
 		if (textPopupOffsets == null)
 			BuildTextPopupOffset ();
@@ -313,7 +326,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		return Vector3.zero;
 	}
 
-	public void DisplayTextAtPopupPosition( Vector3 positionOffset, string text )
+	public  virtual void DisplayTextAtPopupPosition( Vector3 positionOffset, string text )
 	{
 		if(positionOffset.magnitude==0 || text.Length==0)
 		{
@@ -333,7 +346,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	}
 
 	//If appropiate, move an existing TextMesh to a better Posiiton, and Rotate too
-	public void RepositionPopupText()
+	public  virtual void RepositionPopupText()
 	{
 		if (textMesh)
 		{
@@ -346,7 +359,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			
 	}
 
-	public void RerotatePopupText()
+	public  virtual void RerotatePopupText()
 	{
 
 		//		textMesh.transform.localPosition = currentPopupTextPositionOffset;
@@ -356,13 +369,13 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		}
 	}
 
-	public void ClearPopupPositionText()
+	public  virtual void ClearPopupPositionText()
 	{
 		if (textMesh)
 			Destroy ( textMesh );
 		currentPositionOffset = Vector3.zero;
 	}
-	public void TrackThenDestroyTextMesh()
+	public  virtual void TrackThenDestroyTextMesh()
 	{
 		StopCoroutine("TrackThenDestroyTextMesh");
 		StartCoroutine(TrackThenDestroyTextMesh(3f, 9)); // Or whatever delay we want.
@@ -395,12 +408,12 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//// Server Only Functions
 
 	[Command]
-	public void CmdTest() {
+	public  virtual void CmdTest() {
 		Debug.LogError ("Documentation Lied!");
 	}
 
 	//Initiate a teleport on all Clients.
-	public void Svr_TeleportTo ( GameplayRoom dest )
+	public  virtual void Svr_TeleportTo ( GameplayRoom dest )
 	{
 		if (isClient)
 		{
@@ -416,7 +429,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 	//Server only
 	//TODO tango index
-	public void Svr_SetMarker ( TangoSupport.Marker marker )
+	public  virtual void Svr_SetMarker ( TangoSupport.Marker marker )
 	{
 		if (isClient)
 		{
@@ -445,7 +458,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//TODO camera index
 	//TODO OnMarkerFound OnMarkerLost
 	//roomCanNum is 1 based
-	public void Svr_SetMarker ( ARMarker marker, int roomCameraNumber )
+	public virtual  void Svr_SetMarker ( ARMarker marker, int roomCameraNumber )
 	{
 		if (isClient)
 		{
@@ -467,7 +480,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	}
 
 	//Server
-	public void Svr_RecieveIMU ( Vector3 imuReadings )
+	public virtual  void Svr_RecieveIMU ( Vector3 imuReadings )
 	{
 		if (isClient)
 		{
@@ -481,7 +494,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//Apply transformation after regular update so we have all readings in
 	//TODO sensible bounds checking
 	//Handled on Server, and clients get NetworkTransform'd the position
-	protected void Svr_ApplyTransformations() 
+	protected virtual  void Svr_ApplyTransformations() 
 	{
 		syn_isTrackingGood = false;
 		syn_isTangoTrackingGood = false;
@@ -539,7 +552,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//// Client Only Functions
 
 	[ClientRpc]
-	public void RpcTeleportTo ( string name )
+	public  virtual void RpcTeleportTo ( string name )
 	{
 		GameObject dest = GameObject.Find ( name );//TODO - inefficient
 		SetNewParent ( dest.transform );
@@ -550,10 +563,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	* There is an ordered list of preffered positions.  The first which is not blocked is chosen.
 	* The text looks like a 2D space text, ie always facing the player and flat.
 	*/
-	protected bool cnt_IsClickPullHinting = false;
-
-
-	public void Cnt_CheckIfINeedToDisplayClickPullHint()
+	public virtual  void Cnt_CheckIfINeedToDisplayClickPullHint()
 	{
 		if (!isClient)
 			return;
@@ -584,7 +594,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		}
 	}
 
-	protected void Cnt_CheckInputTouch() 
+	protected virtual  void Cnt_CheckInputTouch() 
 	{
 		Debug.Log ( "Touch Count: " + Input.touchCount + "   TouchPhase: " + ( Input.touchCount > 0 ? Input.GetTouch ( 0 ).phase.ToString() : "N/A") );
 
