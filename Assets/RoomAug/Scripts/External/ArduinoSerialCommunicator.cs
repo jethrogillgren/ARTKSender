@@ -17,13 +17,16 @@ public class ArduinoSerialCommunicator : MonoBehaviour {
 	[Tooltip("The baudrate of the serial port")]
 	public int baudrate = 9600;
 
-	[Space]
-
-	public Transform target;
+	private int version = 2; //0 == Original Firmware with my changes.  1 == The Modified firmware
 
 	[Space]
 
-	public bool poll = true;
+	public PandaCubeGameplayObject target;
+
+	[Space]
+
+	public bool poll = true; //Automatically poll in our own update.  If false, someone else is probably requesting the polls
+	public bool resetPos = true; //flips back to false after acting
 	[Space]
 	public bool toggleAccelerometer = false;// – Turn accelerometer readings on or off;
 	public bool toggleGyro = false;// – Turn gyroscope readings on or off
@@ -73,6 +76,11 @@ public class ArduinoSerialCommunicator : MonoBehaviour {
 		}
 	}
 
+	public void ResetPosition()
+	{
+		
+	}
+
 //	bool on = true;
 //	int cnt = 0;
 	void Update()
@@ -80,24 +88,56 @@ public class ArduinoSerialCommunicator : MonoBehaviour {
 		if (!stream.IsOpen)
 			return;
 
-		writeClear(ref toggleAccelerometer, "a");
-		writeClear(ref toggleGyro, "g");
-		writeClear(ref toggleMagnetometer, "m");
-		writeClear(ref toggleQuaternions, "q");
+		writeClear ( ref toggleAccelerometer, "a" );
+		writeClear ( ref toggleGyro, "g" );
+		writeClear ( ref toggleMagnetometer, "m" );
+		writeClear ( ref toggleQuaternions, "q" );
+
+		writeClear ( ref resetPos, "R" );
 
 		if (!poll)
 			return;
-		
-//		StartCoroutine (
-//			AsynchronousReadFromArduino (
-//				(string s ) => Debug.Log ( s ),     // Callback
-//				() => OnIMUError(), // Error callback
-//				10f                             // Timeout (seconds)
-//			)
-//		);
 
-		WriteToArduino ("#f");
-		OnIMU( ReadFromArduino ( 10 ) );
+		PollForIMU ();
+
+	}
+
+	public void PollForIMU(){
+
+
+		if (version == 1)
+		{
+			WriteToArduino ( "#f" );
+			OnIMU ( ReadFromArduino ( 10 ) );
+		}
+		else if(version == 0 )
+		{
+
+			WriteToArduino ( "f" );
+			OnIMU ( ReadFromArduino ( 10 ) );
+
+//			StartCoroutine (
+//				AsynchronousReadFromArduino (
+//					(string s ) => OnIMU ( s ),     // Callback
+//					() => OnIMUError(), // Error callback
+//					10f                             // Timeout (seconds)
+//				)
+//			);
+		}
+		else if(version == 2  && target.syn_isIMUTrackingActive )
+		{
+
+			WriteToArduino ( "f" );
+			OnIMU ( ReadFromArduino ( 10 ) );
+
+			//			StartCoroutine (
+			//				AsynchronousReadFromArduino (
+			//					(string s ) => OnIMU ( s ),     // Callback
+			//					() => OnIMUError(), // Error callback
+			//					10f                             // Timeout (seconds)
+			//				)
+			//			);
+		}
 
 
 //		cnt++;
@@ -124,24 +164,45 @@ public class ArduinoSerialCommunicator : MonoBehaviour {
 //		}
 	}
 
-	//Assumes Quaternion   1466662, 0.7000, -0.0505, 0.0592, 0.7099
-	//Or v2 Euler   	#YPRAG=38.71,-25.54,10.99,109.13,44.75,228.13,-0.00,0.01,0.01
 	private readonly string[] stringSeparators = new string[] {",", "="};
 	public void OnIMU(string s)
 	{
-		Debug.Log ( s );
+//		Debug.Log ( s );
 
-		//First Verison Quaternions
-//		string[] parsed = s.Split ( stringSeparators, StringSplitOptions.None);
-//		Debug.LogWarning ( float.Parse(parsed[1]) + "." +float.Parse(parsed[2]) + "." +float.Parse(parsed[3]) + "." +float.Parse(parsed[4]));
-//		if (target)
-//			target.rotation = Quaternion.Inverse(new Quaternion (float.Parse(parsed[1]),float.Parse(parsed[2]),float.Parse(parsed[3]),float.Parse(parsed[4]) ));
+		if (s == null || target == null)
+			return;
 
-		//Second Version EUler
-		string[] parsed = s.Split ( stringSeparators, StringSplitOptions.None);
-		Debug.LogWarning ( float.Parse(parsed[1]) + "." +float.Parse(parsed[2]) + "." +float.Parse(parsed[3]) + "." +float.Parse(parsed[4]));
-		if (target)
-			target.localEulerAngles = new Vector3 ( float.Parse ( parsed [ 3 ] ), float.Parse ( parsed [ 2 ] ), float.Parse ( parsed [ 1 ] ) );
+		//Euler or something
+		//YPRAG=38.71,-25.54,10.99,109.13,44.75,228.13,-0.00,0.01,0.01
+		if(version == 0)
+		{
+			string[] parsed = s.Split ( stringSeparators, StringSplitOptions.None);
+			Debug.LogWarning ( float.Parse(parsed[1]) + "." +float.Parse(parsed[2]) + "." +float.Parse(parsed[3]) + "." +float.Parse(parsed[4]));
+			target.Svr_SetIMU( Vector3.zero, Quaternion.Inverse(new Quaternion (float.Parse(parsed[1]),float.Parse(parsed[2]),float.Parse(parsed[3]),float.Parse(parsed[4]) )) );
+		}
+
+		//Quaternions
+		//Assumes Quaternion   1466662, 0.7000, -0.0505, 0.0592, 0.7099
+		if (version == 1)
+		{
+			string [] parsed = s.Split ( stringSeparators, StringSplitOptions.None );
+			Debug.LogWarning ( float.Parse ( parsed [ 1 ] ) + "." + float.Parse ( parsed [ 2 ] ) + "." + float.Parse ( parsed [ 3 ] ) + "." + float.Parse ( parsed [ 4 ] ) );
+			target.Svr_SetIMU( Vector3.zero,  new Vector3 ( float.Parse ( parsed [ 3 ] ), float.Parse ( parsed [ 2 ] ), float.Parse ( parsed [ 1 ] ) ) );
+		}
+
+		//Time, Pos, Quaternion
+		//675643, -26252.05, -24.13, 24543.12, 0.9079, 0.0519, 0.3990, -0.1175
+		if (version == 2)
+		{
+//			Debug.LogWarning ( float.Parse ( parsed [ 1 ] ) + "." + float.Parse ( parsed [ 2 ] ) + "." + float.Parse ( parsed [ 3 ] ) + "." + float.Parse ( parsed [ 4 ] ) );
+
+			if ( target.syn_isIMUTrackingActive )
+			{
+				string [] parsed = s.Split ( stringSeparators, StringSplitOptions.None );
+				target.Svr_SetIMU ( new Vector3 ( float.Parse ( parsed [ 1 ] ) , float.Parse ( parsed [ 2 ] ) , float.Parse ( parsed [ 3 ] ) ),
+					Quaternion.Inverse ( new Quaternion ( float.Parse ( parsed [ 4 ] ), float.Parse ( parsed [ 5 ] ), float.Parse ( parsed [ 6 ] ), float.Parse ( parsed [ 7 ] ) ) ) );
+			}
+		}
 	}
 
 	public void OnIMUError()

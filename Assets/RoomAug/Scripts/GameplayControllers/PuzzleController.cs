@@ -267,7 +267,14 @@ public class PuzzleController : NetworkBehaviour
 		
 		Debug.Log ("Doing Clicker - Down");
 
-		GetComponent<SlowMotionController>().SlowDownUpDefault();
+//		GetComponent<SlowMotionController>().SlowDownUpDefault();
+		GetComponentInChildren<ArduinoSerialCommunicator> ().resetPos = true;
+
+		PandaCubeGameplayObject pc = GameObject.Find ( "PandaCube 1" ).GetComponent<PandaCubeGameplayObject> ();
+		Tango.TangoSupport.Marker mkr = new Tango.TangoSupport.Marker ();
+		mkr.m_translation = Vector3.zero;
+		mkr.m_orientation = new Quaternion (0,0,0,0);
+		pc.Svr_SetMarker (mkr);
 	}
 	private void EnableClickers(){ DisableClickers ( false );}
 	private void DisableClickers( bool disable = true ) //Call with true to disable clickers.  False to reenable

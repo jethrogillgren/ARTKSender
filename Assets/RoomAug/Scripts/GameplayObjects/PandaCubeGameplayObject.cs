@@ -15,12 +15,6 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	public Material defaultMaterial;
 	public Material wireframeMaterial;
 
-	//Number of real world sensors
-	protected const int sensors = 7;
-	protected const int tangoOffset = 2;
-	//Number of seconds to consider a sensor reading valid
-	public const float dropoffDelay = 1.0f; 
-
 	protected Vector3 corner3DP0;
 	protected Vector3 corner3DP1;
 	protected Vector3 corner3DP2;
@@ -79,13 +73,16 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	/// These are Server controlled only, and sync to all clients
 	[SyncVar]
 	[HideInInspector]
-	public bool syn_isTrackingGood = true;
+	public bool syn_isOpticalTrackingGood = true;
 	[SyncVar]
 	[HideInInspector]
 	public bool syn_isTangoTrackingGood = false;
 	[SyncVar]
 	[HideInInspector]
 	public bool syn_isARToolkitTrackingGood = false;
+	[SyncVar]
+	[HideInInspector]
+	public bool syn_isIMUTrackingActive = false;
 
 	[SyncVar]
 	public Util.ElementalType syn_cubeType;
@@ -93,13 +90,25 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 
 	////Server only Stuff
+	ArduinoSerialCommunicator arduinoComm;
 
 	//Store all the sensor readings
+	protected const int sensors = 7;//Number of real world sensors
+	protected const int svr_tangoOffset = 2; //First slots are Room ARToolkit cams.  Second are tangos.
+	protected const int svr_imuOffset = 6; //One final slot is this cubes IMU reading.
+
+	public const float svr_opticalDropoffDelay = 0.1f; //Number of seconds to consider a optical sensor reading valid
+	public const float svr_imuCutOffDelay = 300.0f; //seconds we trust the IMU beore drift means we need to disregard it and lose all tracking (only in effect when optical is also lost).
+
+	protected float svr_timeRelyingOnIMU = 0f; //tracks the time we are on IMU tracking only for the above
 	Vector3[] svr_transformPositions = new Vector3[] {new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3()};
 	Quaternion[] svr_transformRotations = new Quaternion[] {new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion()};
 
 	float[] svr_transformTimestamps = new float[sensors]; //The last times we heard from that sensor
 
+	//This is the result of the Optical averaging.
+	Vector3 svr_lastKnownCulminativePosition = Vector3.zero;
+	Quaternion svr_lastKnownCulminativeQuaternion = new Quaternion();
 
 
 
@@ -123,6 +132,9 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		if (!lineRenderer)
 			Debug.LogError (name + " did not find it's Line Renderer");
 
+		svr_lastKnownCulminativePosition = transform.localPosition;
+		svr_lastKnownCulminativeQuaternion = transform.localRotation;
+
 		foreach ( GhostPandaCubeGameplayObject ghost in ghosts )
 			ghost.realLivingCube = this;
 
@@ -134,10 +146,15 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	public override void OnStartServer ()
 	{
 		DrawFull ();
+		arduinoComm = GameObject.Find("PandaCubeController").GetComponent<ArduinoSerialCommunicator> ();
+		if (!arduinoComm)
+			Debug.LogError ("Panda Cube on Server could not find an ArduinoSerialCommunicator");
 		Invoke ( "D", 1 );
 	}
 
-	private void D(){Svr_ShowDebugLabel = true;} //Getting around OnStartServer being called before Object has Started
+	private void D(){//Getting around OnStartServer being called before Object has Started
+		Svr_ShowDebugLabel = true;
+	} 
 
 	private bool svr_ShowingDebugLabels = false;
 	public bool Svr_ShowDebugLabel
@@ -427,6 +444,54 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		RpcTeleportTo ( dest.name );
 	}
 
+
+	//These functions recieve an IMU update for this cube.
+	//The update is always calculated, but only applied directly
+	//if the Optical Trackings are all out of date.
+	//The IMU position & rotation gets reset when an optical position comes in.
+	public  virtual void Svr_SetIMU ( Vector3 position, Vector3 rotation )
+	{
+		//TODO - This is for ArduinoSerial Version1
+	}
+	public  virtual void Svr_SetIMU ( Vector3 position, Quaternion rotation )
+	{
+		//This is for ArduinoSerial Version0 or 2
+		if (isClient)
+		{
+			Debug.LogError ( "Client recieved an IMU update" );
+			return;
+		}
+
+//		if(position != Vector3.zero){
+//			svr_transformPositions [ svr_imuOffset ] = position;
+//			svr_transformTimestamps [ svr_imuOffset ] = Time.time;
+//		}
+//
+////		if(rotation) //TODO bad check
+////		{
+//		svr_transformRotations [ svr_imuOffset ] = rotation;
+//		svr_transformTimestamps [ svr_imuOffset ] = Time.time;
+////		}
+
+
+		if ( !syn_isOpticalTrackingGood //extra check
+			&& ( svr_timeRelyingOnIMU < svr_imuCutOffDelay ) ) //IMU hasn't gone on too long already
+		{
+			svr_timeRelyingOnIMU += Time.deltaTime;
+
+//			transform.localPosition = svr_lastKnownCulminativePosition + position;
+			transform.localRotation = rotation;
+//			Debug.LogWarning (transform.localPosition);
+			DrawRect ();
+		}
+		else //We regained Optical, or lingered on IMU too long
+		{
+			syn_isIMUTrackingActive = false;
+		}
+
+
+	}
+
 	//Server only
 	//TODO tango index
 	public  virtual void Svr_SetMarker ( TangoSupport.Marker marker )
@@ -439,16 +504,17 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 		// Apply the pose of the marker to the prefab.
 		// This also applies implicitly to the axis and cube objects.
-		svr_transformPositions [ tangoOffset ] = marker.m_translation;
-		svr_transformRotations [ tangoOffset ] = marker.m_orientation;
+		svr_transformPositions [ svr_tangoOffset ] = marker.m_translation;
+		svr_transformRotations [ svr_tangoOffset ] = marker.m_orientation;
 
-		svr_transformTimestamps [ tangoOffset ] = Time.time;
+		svr_transformTimestamps [ svr_tangoOffset ] = Time.time;
 
 
-		corner3DP0 =  marker.m_corner3DP0 ;
-		corner3DP1 =  marker.m_corner3DP1 ;
-		corner3DP2 =  marker.m_corner3DP2 ;
-		corner3DP3 =  marker.m_corner3DP3 ;
+		//TODO reenable
+//		corner3DP0 =  marker.m_corner3DP0 ;
+//		corner3DP1 =  marker.m_corner3DP1 ;
+//		corner3DP2 =  marker.m_corner3DP2 ;
+//		corner3DP3 =  marker.m_corner3DP3 ;
 
 		//		Debug.LogError ( "Tango Says " + transformPositions [ tangoOffset ] );
 	}
@@ -496,7 +562,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//Handled on Server, and clients get NetworkTransform'd the position
 	protected virtual  void Svr_ApplyTransformations() 
 	{
-		syn_isTrackingGood = false;
+		syn_isOpticalTrackingGood = false;
 		syn_isTangoTrackingGood = false;
 		syn_isARToolkitTrackingGood = false;
 
@@ -504,42 +570,87 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		//need to be averaged.
 		int addAmount = 0;
 
-		//Global variables which represents the additive values
-		Vector3 culminativePosition = Vector3.zero;
-		Vector4 culminativeQuaternion = Vector4.zero;
-		Quaternion result = new Quaternion();
+		//Used to build up the average result
+		Vector3 lastKnownCulminativePosition = Vector3.zero;
+		Quaternion lastKnownCulminativeQuaternion = new Quaternion();
+		Vector4 tempQuaternion = Vector4.zero;
 
-		//For each sensor reading
-		for ( int i = 0; i < sensors; i++ )
+
+		float t = Time.time;
+
+		//For each sensor reading.  Note - IMUs are special and handled seperately
+		for ( int i = 0; i < svr_imuOffset; i++ )
 		{
-			float t = Time.time;
 			//If we had a reading within the dropoff delay time
-			if (svr_transformTimestamps [ i ] > 0 && ( svr_transformTimestamps [ i ] > ( t - dropoffDelay ) ))
+			if (svr_transformTimestamps [ i ] > 0 && ( svr_transformTimestamps [ i ] > ( t - svr_opticalDropoffDelay ) ))
 			{
 				//				Debug.LogError ("Set  : " + transformTimestamps[i] + " " + transformPositions[i] );
 
-				syn_isTrackingGood = true;
-				if( i < tangoOffset ) syn_isARToolkitTrackingGood = true;
-				if( i >= tangoOffset ) syn_isTangoTrackingGood = true;
+				syn_isOpticalTrackingGood = true;
+				if( i < svr_tangoOffset ) syn_isARToolkitTrackingGood = true;
+				if( i >= svr_tangoOffset ) syn_isTangoTrackingGood = true;
+
+				syn_isIMUTrackingActive = false;
+				svr_timeRelyingOnIMU = 0f;
 
 				addAmount++; //Amount of separate values so far
 
 				//Rotation
-				result = Util.AverageQuaternion (ref culminativeQuaternion, svr_transformRotations [ i ], transform.rotation, addAmount);
+				lastKnownCulminativeQuaternion = Util.AverageQuaternion (ref tempQuaternion, svr_transformRotations [ i ], transform.rotation, addAmount);
 				//				transform.eulerAngles = ( transformRotations [ i ] );
 
 				//Position
-				culminativePosition += svr_transformPositions[i]; //We could divide by addAmount at this stage to get a valid reading without going through the whole array
+				lastKnownCulminativePosition += svr_transformPositions[i]; //We could divide by addAmount at this stage to get a valid reading without going through the whole array
 
 			}
 		}
 
-		if (syn_isTrackingGood)
+		svr_lastKnownCulminativePosition = svr_lastKnownCulminativePosition / ( float )addAmount;
+		svr_lastKnownCulminativeQuaternion = lastKnownCulminativeQuaternion;
+
+
+		// If we have Optical, we can apply the average
+		if (syn_isOpticalTrackingGood)
 		{
-			transform.localPosition = culminativePosition / ( float )addAmount;
-			transform.localRotation = result;
+			transform.localPosition = svr_lastKnownCulminativePosition;
+			transform.localRotation = svr_lastKnownCulminativeQuaternion;
 			DrawRect ();
 		}
+
+		//If we don't have good optical, go to the IMU
+		else if( !syn_isOpticalTrackingGood )
+		{
+			if (!syn_isIMUTrackingActive && arduinoComm) //On first frame activating IMU
+				arduinoComm.resetPos = true; // actually happens on next Communcator Update
+			
+			syn_isIMUTrackingActive = true; //Once set, the Communcator will start delivering updates
+		}
+
+
+//
+//		//Now we switch to IMU if needed.
+//		if(!syn_isOpticalTrackingGood //IMU tracking is needed
+//			&& svr_timeRelyingOnIMU == 0f //And we are just turning it on
+//			&& arduinoComm)
+//		{
+//			arduinoComm.resetPos = true;
+//		}
+//
+//		if ( !syn_isOpticalTrackingGood //IMU tracking is needed
+//			&& ( svr_timeRelyingOnIMU < svr_imuCutOffDelay ) ) //IMU hasn't gone on too long already
+//		{
+//			svr_timeRelyingOnIMU += Time.deltaTime;
+//
+//			//TODO - is this check (IMU data age) redundant - ie can we assume IMU data will stream OK?
+//			if(	svr_transformTimestamps[svr_imuOffset] > 0 && svr_transformTimestamps[svr_imuOffset] > (t - svr_imuCutOffDelay) )
+//			{
+//				transform.localPosition = svr_transformPositions[svr_imuOffset];
+//				transform.localRotation = svr_transformRotations[svr_imuOffset];
+//				Debug.LogWarning (transform.localPosition);
+//				DrawRect ();
+//			}
+//		}
+
 	}
 
 
@@ -569,7 +680,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			return;
 
 		//Check if the Object is good for ClickPulling
-		if( !textMesh && syn_isTrackingGood && !gameplayRoom.cnt_roomActive && Util.Cnt_IsObjectInMainCamerasFOV ( this.transform ))
+		if( !textMesh && syn_isOpticalTrackingGood && !gameplayRoom.cnt_roomActive && Util.Cnt_IsObjectInMainCamerasFOV ( this.transform ))
 		{
 			Util.JLogErr ("DisplayClickPullHint saw it", false);
 			//Wait a bit if we're being pushy
@@ -598,7 +709,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	{
 		Debug.Log ( "Touch Count: " + Input.touchCount + "   TouchPhase: " + ( Input.touchCount > 0 ? Input.GetTouch ( 0 ).phase.ToString() : "N/A") );
 
-		if ( syn_isTrackingGood && !gameplayRoom.cnt_roomActive && Input.touchCount > 0  &&  Input.GetTouch(0).phase == TouchPhase.Began  &&  Util.Cnt_IsObjectInMainCamerasFOV ( this.transform ) )
+		if ( syn_isOpticalTrackingGood && !gameplayRoom.cnt_roomActive && Input.touchCount > 0  &&  Input.GetTouch(0).phase == TouchPhase.Began  &&  Util.Cnt_IsObjectInMainCamerasFOV ( this.transform ) )
 		{
 			Debug.Log (name + " touch");
 
