@@ -3,6 +3,7 @@
 *sln
 *userprefs
 *.apk
+*.app
 Library
 Temp
 */Library/*
