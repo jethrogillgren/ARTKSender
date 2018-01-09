@@ -250,8 +250,11 @@ public class RoomController : NetworkBehaviour
 
 			gr.UpdateAll();
 
+			#if UNITY_ANDROID && !UNITY_EDITOR
 			if(isClient)
 				Handheld.Vibrate();
+			#endif
+
 			return true;
 
 		}
