@@ -101,6 +101,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	public const float svr_imuCutOffDelay = 300.0f; //seconds we trust the IMU beore drift means we need to disregard it and lose all tracking (only in effect when optical is also lost).
 
 	protected float svr_timeRelyingOnIMU = 0f; //tracks the time we are on IMU tracking only for the above
+	//TODO move to a ConcurrentDictionary TODO
 	Vector3[] svr_transformPositions = new Vector3[] {new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3()};
 	Quaternion[] svr_transformRotations = new Quaternion[] {new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion()};
 
@@ -526,13 +527,17 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//roomCanNum is 1 based
 	public virtual  void Svr_SetMarker ( ARMarker marker, int roomCameraNumber )
 	{
+		Svr_SetMarker ( marker.TransformationMatrix, roomCameraNumber );
+	}
+	public virtual  void Svr_SetMarker ( Matrix4x4 transformationMatrix, int roomCameraNumber )
+	{
 		if (isClient)
 		{
 			Debug.LogError ( "Client recieved an ARToolkit Marker update" );
 			return;
 		}
 
-		Matrix4x4 pose = roomController.camera1ZeroPosition.transform.localToWorldMatrix * marker.TransformationMatrix;
+		Matrix4x4 pose = roomController.camera1ZeroPosition.transform.localToWorldMatrix * transformationMatrix;
 
 		svr_transformPositions [ roomCameraNumber-1 ] = ARUtilityFunctions.PositionFromMatrix ( pose );
 		svr_transformRotations [ roomCameraNumber-1 ] = ARUtilityFunctions.QuaternionFromMatrix ( pose );

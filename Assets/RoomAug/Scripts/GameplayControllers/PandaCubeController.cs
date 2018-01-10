@@ -1,8 +1,14 @@
 ﻿using System;
+using System.Threading;
 using System.Collections.Generic;
 using UnityEngine;
 using Tango;
 using UnityEngine.Networking;
+using System.Text;
+using System.Linq;
+using System.Net.Sockets;
+using System.Net;
+
 
 //Cubes send IMU data direct to server
 //Client alerts server with Marker visual positions
@@ -21,6 +27,7 @@ public class PandaCubeController : NetworkBehaviour {
     //private Dictionary<String, PandaCubeGameplayObject> m_PandaCubes;
 
 	public RoomController roomController;
+	public RoomAugNetworkController networkController;
 
     //public HashSet<PandaCubeGameplayObject> m_PandaCubes;
     public PandaCubeGameplayObject cube1;
@@ -36,9 +43,83 @@ public class PandaCubeController : NetworkBehaviour {
 
 		roomController = GetComponentInParent<RoomController> ();
 
+		networkController = GameObject.FindObjectOfType<RoomAugNetworkController> ();
+
         if ( !cube1 || !cube2 || !cube3 || !cube4 )
             Debug.LogError( name + ": DID NOT FIND ALL CUBE GAMEOBJECTS" );
 
+	}
+
+	public void Svr_StartARToolkitAgentRecieve()
+	{
+		new Thread( () => Svr_ARToolkitAgentThread(0) ).Start();
+		new Thread( () => Svr_ARToolkitAgentThread(1) ).Start();
+		new Thread( () => Svr_ARToolkitAgentThread(2) ).Start();
+		new Thread( () => Svr_ARToolkitAgentThread(3) ).Start();
+	}
+
+	public void Svr_ARToolkitAgentThread(int camID)
+	{
+		Thread.CurrentThread.IsBackground = true;//These threads will not prevent application termination
+
+		UdpClient udpClient = networkController.clients [ camID ];
+
+		/* run your code here */ 
+		while (true)
+		{
+			try {
+
+				Debug.LogError ( "Thread running for " + camID );
+
+				IPEndPoint ep = new IPEndPoint(IPAddress.Any,0);
+				Debug.LogError ("Listening to " + IPAddress.Any.ToString() + " : " +  (networkController.portARToolkitAgentBase + camID));
+
+				byte [] byteArray = udpClient.Receive ( ref ep );
+
+				string returnData = Encoding.ASCII.GetString(byteArray);
+				Debug.LogError ("Whole data (byteArray.Length: " + byteArray.Length + ") and as ASCII: " + returnData);
+				//Length 71
+
+				//Recreate the TransformationMatrix
+				float [] floatArray = new float[16]; //Manual number matching hte sender
+				Debug.LogError("Made float[]  .Length " + floatArray.Length ); //Length 17
+				System.Buffer.BlockCopy ( byteArray, 0, floatArray, 0, 16*4 );
+				Debug.LogError("Made BlockCopy");
+				Matrix4x4 m = new Matrix4x4 ();
+				m.m00 = floatArray [ 0 ];
+				m.m01 = floatArray [ 1 ];
+				m.m02 = floatArray [ 2 ];
+				m.m03 = floatArray [ 3 ];
+				m.m10 = floatArray [ 4 ];
+				m.m11 = floatArray [ 5 ];
+				m.m12 = floatArray [ 6 ];
+				m.m13 = floatArray [ 7 ];
+				m.m20 = floatArray [ 8 ];
+				m.m21 = floatArray [ 9 ];
+				m.m22 = floatArray [ 10 ];
+				m.m23 = floatArray [ 11 ];
+				m.m30 = floatArray [ 12 ];
+				m.m31 = floatArray [ 13 ];
+				m.m32 = floatArray [ 14 ];
+				m.m33 = floatArray [ 15 ];
+
+				Debug.LogError("Reconstructed the Matrix4x4");
+
+				//De-encode the Tag
+				string tag = Encoding.ASCII.GetString ( byteArray.Skip ( 16*4 ).ToArray () );
+
+				Debug.LogError ( "Passing data out" );
+				OnMarkerTracked ( camID, tag, m );
+
+			} catch(Exception e) {
+				Debug.LogError ( "ARToolkitAgentThread hit exception: " + e.Message ) ;
+			}
+		}
+	}
+
+	public void RecieveARToolkitUpdates()
+	{
+		
 	}
 	
 	// Update is called once per frame
@@ -74,6 +155,16 @@ public class PandaCubeController : NetworkBehaviour {
 		else
 			Debug.LogError (name + " Could not get a cube for ARToolkit marker: " + marker);
 	}
+	//Recieve an ARToolkit marker signhting
+	public void OnMarkerTracked ( int camOffset, string tag, Matrix4x4 transformationMatrix )
+	{
+		Debug.LogError ("MARKER TRACKED");
+		PandaCubeGameplayObject c = GetCubeByTag ( tag );
+		if (c)
+			c.Svr_SetMarker (transformationMatrix, camOffset);
+		else
+			Debug.LogError (name + " Could not get a cube for ARToolkit tag: " + tag);
+	}
 
 	private PandaCubeGameplayObject GetCube( ARMarker marker ) {
 		if ( marker.Tag.Contains( cube1.cubeContentName ) )
@@ -101,6 +192,20 @@ public class PandaCubeController : NetworkBehaviour {
 		else if ( cubeContentName == cube3.cubeContentName )
 			return cube3;
 		else if ( cubeContentName == cube4.cubeContentName )
+			return cube4;
+
+		return null;
+	}
+
+	public PandaCubeGameplayObject GetCubeByTag( string arTag ) {
+		string prfx = "ARTag";
+		if ( arTag == prfx + cube1.cubeContentName )
+			return cube1;
+		else if ( arTag == prfx +cube2.cubeContentName )
+			return cube2;
+		else if ( arTag == prfx +cube3.cubeContentName )
+			return cube3;
+		else if ( arTag == prfx +cube4.cubeContentName )
 			return cube4;
 
 		return null;

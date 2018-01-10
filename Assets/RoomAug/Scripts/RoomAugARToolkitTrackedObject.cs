@@ -1,34 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text;
 
 public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 
-//	public string eventReceiverLookupName = "";
-//	private PandaCubeController pandaCubeController;
+	public RoomAugNetworkController networkController;
 
 	// Use this for initialization
 	protected override void Start () {
 		LogTag = "RoomAugARToolkitTrackedObject: ";
-
-//		pandaCubeController =FindObjectOfType<PandaCubeController> ();
-
-
-		Invoke ( "FindEventReciever", 2 );
-
-//		base.Start (); Without this, we do not draw ourselves
-	}
-
-
-	public void FindEventReciever()
-	{
-		PandaCubeController c = FindObjectOfType<PandaCubeController> ();
-		if (c)
-			eventReceiver = ( GameObject )c.gameObject;
-		else
-			Debug.LogWarning(name + " couldn't find an PandaCubeController for Event Reciever");
-//		if (eventReceiverLookupName != "")
-//			eventReceiver = GameObject.Find ( eventReceiverLookupName );
+		networkController = FindObjectOfType<RoomAugNetworkController> ();
 	}
 
 	//Overridden version strips all unnessecary (for us) draws
@@ -51,16 +33,56 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 					if (!visible) {
 						// Marker was hidden but now is visible.
 						visible = true;
-						if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerFound", marker, SendMessageOptions.DontRequireReceiver);
+//						if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerFound", marker, SendMessageOptions.DontRequireReceiver);
 
 					}
 
-					if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerTracked", marker, SendMessageOptions.DontRequireReceiver);
+					//Marker Update available - send it to the Server
+//					if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerTracked", marker, SendMessageOptions.DontRequireReceiver);
+					if( networkController.GetUDPClient() != null )
+					{
+						float[] floatArray = new float[] {
+							marker.TransformationMatrix.m00,
+							marker.TransformationMatrix.m01, 
+							marker.TransformationMatrix.m02,
+							marker.TransformationMatrix.m03,
+							marker.TransformationMatrix.m10,
+							marker.TransformationMatrix.m11,
+							marker.TransformationMatrix.m12,
+							marker.TransformationMatrix.m13,
+							marker.TransformationMatrix.m20,
+							marker.TransformationMatrix.m21,
+							marker.TransformationMatrix.m22,
+							marker.TransformationMatrix.m23,
+							marker.TransformationMatrix.m30,
+							marker.TransformationMatrix.m31,
+							marker.TransformationMatrix.m32,
+							marker.TransformationMatrix.m33,
+						};
+						byte[] encodedTag = Encoding.ASCII.GetBytes(marker.Tag);
+
+						// create a byte array and copy the floats into it...
+						var byteArray = new byte[(floatArray.Length *4) + encodedTag.Length ];
+						System.Buffer.BlockCopy(floatArray, 0, byteArray, 0, floatArray.Length * 4);
+
+						//Then append the encoded Tag to the end.
+						encodedTag.CopyTo ( byteArray, (floatArray.Length *4) );
+
+						Debug.LogError ("Sending AR Update from CamID " + networkController.ARToolkit_CamID + " for tag: " + marker.Tag);
+
+						byte[] senddata1 = Encoding.ASCII.GetBytes("Hello TEMP UDPSend");
+						FindObjectOfType<TEMP_UdpSend>().GetUDPClient().Send(senddata1, senddata1.Length);
+
+//						byte[] senddata2 = Encoding.ASCII.GetBytes("Hello NetworkController");
+//						networkController.GetUDPClient().Send(senddata2, senddata2.Length);
+						networkController.GetUDPClient().Send ( byteArray, byteArray.Length );
+					}
+
 
 				} else {
 					
 					if ( timeNow - timeTrackingLost >= secondsToRemainVisible) {
-						if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerLost", marker, SendMessageOptions.DontRequireReceiver);
+//						if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerLost", marker, SendMessageOptions.DontRequireReceiver);
 					}
 				}
 			} // marker
