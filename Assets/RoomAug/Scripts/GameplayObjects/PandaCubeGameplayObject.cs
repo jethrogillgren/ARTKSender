@@ -43,6 +43,9 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 	public GhostPandaCubeGameplayObject[] ghosts;
 
+	protected Matrix4x4 threadSafeCopyOfCamera1ZeroPosition;
+	float t;//Put here so the Threads can access the main threads Time.time  TODO concurrency.... AARAGGRAHGHj
+	private Object updateLock = new Object();
 
 	[Space]
 	////Player Specific Stuff
@@ -105,7 +108,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	Vector3[] svr_transformPositions = new Vector3[] {new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3()};
 	Quaternion[] svr_transformRotations = new Quaternion[] {new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion(), new Quaternion()};
 
-	float[] svr_transformTimestamps = new float[sensors]; //The last times we heard from that sensor
+	private float[] svr_transformTimestamps = new float[sensors]; //The last times we heard from that sensor
 
 	//This is the result of the Optical averaging.
 	Vector3 svr_lastKnownCulminativePosition = Vector3.zero;
@@ -135,6 +138,8 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 		svr_lastKnownCulminativePosition = transform.localPosition;
 		svr_lastKnownCulminativeQuaternion = transform.localRotation;
+
+		threadSafeCopyOfCamera1ZeroPosition = roomController.camera1ZeroPosition.transform.localToWorldMatrix;
 
 		foreach ( GhostPandaCubeGameplayObject ghost in ghosts )
 			ghost.realLivingCube = this;
@@ -187,6 +192,8 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			Cnt_CheckInputTouch ();
 
 		RerotatePopupText ();
+
+		Debug.LogError ( svr_transformTimestamps [ 0 ] );
 
 	}
 	public virtual void LateUpdate()  //svr only
@@ -497,27 +504,30 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 	//TODO tango index
 	public  virtual void Svr_SetMarker ( TangoSupport.Marker marker )
 	{
-		if (isClient)
-		{
-			Debug.LogError ( "Client recieved a Tango Marker update" );
-			return;
-		}
-
-		// Apply the pose of the marker to the prefab.
-		// This also applies implicitly to the axis and cube objects.
-		svr_transformPositions [ svr_tangoOffset ] = marker.m_translation;
-		svr_transformRotations [ svr_tangoOffset ] = marker.m_orientation;
-
-		svr_transformTimestamps [ svr_tangoOffset ] = Time.time;
-
-
-		//TODO reenable
-//		corner3DP0 =  marker.m_corner3DP0 ;
-//		corner3DP1 =  marker.m_corner3DP1 ;
-//		corner3DP2 =  marker.m_corner3DP2 ;
-//		corner3DP3 =  marker.m_corner3DP3 ;
-
-		//		Debug.LogError ( "Tango Says " + transformPositions [ tangoOffset ] );
+//		if (isClient)
+//		{
+//			Debug.LogError ( "Client recieved a Tango Marker update" );
+//			return;
+//		}
+//
+//		lock ( updateLock )
+//		{
+//			// Apply the pose of the marker to the prefab.
+//			// This also applies implicitly to the axis and cube objects.
+//			svr_transformPositions [ svr_tangoOffset ] = marker.m_translation;
+//			svr_transformRotations [ svr_tangoOffset ] = marker.m_orientation;
+//
+//			svr_transformTimestamps [ svr_tangoOffset ] = Time.time;
+//		}
+//
+//
+//		//TODO reenable
+////		corner3DP0 =  marker.m_corner3DP0 ;
+////		corner3DP1 =  marker.m_corner3DP1 ;
+////		corner3DP2 =  marker.m_corner3DP2 ;
+////		corner3DP3 =  marker.m_corner3DP3 ;
+//
+//		//		Debug.LogError ( "Tango Says " + transformPositions [ tangoOffset ] );
 	}
 
 	//Server only
@@ -537,13 +547,17 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			return;
 		}
 
-		Matrix4x4 pose = roomController.camera1ZeroPosition.transform.localToWorldMatrix * transformationMatrix;
+		lock ( updateLock )
+		{
+			Matrix4x4 pose = threadSafeCopyOfCamera1ZeroPosition * transformationMatrix;
 
-		svr_transformPositions [ roomCameraNumber-1 ] = ARUtilityFunctions.PositionFromMatrix ( pose );
-		svr_transformRotations [ roomCameraNumber-1 ] = ARUtilityFunctions.QuaternionFromMatrix ( pose );
+			svr_transformPositions [ roomCameraNumber-1 ] = ARUtilityFunctions.PositionFromMatrix ( pose );
+			svr_transformRotations [ roomCameraNumber-1 ] = ARUtilityFunctions.QuaternionFromMatrix ( pose );
 
-		svr_transformTimestamps [ roomCameraNumber-1 ] = Time.time;
+			svr_transformTimestamps [ roomCameraNumber - 1 ] = t;
+		}
 
+		Debug.LogError ( svr_transformTimestamps [ 0 ] );
 
 		//		Debug.Log ("ARToolkit Marker:  Marker Matrix " + marker.TransformationMatrix);
 		//		Debug.Log ("ARToolkit Marker:  Transform     " + transform.position + " / " + transform.rotation);
@@ -580,33 +594,37 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 		Quaternion lastKnownCulminativeQuaternion = new Quaternion();
 		Vector4 tempQuaternion = Vector4.zero;
 
-
-		float t = Time.time;
-
-		//For each sensor reading.  Note - IMUs are special and handled seperately
-		for ( int i = 0; i < svr_imuOffset; i++ )
+		lock ( updateLock )
 		{
-			//If we had a reading within the dropoff delay time
-			if (svr_transformTimestamps [ i ] > 0 && ( svr_transformTimestamps [ i ] > ( t - svr_opticalDropoffDelay ) ))
+			t = Time.time;
+
+			//For each sensor reading.  Note - IMUs are special and handled seperately
+			for ( int i = 0; i < svr_imuOffset; i++ )
 			{
-				//				Debug.LogError ("Set  : " + transformTimestamps[i] + " " + transformPositions[i] );
+				//If we had a reading within the dropoff delay time
+				if (svr_transformTimestamps [ i ] > 0 && ( svr_transformTimestamps [ i ] > ( t - svr_opticalDropoffDelay ) ))
+				{
+					//				Debug.LogError ("Set  : " + transformTimestamps[i] + " " + transformPositions[i] );
 
-				syn_isOpticalTrackingGood = true;
-				if( i < svr_tangoOffset ) syn_isARToolkitTrackingGood = true;
-				if( i >= svr_tangoOffset ) syn_isTangoTrackingGood = true;
+					syn_isOpticalTrackingGood = true;
+					if (i < svr_tangoOffset)
+						syn_isARToolkitTrackingGood = true;
+					if (i >= svr_tangoOffset)
+						syn_isTangoTrackingGood = true;
 
-				syn_isIMUTrackingActive = false;
-				svr_timeRelyingOnIMU = 0f;
+					syn_isIMUTrackingActive = false;
+					svr_timeRelyingOnIMU = 0f;
 
-				addAmount++; //Amount of separate values so far
+					addAmount++; //Amount of separate values so far
 
-				//Rotation
-				lastKnownCulminativeQuaternion = Util.AverageQuaternion (ref tempQuaternion, svr_transformRotations [ i ], transform.rotation, addAmount);
-				//				transform.eulerAngles = ( transformRotations [ i ] );
+					//Rotation
+					lastKnownCulminativeQuaternion = Util.AverageQuaternion ( ref tempQuaternion, svr_transformRotations [ i ], transform.rotation, addAmount );
+					//				transform.eulerAngles = ( transformRotations [ i ] );
 
-				//Position
-				lastKnownCulminativePosition += svr_transformPositions[i]; //We could divide by addAmount at this stage to get a valid reading without going through the whole array
+					//Position
+					lastKnownCulminativePosition += svr_transformPositions [ i ]; //We could divide by addAmount at this stage to get a valid reading without going through the whole array
 
+				}
 			}
 		}
 

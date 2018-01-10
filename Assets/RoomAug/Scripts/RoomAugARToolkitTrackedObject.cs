@@ -39,7 +39,7 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 
 					//Marker Update available - send it to the Server
 //					if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerTracked", marker, SendMessageOptions.DontRequireReceiver);
-					if( networkController.GetUDPClient() != null )
+					if( networkController.ARToolkit_UdpClient != null )
 					{
 						float[] floatArray = new float[] {
 							marker.TransformationMatrix.m00,
@@ -68,14 +68,14 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 						//Then append the encoded Tag to the end.
 						encodedTag.CopyTo ( byteArray, (floatArray.Length *4) );
 
-						Debug.LogError ("Sending AR Update from CamID " + networkController.ARToolkit_CamID + " for tag: " + marker.Tag);
+						Debug.LogError ("Sending an AR Update from CamID " + networkController.ARToolkit_CamID + " for tag: " + marker.Tag);
 
-						byte[] senddata1 = Encoding.ASCII.GetBytes("Hello TEMP UDPSend");
-						FindObjectOfType<TEMP_UdpSend>().GetUDPClient().Send(senddata1, senddata1.Length);
+//						byte[] senddata1 = Encoding.ASCII.GetBytes("Hello TEMP UDPSend");
+//						FindObjectOfType<TEMP_UdpSend>().GetUDPClient().Send(senddata1, senddata1.Length);
 
 //						byte[] senddata2 = Encoding.ASCII.GetBytes("Hello NetworkController");
 //						networkController.GetUDPClient().Send(senddata2, senddata2.Length);
-						networkController.GetUDPClient().Send ( byteArray, byteArray.Length );
+						networkController.ARToolkit_UdpClient.Send ( byteArray, byteArray.Length );
 					}
 
 

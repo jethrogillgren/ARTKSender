@@ -15,10 +15,11 @@ public class RoomAugNetworkController : MonoBehaviour {
 
 	public bool ARToolkitSender = false;
 	public int ARToolkit_CamID = 0; //Only applicable for ARToolkitAgents
-	public UdpClient[] clients = new UdpClient[4]; //Used on server and Client
+	public UdpClient ARToolkit_UdpClient;
 //	public IPEndPoint[] remoteEPs = new IPEndPoint[4]; //Used on server and Client
 
-	public readonly int portARToolkitAgentBase = 41600;
+
+	public static string serverIPAddr;
 
 	private PandaCubeController cubeController = null;
 	public PandaCubeController GetCubeController()
@@ -27,16 +28,7 @@ public class RoomAugNetworkController : MonoBehaviour {
 			cubeController = GameObject.FindObjectOfType<PandaCubeController>();
 		return cubeController;
 	}
-
-
-	public UdpClient GetUDPClient()
-	{
-		return GetUDPClient(ARToolkit_CamID);
-	}
-	public UdpClient GetUDPClient(int camId)
-	{
-		return clients [ camId ];
-	}
+		
 
 	// Use this for initialization
 	void Start () {
@@ -71,15 +63,9 @@ public class RoomAugNetworkController : MonoBehaviour {
 		NetworkManager.singleton.StartServer();
 
 		//Listen for the Direct Connections.  Manually add for more room cameras
-		for ( int i = 0; i < clients.Length; i++ )
-		{
-			clients [ i ] = new UdpClient ( portARToolkitAgentBase + i );
-//			clients [ i ].Connect (remoteEPs [ i ]);//The Agent connects to us
 
-			Debug.LogError ( "Created clients and Endpoints for CamID" + i );
-		}
 
-		GetCubeController().Svr_StartARToolkitAgentRecieve ();
+//		GetCubeController().Svr_StartARToolkitAgentRecieve ();
 
 //		while (true)
 //		{
@@ -160,10 +146,10 @@ public class RoomAugNetworkController : MonoBehaviour {
 		RoomAugNetworkDiscovery.Instance.StopBroadcasting ();
 
 		//Test
-		clients[ARToolkit_CamID] = new UdpClient();
-		IPEndPoint ep = new IPEndPoint(IPAddress.Parse(serverIp), portARToolkitAgentBase+ARToolkit_CamID); // endpoint where server is listening
-		Debug.LogError ("Connecting out to " + IPAddress.Parse(serverIp).ToString() + " : " +  (portARToolkitAgentBase+ARToolkit_CamID));
-		clients[ARToolkit_CamID].Connect(ep);
+		ARToolkit_UdpClient = new UdpClient();
+		IPEndPoint ep = new IPEndPoint(IPAddress.Parse(serverIp), Util.portARToolkitAgentBase+ARToolkit_CamID); // endpoint where server is listening
+		Debug.LogError ("Connecting out to " + IPAddress.Parse(serverIp).ToString() + " : " +  (Util.portARToolkitAgentBase+ARToolkit_CamID));
+		ARToolkit_UdpClient.Connect(ep);
 
 //		// send data
 //		while (true)
@@ -182,6 +168,8 @@ public class RoomAugNetworkController : MonoBehaviour {
 	}
 
 	public void OnReceiveBraodcast(string fromIp, string data) {
+		serverIPAddr = fromIp;
+
 		if (ARToolkitSender)
 			JoinGameAsARToolkitAgent ( fromIp );
 		else

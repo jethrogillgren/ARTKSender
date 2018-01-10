@@ -36,6 +36,8 @@ public class PandaCubeController : NetworkBehaviour {
     public PandaCubeGameplayObject cube4;
 
 
+	//ARToolkitAgent connectivity stuff
+	public UdpClient[] clients = new UdpClient[4];
 
 	// Use this for initialization
 	void Start () {
@@ -48,10 +50,17 @@ public class PandaCubeController : NetworkBehaviour {
         if ( !cube1 || !cube2 || !cube3 || !cube4 )
             Debug.LogError( name + ": DID NOT FIND ALL CUBE GAMEOBJECTS" );
 
+		if(!isClient)
+			Svr_StartARToolkitAgentRecieve ();
+
 	}
 
-	public void Svr_StartARToolkitAgentRecieve()
-	{
+	public void Svr_StartARToolkitAgentRecieve() {
+		for ( int i = 0; i < clients.Length; i++ )
+		{
+			clients [ i ] = new UdpClient ( Util.portARToolkitAgentBase + i );
+		}
+
 		new Thread( () => Svr_ARToolkitAgentThread(0) ).Start();
 		new Thread( () => Svr_ARToolkitAgentThread(1) ).Start();
 		new Thread( () => Svr_ARToolkitAgentThread(2) ).Start();
@@ -62,29 +71,23 @@ public class PandaCubeController : NetworkBehaviour {
 	{
 		Thread.CurrentThread.IsBackground = true;//These threads will not prevent application termination
 
-		UdpClient udpClient = networkController.clients [ camID ];
+		UdpClient udpClient = clients [ camID ];
 
 		/* run your code here */ 
 		while (true)
 		{
 			try {
 
-				Debug.LogError ( "Thread running for " + camID );
-
 				IPEndPoint ep = new IPEndPoint(IPAddress.Any,0);
-				Debug.LogError ("Listening to " + IPAddress.Any.ToString() + " : " +  (networkController.portARToolkitAgentBase + camID));
 
 				byte [] byteArray = udpClient.Receive ( ref ep );
 
 				string returnData = Encoding.ASCII.GetString(byteArray);
-				Debug.LogError ("Whole data (byteArray.Length: " + byteArray.Length + ") and as ASCII: " + returnData);
 				//Length 71
 
 				//Recreate the TransformationMatrix
 				float [] floatArray = new float[16]; //Manual number matching hte sender
-				Debug.LogError("Made float[]  .Length " + floatArray.Length ); //Length 17
 				System.Buffer.BlockCopy ( byteArray, 0, floatArray, 0, 16*4 );
-				Debug.LogError("Made BlockCopy");
 				Matrix4x4 m = new Matrix4x4 ();
 				m.m00 = floatArray [ 0 ];
 				m.m01 = floatArray [ 1 ];
@@ -103,12 +106,10 @@ public class PandaCubeController : NetworkBehaviour {
 				m.m32 = floatArray [ 14 ];
 				m.m33 = floatArray [ 15 ];
 
-				Debug.LogError("Reconstructed the Matrix4x4");
 
 				//De-encode the Tag
 				string tag = Encoding.ASCII.GetString ( byteArray.Skip ( 16*4 ).ToArray () );
 
-				Debug.LogError ( "Passing data out" );
 				OnMarkerTracked ( camID, tag, m );
 
 			} catch(Exception e) {
@@ -158,7 +159,6 @@ public class PandaCubeController : NetworkBehaviour {
 	//Recieve an ARToolkit marker signhting
 	public void OnMarkerTracked ( int camOffset, string tag, Matrix4x4 transformationMatrix )
 	{
-		Debug.LogError ("MARKER TRACKED");
 		PandaCubeGameplayObject c = GetCubeByTag ( tag );
 		if (c)
 			c.Svr_SetMarker (transformationMatrix, camOffset);

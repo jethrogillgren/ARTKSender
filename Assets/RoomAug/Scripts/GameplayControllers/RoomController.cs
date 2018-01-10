@@ -32,6 +32,10 @@ public class RoomController : NetworkBehaviour
 	//	public GameplayRoom m_extraGameplayRoom;//TODO - hardcoding in a 2/3 Room Toggle Teleport... add in Mesh n room!
 	//	public PhysicalRoom m_currentPhysicalRoom; //TODO initialization?
 
+//	void Awake() {
+//		DontDestroyOnLoad(transform.gameObject);
+//	}
+
 	// Use this for initialization
 	void Start()
 	{
@@ -57,6 +61,7 @@ public class RoomController : NetworkBehaviour
 			gr.SetAppropiateLayers ();
 
 		}
+
 	}
 
 	public void Update()
