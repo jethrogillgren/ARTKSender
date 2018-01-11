@@ -162,8 +162,8 @@ public class PandaCubeController : NetworkBehaviour {
 		PandaCubeGameplayObject c = GetCubeByTag ( tag );
 		if (c)
 			c.Svr_SetMarker (transformationMatrix, camOffset);
-		else
-			Debug.LogError (name + " Could not get a cube for ARToolkit tag: " + tag);
+//		else
+//			Debug.LogError (name + " Could not get a cube for ARToolkit tag: " + tag);
 	}
 
 	private PandaCubeGameplayObject GetCube( ARMarker marker ) {
