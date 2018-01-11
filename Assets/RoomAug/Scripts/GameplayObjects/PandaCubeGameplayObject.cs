@@ -624,7 +624,7 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 			}
 		}
 
-		svr_lastKnownCulminativePosition = svr_lastKnownCulminativePosition / ( float )addAmount;
+		svr_lastKnownCulminativePosition = lastKnownCulminativePosition / ( float )addAmount;
 		svr_lastKnownCulminativeQuaternion = lastKnownCulminativeQuaternion;
 
 
