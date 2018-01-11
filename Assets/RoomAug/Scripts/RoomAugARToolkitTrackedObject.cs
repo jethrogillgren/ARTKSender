@@ -69,12 +69,6 @@ public class RoomAugARToolkitTrackedObject : ARTrackedObject {
 						encodedTag.CopyTo ( byteArray, (floatArray.Length *4) );
 
 						Debug.LogError ("Sending an AR Update from CamID " + networkController.ARToolkit_CamID + " for tag: " + marker.Tag);
-
-//						byte[] senddata1 = Encoding.ASCII.GetBytes("Hello TEMP UDPSend");
-//						FindObjectOfType<TEMP_UdpSend>().GetUDPClient().Send(senddata1, senddata1.Length);
-
-//						byte[] senddata2 = Encoding.ASCII.GetBytes("Hello NetworkController");
-//						networkController.GetUDPClient().Send(senddata2, senddata2.Length);
 						networkController.ARToolkit_UdpClient.Send ( byteArray, byteArray.Length );
 					}
 

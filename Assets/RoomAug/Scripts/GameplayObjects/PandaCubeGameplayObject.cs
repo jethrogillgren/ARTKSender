@@ -193,8 +193,6 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 		RerotatePopupText ();
 
-		Debug.LogError ( svr_transformTimestamps [ 0 ] );
-
 	}
 	public virtual void LateUpdate()  //svr only
 	{
@@ -556,8 +554,6 @@ public class PandaCubeGameplayObject : BaseGameplayObject
 
 			svr_transformTimestamps [ roomCameraNumber - 1 ] = t;
 		}
-
-		Debug.LogError ( svr_transformTimestamps [ 0 ] );
 
 		//		Debug.Log ("ARToolkit Marker:  Marker Matrix " + marker.TransformationMatrix);
 		//		Debug.Log ("ARToolkit Marker:  Transform     " + transform.position + " / " + transform.rotation);
