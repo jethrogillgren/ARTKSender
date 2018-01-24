@@ -47,6 +47,7 @@ public class ARToolkitAgentUDPForwarder : MonoBehaviour {
 
 			Debug.LogError ("Sending an AR Update from CamID " + networkController.ARToolkit_CamID + " for tag: " + marker.Tag);
 			networkController.ARToolkit_UdpClient.Send ( byteArray, byteArray.Length );
-		}
+
+        }
 	}
 }

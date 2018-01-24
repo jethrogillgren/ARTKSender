@@ -53,9 +53,11 @@ public class ARTrackedObject : MonoBehaviour
 	protected bool visibleOrRemain = false;			// Whether to show the content (based on above variables)
 
 	public GameObject eventReceiver;
+    protected ARToolkitAgent_CamIDGUI gui;
 
-	// Private fields with accessors.
-	[SerializeField]
+
+    // Private fields with accessors.
+    [SerializeField]
 	private string _markerTag = "";					// Unique tag for the marker to get tracking from
 	
 	
@@ -112,7 +114,10 @@ public class ARTrackedObject : MonoBehaviour
 			// In Editor, set initial visibility to visible.
 			for (int i = 0; i < this.transform.childCount; i++) this.transform.GetChild(i).gameObject.SetActive(true);
 		}
-	}
+
+        gui = GameObject.FindObjectOfType<ARToolkitAgent_CamIDGUI>();
+
+    }
 
 	// Use LateUpdate to be sure the ARMarker has updated before we try and use the transformation.
 	protected virtual void LateUpdate()
@@ -160,10 +165,12 @@ public class ARTrackedObject : MonoBehaviour
 						transform.position = ARUtilityFunctions.PositionFromMatrix(pose);
 						transform.rotation = ARUtilityFunctions.QuaternionFromMatrix(pose);
 
-						Debug.LogError ("Breadcasting to EventReciever: " + eventReceiver );
+						//Debug.Log ("Breadcasting to EventReciever: " + eventReceiver );
 						if (eventReceiver != null) eventReceiver.BroadcastMessage("OnMarkerTracked", marker, SendMessageOptions.RequireReceiver);
+                        gui.MarkSeen(marker.Tag);
 
-					} else {
+                    }
+                    else {
 
 						if (visible) {
 							// Marker was visible but now is hidden.

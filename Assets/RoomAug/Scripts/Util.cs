@@ -13,39 +13,7 @@ public static class Util
 	public static readonly float ARToolkitViewportRectY = 0.0f * Screen.height;
 	public static readonly float ARToolkitViewportRectW = 0.25f* Screen.width;
 	public static readonly float ARToolkitViewportRectH = 0.5f* Screen.height;
-
-	public static bool GetIsAltSide(SKStudios.Portals.Portal portal){
-		if (portal.gameObject.name == "SKPortalA")
-			return false;
-		else if (portal.gameObject.name == "SKPortalB")
-			return true;
-
-		Debug.LogError ("Badly named portal");
-		return false;
-	}
-	public static GameplayRoom GetGameplayRoom(SKStudios.Portals.Portal portal){
-		BaseTeleportGameplayObject teleportGPO = portal.GetComponentInParent<BaseTeleportGameplayObject> ();
-
-		if (portal.gameObject.name == "SKPortalA")
-			return teleportGPO.GetTargetGameplayRoom();
-		else if (portal.gameObject.name == "SKPortalB")
-			return teleportGPO.GetTargetGameplayRoom(true);
-
-		Debug.LogError ("Badly named portal");
-		return null;
-	}
-
-	//Get this main Physical room's Gameplay Room.
-	public static GameplayRoom GetCurrentMainGameplayRoom()
-	{
-		foreach( PhysicalRoom pr in GameObject.FindObjectsOfType<PhysicalRoom> () )
-		{
-			if (pr.roomName == "main")
-				return pr.gameplayRoom;
-		}
-
-		return null;
-	}
+    
 
 	public static bool Cnt_IsObjectInMainCamerasFOV( Transform targetPoint){
 		return Cnt_IsObjectInCamerasFOV ( Camera.main, targetPoint );
@@ -61,32 +29,7 @@ public static class Util
 		Debug.Log ("Checking if " + targetPoint.name + " is within " + screenPoint + " .... " + ret + "!" );
 		return ret;
 	}
-
-	//Return the closest Client object to the given position
-	public static RoomAugPlayerController GetNearestPlayer(Transform fromTransform)
-	{
-		RoomAugPlayerController closest = null;
-		float closestMagnitude = 999;
-
-		//TODO is this slooooooww?
-		RoomAugPlayerController[] players = GameObject.FindObjectsOfType<RoomAugPlayerController> ();
-		foreach(RoomAugPlayerController player in players)
-		{
-			if (!closest) //First player is chosen automatically
-			{
-				closest = player;
-
-				//If another player is closer, choose that instead
-			} else if( ( fromTransform.position - player.transform.position ).magnitude < closestMagnitude)
-			{
-				closest = player;
-				closestMagnitude = (fromTransform.position - player.transform.position ).magnitude;
-			}
-				
-		}
-
-		return closest;
-	}
+    
 
 
 	//Get an average (mean) from more then two quaternions (with two, slerp would be used).
@@ -200,17 +143,7 @@ public static class Util
     {
         return new List<T> ( values );
     }
-
-    public static BaseGameplayObject[] getGameplayObjects ( bool inclDisabled = false )
-    {
-        return ( inclDisabled ? Resources.FindObjectsOfTypeAll ( typeof ( BaseGameplayObject ) ) as BaseGameplayObject []
-			: UnityEngine.Object.FindObjectsOfType ( typeof ( BaseGameplayObject ) ) as BaseGameplayObject [] );
-    }
-
-    public static void collectGameplayObjects ( ref HashSet<BaseGameplayObject> m_gameplayObjects )
-    {
-        collectHashSetOfComponents<BaseGameplayObject> ( ref m_gameplayObjects );
-    }
+    
 
     public static void collectHashSetOfComponents<T> ( ref HashSet<T> setToFill, bool inclDisabled = false )
     {
@@ -227,121 +160,4 @@ public static class Util
         }
     }
 
-    //LOGGERS
-
-    //Strings
-    public static void JLog ( string val, bool toast )
-    {
-		Debug.Log ( "J# " + val);
-        if (toast)
-            AndroidHelper.ShowAndroidToastMessage ( val );
-
-    }
-
-    public static void JLogErr ( string val, bool toast )
-    {
-        Debug.LogError ( "J# " + val );
-        if (toast)
-            AndroidHelper.ShowAndroidToastMessage ( val );
-    }
-
-    //Ints
-    public static void JLog ( int val, bool toast )
-    {
-        Debug.Log ( "J# " + val );
-        if (toast)
-            AndroidHelper.ShowAndroidToastMessage ( val.ToString () );
-
-    }
-
-    public static void JLogErr ( int val, bool toast )
-    {
-        Debug.LogError ( "J# " + val );
-        if (toast)
-            AndroidHelper.ShowAndroidToastMessage ( val.ToString () );
-    }
-
-    //Arrays
-    public static void JLog<T> ( T [] arr, bool toast = false )
-    {
-
-        StringBuilder builder = new StringBuilder ();
-        builder.AppendLine ( "J# [" );
-        foreach ( T t in arr )
-        {
-            builder.AppendLine ( " " + t.ToString () );
-        }
-        builder.AppendLine ( "J# [" );
-
-        Debug.Log ( builder.ToString () );
-        if (toast)
-            AndroidHelper.ShowAndroidToastMessage ( builder.ToString () );
-
-    }
-
-    public static void JLogErr<T> ( T [] arr, bool toast = false )
-    {
-        StringBuilder builder = new StringBuilder ();
-        builder.AppendLine ( "J# [" );
-        foreach ( T t in arr )
-        {
-            builder.AppendLine ( " " + t.ToString () );
-        }
-        builder.AppendLine ( "J# [" );
-
-        Debug.LogError ( builder.ToString () );
-        if (toast)
-            AndroidHelper.ShowAndroidToastMessage ( builder.ToString () );
-    }
-
-
-    //Generic Lambda
-    public static void JLog<T> ( T val, Func<T, string> selector, bool toast = false )
-    {
-        Debug.Log ( "J# " + selector ( val ) );
-        if (toast)
-            AndroidHelper.ShowAndroidToastMessage ( selector ( val ) );
-    }
-
-    public static void JLogErr<T> ( T val, Func<T, string> selector, bool toast = false )
-    {
-        Debug.LogError ( "J# " + selector ( val ) );
-        if (toast)
-            AndroidHelper.ShowAndroidToastMessage ( selector ( val ) );
-    }
-
-
-
-    //Generic Lambda Arrays
-    //eg   Util.JLogArr(Application.GetBuildTags(), x => x.ToString() , true);
-    public static void JLogArr<T> ( T [] arr, Func<T, string> selector, bool toast = false )
-    {
-        StringBuilder builder = new StringBuilder ();
-        builder.AppendLine ( "J# [" );
-        foreach ( T t in arr )
-        {
-            builder.AppendLine ( " " + selector ( t ) );
-        }
-        builder.AppendLine ( "]" );
-
-        Debug.Log ( builder.ToString () );
-        if (toast)
-            AndroidHelper.ShowAndroidToastMessage ( builder.ToString () );
-    }
-
-    //Generic Lambda Arrays
-    public static void JLogArrErr<T> ( T [] arr, Func<T, string> selector, bool toast = false )
-    {
-        StringBuilder builder = new StringBuilder ();
-        builder.AppendLine ( "J# [" );
-        foreach ( T t in arr )
-        {
-            builder.Append ( "  " + selector ( t ) );
-        }
-        builder.Append ( "]" );
-
-        Debug.LogError ( builder.ToString () );
-        if (toast)
-            AndroidHelper.ShowAndroidToastMessage ( builder.ToString () );
-    }
 }
