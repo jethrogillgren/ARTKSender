@@ -152,7 +152,8 @@ public class ARCamera : MonoBehaviour
 		}
 		
 		// Don't clear anything or else we interfere with other foreground cameras
-		c.clearFlags = CameraClearFlags.Nothing;
+        //jgillgr - this needed changing from Don'tClear for UNity 5.6 to work.
+		c.clearFlags = CameraClearFlags.Depth;
 		
 		// Renders after the clear and background cameras
 		c.depth = 2;
