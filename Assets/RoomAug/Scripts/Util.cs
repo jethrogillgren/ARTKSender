@@ -13,9 +13,19 @@ public static class Util
 	public static readonly float ARToolkitViewportRectY = 0.0f * Screen.height;
 	public static readonly float ARToolkitViewportRectW = 0.25f* Screen.width;
 	public static readonly float ARToolkitViewportRectH = 0.5f* Screen.height;
-    
 
-	public static bool Cnt_IsObjectInMainCamerasFOV( Transform targetPoint){
+
+    public static Quaternion QuaternionFromMatrix(Matrix4x4 m)
+    {
+        // Trap the case where the matrix passed in has an invalid rotation submatrix.
+        if (m.GetColumn(2) == Vector4.zero)
+        {
+            return Quaternion.identity;
+        }
+        return Quaternion.LookRotation(m.GetColumn(2), m.GetColumn(1));
+    }
+
+    public static bool Cnt_IsObjectInMainCamerasFOV( Transform targetPoint){
 		return Cnt_IsObjectInCamerasFOV ( Camera.main, targetPoint );
 	}
 

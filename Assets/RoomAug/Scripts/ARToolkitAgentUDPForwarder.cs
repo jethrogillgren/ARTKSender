@@ -15,8 +15,12 @@ public class ARToolkitAgentUDPForwarder : MonoBehaviour {
 
 	public void OnMarkerTracked(ARMarker marker)
 	{
-		//THe UDP CLient is made once we have a connection to the main server
-		if( marker && networkController.ARToolkit_UdpClient != null )
+
+        ARUtilityFunctions.PositionFromMatrix(marker.TransformationMatrix);
+
+
+        //THe UDP CLient is made once we have a connection to the main server
+        if ( marker && networkController.ARToolkit_UdpClient != null )
 		{
 			float[] floatArray = new float[] {
 				marker.TransformationMatrix.m00,
@@ -45,9 +49,10 @@ public class ARToolkitAgentUDPForwarder : MonoBehaviour {
 			//Then append the encoded Tag to the end.
 			encodedTag.CopyTo ( byteArray, (floatArray.Length *4) );
 
-			Debug.LogError ("Sending an AR Update from CamID " + networkController.ARToolkit_CamID + " for tag: " + marker.Tag);
-			networkController.ARToolkit_UdpClient.Send ( byteArray, byteArray.Length );
+			Debug.Log("Sending an AR Update from CamID " + networkController.ARToolkit_CamID + " for tag: " + marker.Tag);
+            Debug.Log("Transform     pos: x " + marker.TransformationMatrix.GetColumn(3).x + "   y " + marker.TransformationMatrix.GetColumn(3).y + "  z" + marker.TransformationMatrix.GetColumn(3).z + "   rot: " + Util.QuaternionFromMatrix(marker.TransformationMatrix).eulerAngles);
 
+            networkController.ARToolkit_UdpClient.Send ( byteArray, byteArray.Length );
         }
 	}
 }

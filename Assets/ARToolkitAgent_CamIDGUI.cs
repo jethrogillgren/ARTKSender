@@ -32,12 +32,14 @@ public class ARToolkitAgent_CamIDGUI : MonoBehaviour {
 	void Update () {
         if (!timeText)
             return;
-        
-		if (con)
+
+        timeText.text = "";
+
+        if (con)
 		{
 			timeText.text = "Cam ID: " + con.ARToolkit_CamID;
             if (con.ARToolkit_UdpClient != null)
-                timeText.text += "  Connected to: " + RoomAugNetworkController.serverIPAddr;
+                timeText.text += "  Server: " + RoomAugNetworkController.serverIPAddr;
 
         } else
         {

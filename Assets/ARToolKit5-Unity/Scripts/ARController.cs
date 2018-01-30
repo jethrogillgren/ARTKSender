@@ -241,8 +241,8 @@ public class ARController : MonoBehaviour
     	AR_MATRIX_CODE_3x3_HAMMING63 = 515,
     	AR_MATRIX_CODE_4x4 = 4,
     	AR_MATRIX_CODE_4x4_BCH_13_9_3 = 772,
-    	AR_MATRIX_CODE_4x4_BCH_13_5_5 = 1028//,
-//    	AR_MATRIX_CODE_5x5 = 5,
+    	AR_MATRIX_CODE_4x4_BCH_13_5_5 = 1028,
+    	AR_MATRIX_CODE_5x5 = 5,
 //    	AR_MATRIX_CODE_6x6 = 6,
 //    	AR_MATRIX_CODE_GLOBAL_ID = 2830
 	};
@@ -592,7 +592,8 @@ public class ARController : MonoBehaviour
 			_running = PluginFunctions.arwStartRunningStereoB(videoConfiguration0, cparam0, cparam0.Length, videoConfiguration1, cparam1, cparam1.Length, transL2R, transL2R.Length, NearPlane, FarPlane);
 
 		}
-        
+
+
         if (!_running) {
             Log(LogTag + "Error starting running");
 			ARW_ERROR error = (ARW_ERROR)PluginFunctions.arwGetError();
