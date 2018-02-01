@@ -49,8 +49,8 @@ public class ARToolkitAgentUDPForwarder : MonoBehaviour {
 			//Then append the encoded Tag to the end.
 			encodedTag.CopyTo ( byteArray, (floatArray.Length *4) );
 
-			Debug.Log("Sending an AR Update from CamID " + networkController.ARToolkit_CamID + " for tag: " + marker.Tag);
-            Debug.Log("Transform     pos: x " + marker.TransformationMatrix.GetColumn(3).x + "   y " + marker.TransformationMatrix.GetColumn(3).y + "  z" + marker.TransformationMatrix.GetColumn(3).z + "   rot: " + Util.QuaternionFromMatrix(marker.TransformationMatrix).eulerAngles);
+			//Debug.Log("Sending an AR Update from CamID " + networkController.ARToolkit_CamID + " for tag: " + marker.Tag);
+            //Debug.Log("Transform     pos: x " + marker.TransformationMatrix.GetColumn(3).x + "   y " + marker.TransformationMatrix.GetColumn(3).y + "  z" + marker.TransformationMatrix.GetColumn(3).z + "   rot: " + Util.QuaternionFromMatrix(marker.TransformationMatrix).eulerAngles);
 
             networkController.ARToolkit_UdpClient.Send ( byteArray, byteArray.Length );
         }
